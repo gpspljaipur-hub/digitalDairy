@@ -31,8 +31,8 @@ const Dashboard = () => {
                 <View style={styles.gridContainer}>
                     <QuickActionCard icon="👤" label={Strings.attendance} onPress={() => navigation.navigate('MarkAttendance')} />
                     <QuickActionCard icon="📝" label={Strings.homework} onPress={() => navigation.navigate('AddHomework')} />
-                    <QuickActionCard icon="📢" label={Strings.notice} />
-                    <QuickActionCard icon="📤" label={Strings.marks} />
+                    <QuickActionCard icon="📢" label={Strings.notice} onPress={() => navigation.navigate('CreateNotice')} />
+                    <QuickActionCard icon="📤" label={Strings.marks} onPress={() => navigation.navigate('UPloadMarks')} />
                 </View>
 
                 {/* Schedule Section */}

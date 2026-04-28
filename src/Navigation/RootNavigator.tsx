@@ -7,6 +7,12 @@ import PostHomework from '../Screens/Posthomework';
 import HomeworkDetails from '../Screens/HomeworkDetails';
 import ReminderHomework from '../Screens/ReminderHomework';
 import EditHomework from '../Screens/EditHomework';
+import CreateNotice from '../Screens/CreateNotice';
+import SendNotice from '../Screens/SendNotice'
+import ViewAllNotice from '../Screens/ViewAllNotice'
+import UPloadMarks from '../Screens/UPloadMarks';
+import SaveMarks from '../Screens/SaveMarks';
+import ViewMarkSheet from '../Screens/ViewMarkSheet';
 
 export type RootStackParamList = {
   Dashboard: undefined;
@@ -16,6 +22,13 @@ export type RootStackParamList = {
   HomeworkDetails: undefined;
   ReminderHomework: undefined;
   EditHomework: undefined;
+  CreateNotice: undefined;
+  SendNotice: undefined;
+  ViewAllNotice: undefined;
+  UPloadMarks: undefined;
+  SaveMarks: undefined;
+  ViewMarkSheet: undefined;
+
 };
 
 declare global {
@@ -42,6 +55,13 @@ const RootNavigator = () => {
       <Stack.Screen name="HomeworkDetails" component={HomeworkDetails} />
       <Stack.Screen name="ReminderHomework" component={ReminderHomework} />
       <Stack.Screen name="EditHomework" component={EditHomework} />
+      <Stack.Screen name="CreateNotice" component={CreateNotice} />
+      <Stack.Screen name="SendNotice" component={SendNotice} />
+      <Stack.Screen name="ViewAllNotice" component={ViewAllNotice} />
+      <Stack.Screen name="UPloadMarks" component={UPloadMarks} />
+      <Stack.Screen name="SaveMarks" component={SaveMarks} />
+      <Stack.Screen name="ViewMarkSheet" component={ViewMarkSheet} />
+      
 
     </Stack.Navigator>
   );
