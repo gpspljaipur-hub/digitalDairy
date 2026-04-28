@@ -1,0 +1,53 @@
+const Strings = {
+	en: {
+		// Dashboard Extra
+		dashboardTitle: 'School Dashboard',
+		greeting: 'Namaste, Mrs. Sharma',
+		subtitle: 'Class Teacher: Grade 10-B',
+		home: 'Home',
+		messages: 'Messages',
+		schedule: 'Schedule',
+		account: 'Account',
+		attendance: 'Mark Attendance',
+		notice: 'Send Notice',
+		homework: 'Add Homework',
+		marks: 'Upload Marks',
+		todaySchedule: 'Today’s Schedule',
+		pendingTasks: 'Pending Tasks',
+		urgent: 'URGENT',
+		viewAll: 'View All',
+		homeworkPosted: 'Homework Posted Successfully',
+		homeworkPostedDesc: 'The assignment has been distributed to all students in the selected class.',
+		assignmentSummary: 'Assignment Summary',
+		backToDashboard: 'Back to Dashboard',
+		viewHomework: 'View Homework',
+		subjectLabel: 'Subject',
+		classLabel: 'Class',
+		dueDateLabel: 'Due Date',
+		reminderHomeworkTitle: 'TEACHER PORTAL',
+		activeSession: 'Active Session',
+		sendingReminderFor: 'Sending reminder for ',
+		targetingStudents: 'Targeting students with missing assignments: ',
+		pendingSubmissions: 'Pending Submissions',
+		selectAll: 'Select All',
+		showMoreStudents: 'Show {count} more students',
+		reminderMessageLabel: 'Reminder Message (Optional)',
+		reminderMessageHelper: 'Students will receive this as a push notification and email.',
+		sendReminder: 'Send Reminder',
+		defaultReminderMsg: 'Please submit your quadratic equations assignment by tomorrow.',
+		editHomeworkTitle: 'Edit Homework',
+		editHomeworkSubtitle: 'Update the assignment details for your Mathematics class.',
+		selectClass: 'Select Class',
+		selectSubject: 'Select Subject',
+		homeworkDetails: 'Homework Details',
+		attachments: 'Attachments',
+		addMoreAttachments: 'Add More Attachments',
+		saveChanges: 'Save Changes',
+		cancel: 'Cancel',
+	},
+hi:{
+	
+}
+};
+
+export default Strings;
