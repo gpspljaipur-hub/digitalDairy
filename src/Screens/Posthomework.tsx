@@ -4,7 +4,6 @@ import { Colors } from '../comman/Colors'
 import Fonts from '../comman/fonts'
 import StringsRaw from '../comman/String'
 import HWSize from '../comman/HWSize'
-import ImageSize from '../comman/ImageSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useRoute } from '@react-navigation/native'
 
@@ -15,9 +14,9 @@ const PostHomework = () => {
     const route = useRoute<any>();
 
     const homework = route.params?.homework || {
-        subject: 'Mathematics',
-        class: 'Grade 10-B',
-        dueDate: 'Oct 30, 2023'
+        subject: '',
+        class: '',
+        dueDate: ''
     };
 
     return (

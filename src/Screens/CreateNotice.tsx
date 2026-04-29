@@ -11,7 +11,7 @@ const CreateNotice = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isImportant, setIsImportant] = useState(false);
-    const [selectedClasses, setSelectedClasses] = useState(['Grade 10-A']);
+    const [selectedClasses, setSelectedClasses] = useState(['']);
 
     const classes = [
         'Grade 10-A', 'Grade 10-B',
@@ -132,8 +132,8 @@ const CreateNotice = () => {
                 </View>
 
                 {/* Send Button */}
-                <TouchableOpacity 
-                    style={styles.sendButton} 
+                <TouchableOpacity
+                    style={styles.sendButton}
                     activeOpacity={0.8}
                     onPress={() => navigation.navigate('SendNotice')}
                 >

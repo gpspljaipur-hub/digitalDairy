@@ -6,7 +6,7 @@ import HWSize from '../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Strings from '../comman/String'
-import BottomTab from '../Component/Bottom'
+
 
 interface Student {
     id: string;

@@ -13,7 +13,13 @@ import ViewAllNotice from '../Screens/ViewAllNotice'
 import UPloadMarks from '../Screens/UPloadMarks';
 import SaveMarks from '../Screens/SaveMarks';
 import ViewMarkSheet from '../Screens/ViewMarkSheet';
-
+import Splash from '../Screens/Parent/Splash';
+import LanguageSelection from '../Screens/Parent/LanguageSelection';
+import WelcomeScreen from '../Screens/Parent/WelcomeScreen';
+import StudentRegister from '../Screens/Parent/StudentRegister';
+import Welcomeback from '../Screens/Parent/Welcomeback';
+import ParentRegister from '../Screens/Parent/ParentRegister';
+import OTPVerification from '../Screens/Parent/OTPVerification';
 export type RootStackParamList = {
   Dashboard: undefined;
   MarkAttendance: undefined;
@@ -28,6 +34,14 @@ export type RootStackParamList = {
   UPloadMarks: undefined;
   SaveMarks: undefined;
   ViewMarkSheet: undefined;
+  Splash: undefined;
+  LanguageSelection: undefined;
+  WelcomeScreen: undefined;
+  StudentRegister: undefined;
+  Welcomeback: undefined;
+  ParentRegister: undefined;
+  OTPVerification: undefined;
+
 
 };
 
@@ -42,12 +56,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const RootNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Dashboard"
+      initialRouteName="Splash"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}
     >
+      <Stack.Screen name="Splash" component={Splash} />
+      <Stack.Screen name="LanguageSelection" component={LanguageSelection} />
       <Stack.Screen name="Dashboard" component={Dashboard} />
       <Stack.Screen name="MarkAttendance" component={MarkAttendance} />
       <Stack.Screen name="AddHomework" component={AddHomework} />
@@ -61,7 +77,12 @@ const RootNavigator = () => {
       <Stack.Screen name="UPloadMarks" component={UPloadMarks} />
       <Stack.Screen name="SaveMarks" component={SaveMarks} />
       <Stack.Screen name="ViewMarkSheet" component={ViewMarkSheet} />
-      
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+      <Stack.Screen name="StudentRegister" component={StudentRegister} />
+      <Stack.Screen name="ParentRegister" component={ParentRegister} />
+      <Stack.Screen name="Welcomeback" component={Welcomeback} />
+      <Stack.Screen name="OTPVerification" component={OTPVerification} />
+
 
     </Stack.Navigator>
   );

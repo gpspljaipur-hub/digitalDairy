@@ -24,8 +24,8 @@ const SUBJECTS = ['Mathematics', 'Science', 'English', 'History', 'Physics', 'Ch
 const UPloadMarks = () => {
     const navigation = useNavigation();
     const [students, setStudents] = useState(STUDENTS_DATA);
-    const [selectedClass, setSelectedClass] = useState('Grade 10-B');
-    const [selectedSubject, setSelectedSubject] = useState('Mathematics');
+    const [selectedClass, setSelectedClass] = useState('Select Class');
+    const [selectedSubject, setSelectedSubject] = useState('Select Subject');
     const [showClassList, setShowClassList] = useState(false);
     const [showSubjectList, setShowSubjectList] = useState(false);
 

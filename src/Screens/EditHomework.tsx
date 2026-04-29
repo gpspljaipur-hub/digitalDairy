@@ -2,18 +2,30 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image,
 import React, { useState } from 'react'
 import { Colors } from '../comman/Colors'
 import Fonts from '../comman/fonts'
-import HWSize from '../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Header from '../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 import StringsRaw from '../comman/String'
+import DatePicker from '../comman/DatePicker'
 
 const Strings = StringsRaw.en
 
 const EditHomework = () => {
     const navigation = useNavigation<any>();
-    const [homeworkDetails, setHomeworkDetails] = useState('Please complete the exercises from Chapter 4, Section 4.2. Focus on problems 1 through 15. Show all working steps for the algebraic derivations.')
-    const [dueDate, setDueDate] = useState('10/30/2023')
+    const [homeworkDetails, setHomeworkDetails] = useState('Type your message here...')
+    const [dueDate, setDueDate] = useState(new Date())
+    const [showDatePicker, setShowDatePicker] = useState(false)
+
+    const formatDate = (date: Date) => {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    };
+    const [selectedClass, setSelectedClass] = useState('Select Class')
+    const [selectedSubject, setSelectedSubject] = useState('Select Subject')
+    const [showClassDropdown, setShowClassDropdown] = useState(false)
+    const [showSubjectDropdown, setShowSubjectDropdown] = useState(false)
+
+    const classOptions = ['Grade 10-A', 'Grade 10-B', 'Grade 11-A', 'Grade 11-B', 'Grade 12-A']
+    const subjectOptions = ['Mathematics', 'Science', 'English', 'History', 'Physics', 'Geography']
 
     return (
         <SafeAreaView style={styles.container}>
@@ -26,15 +38,15 @@ const EditHomework = () => {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>TEACHER PORTAL</Text>
                 <TouchableOpacity style={styles.profileBtn}>
-                    <Image 
-                        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }} 
-                        style={styles.profileImg} 
+                    <Image
+                        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}
+                        style={styles.profileImg}
                     />
                 </TouchableOpacity>
             </View>
 
-            <ScrollView 
-                showsVerticalScrollIndicator={false} 
+            <ScrollView
+                showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
             >
@@ -46,16 +58,56 @@ const EditHomework = () => {
                 {/* Form Fields */}
                 <View style={styles.formContainer}>
                     <Text style={styles.label}>{Strings.selectClass}</Text>
-                    <TouchableOpacity style={styles.dropdown}>
-                        <Text style={styles.dropdownValue}>Grade 10-B</Text>
-                        <Text style={styles.chevronIcon}>︾</Text>
+                    <TouchableOpacity
+                        style={styles.dropdown}
+                        onPress={() => setShowClassDropdown(!showClassDropdown)}
+                    >
+                        <Text style={styles.dropdownValue}>{selectedClass}</Text>
+                        <Text style={styles.chevronIcon}>{showClassDropdown ? '︽' : '︾'}</Text>
                     </TouchableOpacity>
 
+                    {showClassDropdown && (
+                        <View style={styles.dropdownList}>
+                            {classOptions.map((item) => (
+                                <TouchableOpacity
+                                    key={item}
+                                    style={styles.dropdownItem}
+                                    onPress={() => {
+                                        setSelectedClass(item)
+                                        setShowClassDropdown(false)
+                                    }}
+                                >
+                                    <Text style={[styles.dropdownItemText, selectedClass === item && styles.selectedText]}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+
                     <Text style={styles.label}>{Strings.selectSubject}</Text>
-                    <TouchableOpacity style={styles.dropdown}>
-                        <Text style={styles.dropdownValue}>Mathematics</Text>
-                        <Text style={styles.chevronIcon}>︾</Text>
+                    <TouchableOpacity
+                        style={styles.dropdown}
+                        onPress={() => setShowSubjectDropdown(!showSubjectDropdown)}
+                    >
+                        <Text style={styles.dropdownValue}>{selectedSubject}</Text>
+                        <Text style={styles.chevronIcon}>{showSubjectDropdown ? '︽' : '︾'}</Text>
                     </TouchableOpacity>
+
+                    {showSubjectDropdown && (
+                        <View style={styles.dropdownList}>
+                            {subjectOptions.map((item) => (
+                                <TouchableOpacity
+                                    key={item}
+                                    style={styles.dropdownItem}
+                                    onPress={() => {
+                                        setSelectedSubject(item)
+                                        setShowSubjectDropdown(false)
+                                    }}
+                                >
+                                    <Text style={[styles.dropdownItemText, selectedSubject === item && styles.selectedText]}>{item}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
 
                     <Text style={styles.label}>{Strings.homeworkDetails}</Text>
                     <View style={styles.textAreaContainer}>
@@ -69,14 +121,13 @@ const EditHomework = () => {
                     </View>
 
                     <Text style={styles.label}>{Strings.dueDateLabel}</Text>
-                    <View style={styles.dateInputContainer}>
-                        <TextInput
-                            style={styles.dateInput}
-                            value={dueDate}
-                            onChangeText={setDueDate}
-                        />
+                    <TouchableOpacity
+                        style={styles.dateInputContainer}
+                        onPress={() => setShowDatePicker(true)}
+                    >
+                        <Text style={styles.dateInput}>{formatDate(dueDate)}</Text>
                         <Text style={styles.calendarIcon}>📅</Text>
-                    </View>
+                    </TouchableOpacity>
 
                     <Text style={styles.label}>{Strings.attachments}</Text>
                     <View style={styles.attachmentCard}>
@@ -97,7 +148,7 @@ const EditHomework = () => {
                     </TouchableOpacity>
 
                     {/* Action Buttons */}
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.saveBtn}
                         onPress={() => navigation.goBack()}
                     >
@@ -105,7 +156,7 @@ const EditHomework = () => {
                         <Text style={styles.saveBtnText}>{Strings.saveChanges}</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.cancelBtn}
                         onPress={() => navigation.goBack()}
                     >
@@ -113,6 +164,16 @@ const EditHomework = () => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            <DatePicker
+                visible={showDatePicker}
+                onClose={() => setShowDatePicker(false)}
+                selectedDate={dueDate}
+                onSelect={(date) => {
+                    setDueDate(date);
+                    setShowDatePicker(false);
+                }}
+            />
         </SafeAreaView>
     )
 }
@@ -340,5 +401,33 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: Fonts.LexendBold,
         color: '#0056B3',
+    },
+    dropdownList: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        marginTop: 5,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        overflow: 'hidden',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    dropdownItem: {
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F5F9',
+    },
+    dropdownItemText: {
+        fontSize: 15,
+        fontFamily: Fonts.Lexend_Regular,
+        color: '#475569',
+    },
+    selectedText: {
+        color: '#2563EB',
+        fontFamily: Fonts.Lexend_SemiBold,
     },
 })

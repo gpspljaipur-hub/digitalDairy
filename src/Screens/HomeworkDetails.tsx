@@ -2,13 +2,10 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar,
 import React from 'react'
 import { Colors } from '../comman/Colors'
 import Fonts from '../comman/fonts'
-import StringsRaw from '../comman/String'
-import HWSize from '../comman/HWSize'
+import Strings from '../comman/String'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import Header from '../comman/Header'
-
-const Strings = StringsRaw.en
 
 const HomeworkDetails = () => {
     const navigation = useNavigation<any>();
