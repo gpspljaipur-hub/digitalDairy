@@ -28,15 +28,8 @@ const axiosCatchLegacy = (error: any) => {
   return error?.message ?? null;
 };
 
-export const Auth_Api = (Url: string, SendData: any) => async () => {
-  const data = await Auth_ApiRequest(Url, SendData);
-  return { data: data };
-};
 
-export const Get_Api = (Url: string, SendData: any) => async () => {
-  const response = await Get_Send_Api(Url, SendData);
-  return { data: response };
-};
+
 
 export const Post_ApiWithToken = (Url: string, SendData: any) => async () => {
   console.log('Post_ApiWithToken url', fullUrl(Url));

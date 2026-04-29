@@ -12,7 +12,7 @@ import { Alert, ActivityIndicator } from 'react-native'
 import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
 import { useDispatch } from 'react-redux'
-import { loginSuccess } from '../../Redux/Reducers/Userslice'
+import { loginStudentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
 
 const OTPVerification = ({ navigation, route }: any) => {
     const { mobile, role, otp: receivedOtp } = route?.params || {};
@@ -62,28 +62,17 @@ const OTPVerification = ({ navigation, route }: any) => {
 
         setLoading(true);
         try {
-            const res = await Auth_ApiRequest(ApiUrl.VerifyOtp, {
-                phone: mobile,
-                otp: enteredOtp,
-            });
-
+            const res = await Auth_ApiRequest(ApiUrl.VerifyOtp, { phone: mobile, otp: enteredOtp, });
             console.log('Verify OTP Response:', res);
 
             if (res && !res.error) {
-                // Save token if returned
-
                 await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
-                const userData = { ...res.user, };
-                dispatch(loginSuccess(userData));
-                // Navigate based on role or success
-                if (role === 'teacher') {
-                    navigation.navigate('StudentRegister'); // Or appropriate screen
-                } else {
-                    navigation.navigate('ParentRegister');
-                }
-            } else {
-                Alert.alert('Error', res?.message || 'Invalid OTP. Please try again.');
+                const userData = res.user;
+                dispatch(loginStudentSuccess(userData));
+                dispatch(setUserType(role));
+                navigation.navigate('ParentRegister');
             }
+
         } catch (error) {
             console.error('Verify OTP Error:', error);
             Alert.alert('Error', 'Something went wrong. Please try again.');

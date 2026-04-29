@@ -9,6 +9,11 @@ import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import { Alert, ActivityIndicator } from 'react-native'
 import Helper from '../../Lib/HelperFiles/Helper'
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
+import Config from '../../Lib/ApiService/Config'
+import { useDispatch } from 'react-redux'
+import { loginTeacherSuccess, setUserType } from '../../Redux/Reducers/Userslice'
+import validate from '../../Lib/HelperFiles/validation/validate_wrapper'
 
 const Welcomeback = ({ navigation }: any) => {
     const [mobile, setMobile] = useState('')
@@ -16,36 +21,72 @@ const Welcomeback = ({ navigation }: any) => {
     const [password, setPassword] = useState('')
     const [role, setRole] = useState('')
     const [loading, setLoading] = useState(false)
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+    const [mobileError, setMobileError] = useState('')
+    const dispatch = useDispatch()
+
+    const checkValidation = () => {
+        if (role === 'teacher') {
+            const emailErr = validate('email', email);
+            const passwordErr = validate('password', password);
+            setEmailError(emailErr);
+            setPasswordError(passwordErr);
+            return !emailErr && !passwordErr;
+        } else {
+            const mobileErr = validate('mobile', mobile);
+            setMobileError(mobileErr);
+            return !mobileErr;
+        }
+    };
 
     const handleSendOtp = async () => {
         if (!role) {
             Helper.showToast('Please select a role');
             return;
         }
-        if (mobile.length !== 10) {
-            Helper.showToast('Please enter a valid 10-digit mobile number');
+
+        if (!checkValidation()) {
             return;
         }
 
         setLoading(true);
         try {
-            const res = await Auth_ApiRequest(ApiUrl.SendOtp, {
-                phone: mobile,
-            });
-
-            console.log('Send OTP Response:', res);
-
-            if (res && !res.error) {
-                navigation.navigate('OTPVerification', {
-                    mobile: mobile,
-                    role: role,
-                    otp: res.otp // Assuming API returns OTP
+            if (role === 'teacher') {
+                const res = await Auth_ApiRequest(ApiUrl.TeacherLogin, {
+                    email: email,
+                    password: password,
                 });
+
+                console.log('Teacher Login Response:', res);
+
+                if (res && !res.error) {
+                    await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
+                    dispatch(loginTeacherSuccess(res.teacher));
+                    dispatch(setUserType(role));
+                    navigation.navigate('Dashboard');
+                } else {
+                    Helper.showToast(res?.message || 'Invalid credentials');
+                }
             } else {
-                Helper.showToast(res?.message);
+                const res = await Auth_ApiRequest(ApiUrl.SendOtp, {
+                    phone: mobile,
+                });
+
+                console.log('Send OTP Response:', res);
+
+                if (res && !res.error) {
+                    navigation.navigate('OTPVerification', {
+                        mobile: mobile,
+                        role: role,
+                        otp: res.otp
+                    });
+                } else {
+                    Helper.showToast(res?.message);
+                }
             }
         } catch (error) {
-            console.error('Send OTP Error:', error);
+            console.error('Auth Error:', error);
             Helper.showToast('Something went wrong. Please try again.');
         } finally {
             setLoading(false);
@@ -107,34 +148,42 @@ const Welcomeback = ({ navigation }: any) => {
                 {role === 'teacher' ? (
                     <View style={styles.inputSection}>
                         <Text style={styles.label}>{s.email}</Text>
-                        <View style={styles.inputContainer}>
+                        <View style={[styles.inputContainer]}>
                             <TextInput
                                 style={styles.input}
                                 placeholder={s.emailPlaceholder}
                                 placeholderTextColor={Colors.lightGreyText}
                                 value={email}
-                                onChangeText={setEmail}
+                                onChangeText={(text) => {
+                                    setEmail(text);
+                                    if (emailError) setEmailError('');
+                                }}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                             />
                         </View>
+                        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-                        <Text style={[styles.label, { marginTop: 20 }]}>{s.password}</Text>
-                        <View style={styles.inputContainer}>
+                        <Text style={[styles.label, { marginTop: emailError ? 10 : 20 }]}>{s.password}</Text>
+                        <View style={[styles.inputContainer]}>
                             <TextInput
                                 style={styles.input}
                                 placeholder={s.passwordPlaceholder}
                                 placeholderTextColor={Colors.lightGreyText}
                                 value={password}
-                                onChangeText={setPassword}
+                                onChangeText={(text) => {
+                                    setPassword(text);
+                                    if (passwordError) setPasswordError('');
+                                }}
                                 secureTextEntry
                             />
                         </View>
+                        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
                     </View>
                 ) : (
                     <View style={styles.inputSection}>
                         <Text style={styles.label}>{s.mobileNumber}</Text>
-                        <View style={styles.mobileInputContainer}>
+                        <View style={[styles.mobileInputContainer]}>
                             <View style={styles.countryCodeBox}>
                                 <Text style={styles.countryCode}>{s.countryCode}</Text>
                             </View>
@@ -145,9 +194,13 @@ const Welcomeback = ({ navigation }: any) => {
                                 keyboardType="phone-pad"
                                 maxLength={10}
                                 value={mobile}
-                                onChangeText={setMobile}
+                                onChangeText={(text) => {
+                                    setMobile(text);
+                                    if (mobileError) setMobileError('');
+                                }}
                             />
                         </View>
+                        {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
                         <Text style={styles.otpNote}>{s.otpNote}</Text>
                     </View>
                 )}
@@ -162,7 +215,7 @@ const Welcomeback = ({ navigation }: any) => {
                         <ActivityIndicator color={Colors.white} />
                     ) : (
                         <>
-                            <Text style={styles.sendOtpText}>{s.sendOTP}</Text>
+                            <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
                             <Text style={styles.btnArrow}>→</Text>
                         </>
                     )}
@@ -438,5 +491,16 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: Fonts.Lexend_Medium,
         color: '#64748B',
+    },
+    errorText: {
+        fontSize: 12,
+        fontFamily: Fonts.Lexend_Regular,
+        color: '#EF4444',
+        marginTop: 5,
+        marginLeft: 5,
+    },
+    errorInput: {
+        borderColor: '#EF4444',
+        borderWidth: 1.5,
     },
 })

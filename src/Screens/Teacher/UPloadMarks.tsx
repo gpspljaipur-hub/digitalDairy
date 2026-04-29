@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, StatusBar } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
@@ -7,27 +7,88 @@ import StringsRaw from '../../comman/String'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
+import { ActivityIndicator } from 'react-native'
+import { useSelector } from 'react-redux'
 
 const Strings = StringsRaw.en
 
-const STUDENTS_DATA = [
-    { id: '1', name: 'Alex Johnson', rollNo: '1024', marks: '85', completed: true, initial: 'AJ' },
-    { id: '2', name: 'Sarah Williams', rollNo: '1025', marks: '92', completed: true, initial: 'SW' },
-    { id: '3', name: 'Marcus Thompson', rollNo: '1026', marks: '', completed: false, initial: 'MT' },
-    { id: '4', name: 'Emily Lane', rollNo: '1027', marks: '78', completed: true, initial: 'EL' },
-    { id: '5', name: 'John Doe', rollNo: '1028', marks: '', completed: false, initial: 'JD' },
-]
-
-const CLASSES = ['Grade 10-A', 'Grade 10-B', 'Grade 11-A', 'Grade 11-B', 'Grade 12-A'];
-const SUBJECTS = ['Mathematics', 'Science', 'English', 'History', 'Physics', 'Chemistry'];
-
 const UPloadMarks = () => {
-    const navigation = useNavigation();
-    const [students, setStudents] = useState(STUDENTS_DATA);
-    const [selectedClass, setSelectedClass] = useState('Select Class');
-    const [selectedSubject, setSelectedSubject] = useState('Select Subject');
+    const navigation = useNavigation<any>();
+    const { teacher } = useSelector((state: any) => state.user);
+    console.log(teacher, 'teacher');
+    const [loading, setLoading] = useState(false);
+    const [loadingClasses, setLoadingClasses] = useState(false);
+    const [loadingData, setLoadingData] = useState(false);
+
+    const [classes, setClasses] = useState<any[]>([]);
+    const [subjects, setSubjects] = useState<any[]>([]);
+    const [students, setStudents] = useState<any[]>([]);
+
+    const [selectedClass, setSelectedClass] = useState<any>(null);
+    const [selectedSubject, setSelectedSubject] = useState<any>(null);
     const [showClassList, setShowClassList] = useState(false);
     const [showSubjectList, setShowSubjectList] = useState(false);
+
+    useEffect(() => {
+        fetchClasses()
+        fetchStudents(teacher?._id)
+    }, []);
+
+    const fetchClasses = async () => {
+        setLoadingClasses(true);
+        try {
+            const res = await Get_Send_Api(ApiUrl.ClassesAll, {});
+            if (res && !res.error) {
+                setClasses(res || []);
+            } else {
+                Helper.showToast(res?.message || 'Failed to fetch classes');
+            }
+        } catch (error) {
+            console.error('Fetch Classes Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoadingClasses(false);
+        }
+    };
+
+    const fetchSubjects = async (classId: string) => {
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.SubjectsList, { classId });
+            if (res && !res.error) {
+                setSubjects(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Subjects Error:', error);
+        }
+    };
+
+    const fetchStudents = async (classId: string) => {
+        setLoadingData(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.StudentsList, { teacherId: classId });
+            console.log(res, 'stuRes')
+            if (res && !res.error) {
+                const list = res.data || res || [];
+                const formattedStudents = list.map((s: any) => ({
+                    id: s._id,
+                    name: s.name,
+                    rollNo: s.rollNo || 'N/A',
+                    marks: '',
+                    completed: false,
+                    initial: s.name ? s.name.charAt(0).toUpperCase() : '?'
+                }));
+                setStudents(formattedStudents);
+            }
+        } catch (error) {
+            console.error('Fetch Students Error:', error);
+            Helper.showToast('Failed to load students');
+        } finally {
+            setLoadingData(false);
+        }
+    };
 
     const handleMarksChange = (id: string, value: string) => {
         setStudents(prev => prev.map(student =>
@@ -37,7 +98,51 @@ const UPloadMarks = () => {
         ));
     };
 
-    const renderStudentItem = ({ item }: { item: typeof STUDENTS_DATA[0] }) => (
+    const handlePostMarks = async () => {
+        if (!selectedClass || !selectedSubject) {
+            Helper.showToast('Please select class and subject');
+            return;
+        }
+
+        const marksData = students
+            .filter(s => s.marks !== '')
+            .map(s => ({
+                studentId: s.id,
+                marks: s.marks
+            }));
+
+        if (marksData.length === 0) {
+            Helper.showToast('Please enter marks for at least one student');
+            return;
+        }
+
+        const payload = {
+            classId: selectedClass._id,
+            subjectId: selectedSubject._id,
+            teacherId: teacher?._id,
+            students: marksData,
+            date: new Date().toISOString().split('T')[0]
+        };
+        console.log(payload, 'payload')
+
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.MarksAdd, payload);
+            if (res && !res.error) {
+                Helper.showToast('Marks uploaded successfully');
+                navigation.navigate('Dashboard');
+            } else {
+                Helper.showToast(res?.message || 'Failed to upload marks');
+            }
+        } catch (error) {
+            console.error('Upload Marks Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const renderStudentItem = ({ item }: { item: any }) => (
         <View style={styles.studentCard}>
             <View style={styles.studentInfo}>
                 <View style={[styles.avatar, { backgroundColor: item.completed ? '#E9E7FF' : '#F1F5F9' }]}>
@@ -87,80 +192,113 @@ const UPloadMarks = () => {
                 </View>
 
                 {/* Dropdowns */}
+                {/* Dropdowns */}
                 <View style={styles.selectorContainer}>
                     <Text style={styles.selectorLabel}>{Strings.selectClass}</Text>
                     <TouchableOpacity
                         style={styles.dropdown}
                         activeOpacity={0.7}
-                        onPress={() => setShowClassList(!showClassList)}
+                        onPress={() => {
+                            setShowClassList(!showClassList);
+                            setShowSubjectList(false);
+                        }}
                     >
-                        <Text style={styles.dropdownText}>{selectedClass}</Text>
-                        <Text style={[styles.arrowIcon, showClassList && styles.arrowRotated]}>▼</Text>
+                        <Text style={[styles.dropdownText, !selectedClass && { color: '#94A3B8' }]}>
+                            {selectedClass ? selectedClass.name : Strings.selectClass}
+                        </Text>
+                        {loadingClasses ? (
+                            <ActivityIndicator size="small" color={Colors.primary} />
+                        ) : (
+                            <Text style={[styles.arrowIcon, showClassList && styles.arrowRotated]}>▼</Text>
+                        )}
                     </TouchableOpacity>
 
                     {showClassList && (
                         <View style={styles.dropdownList}>
-                            {CLASSES.map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setSelectedClass(item);
-                                        setShowClassList(false);
-                                    }}
-                                >
-                                    <Text style={[styles.dropdownItemText, selectedClass === item && styles.selectedItemText]}>{item}</Text>
-                                    {selectedClass === item && <Text style={styles.selectedCheck}>✓</Text>}
-                                </TouchableOpacity>
-                            ))}
+                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                {classes.map((item) => (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedClass(item);
+                                            setShowClassList(false);
+                                            setSelectedSubject(null);
+
+                                            fetchSubjects(item._id);
+
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedClass?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                        {selectedClass?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
                         </View>
                     )}
 
                     <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
                     <TouchableOpacity
-                        style={styles.dropdown}
+                        style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
                         activeOpacity={0.7}
-                        onPress={() => setShowSubjectList(!showSubjectList)}
+                        disabled={!selectedClass}
+                        onPress={() => {
+                            setShowSubjectList(!showSubjectList);
+                            setShowClassList(false);
+                        }}
                     >
-                        <Text style={styles.dropdownText}>{selectedSubject}</Text>
+                        <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
+                            {selectedSubject ? selectedSubject.name : Strings.selectSubject}
+                        </Text>
                         <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
                     </TouchableOpacity>
 
                     {showSubjectList && (
                         <View style={styles.dropdownList}>
-                            {SUBJECTS.map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setSelectedSubject(item);
-                                        setShowSubjectList(false);
-                                    }}
-                                >
-                                    <Text style={[styles.dropdownItemText, selectedSubject === item && styles.selectedItemText]}>{item}</Text>
-                                    {selectedSubject === item && <Text style={styles.selectedCheck}>✓</Text>}
-                                </TouchableOpacity>
-                            ))}
+                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                {subjects.map((item) => (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedSubject(item);
+                                            setShowSubjectList(false);
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                        {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
                         </View>
                     )}
                 </View>
 
-                {/* List Header */}
+                {/* Students List */}
                 <View style={styles.listHeader}>
                     <Text style={styles.listTitle}>{Strings.studentsList} ({students.length})</Text>
-                    <View style={styles.totalBadge}>
-                        <Text style={styles.totalBadgeText}>{Strings.totalMarks}</Text>
-                    </View>
                 </View>
 
-                {/* Students List */}
-                <View style={styles.listContainer}>
-                    {students.map(student => (
-                        <View key={student.id}>
-                            {renderStudentItem({ item: student })}
-                        </View>
-                    ))}
-                </View>
+                {loadingData ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={Colors.primary} />
+                        <Text style={styles.loadingText}>Loading students...</Text>
+                    </View>
+                ) : (
+                    <View style={styles.listContainer}>
+                        {students.length > 0 ? (
+                            students.map(student => (
+                                <View key={student.id}>
+                                    {renderStudentItem({ item: student })}
+                                </View>
+                            ))
+                        ) : (
+                            <View style={styles.emptyState}>
+                                <Text style={styles.emptyText}>{selectedClass ? 'No students found' : 'Select a class to view students'}</Text>
+                            </View>
+                        )}
+                    </View>
+                )}
 
                 {/* Warning Box */}
                 <View style={styles.infoBox}>
@@ -172,13 +310,19 @@ const UPloadMarks = () => {
 
                 {/* Save Button */}
                 <TouchableOpacity
-                    style={[styles.saveButton, { opacity: students.some(s => s.marks !== '') ? 1 : 0.6 }]}
+                    style={[styles.saveButton, (students.length === 0 || loading) && { opacity: 0.6 }]}
                     activeOpacity={0.8}
-                    disabled={!students.some(s => s.marks !== '')}
-                    onPress={() => navigation.navigate('SaveMarks')}
+                    disabled={loading || students.length === 0}
+                    onPress={handlePostMarks}
                 >
-                    <Text style={styles.cloudIcon}>☁</Text>
-                    <Text style={styles.saveButtonText}>{Strings.saveAndUpload}</Text>
+                    {loading ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <>
+                            <Text style={styles.cloudIcon}>☁</Text>
+                            <Text style={styles.saveButtonText}>{Strings.saveAndUpload}</Text>
+                        </>
+                    )}
                 </TouchableOpacity>
             </ScrollView>
         </SafeAreaView>
@@ -457,5 +601,31 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: Fonts.LexendBold,
         color: Colors.white,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 50,
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Medium,
+        color: Colors.primary,
+    },
+    emptyState: {
+        marginHorizontal: HWSize.W_Width20,
+        paddingVertical: 40,
+        backgroundColor: Colors.white,
+        borderRadius: 12,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#F1F5F9',
+    },
+    emptyText: {
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Medium,
+        color: '#94A3B8',
     },
 })
