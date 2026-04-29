@@ -131,6 +131,11 @@ const Strings = {
 		sendOTP: 'Send OTP',
 		dataSafeNote: 'Your data is safe. Managed by the National Education Authority.',
 		helpLoggingIn: 'Need help logging in?',
+		email: 'Email Address',
+		emailPlaceholder: 'Enter your email',
+		password: 'Password',
+		passwordPlaceholder: 'Enter your password',
+		login: 'Login',
 		languageEnglish: 'Language: English',
 		privacy: 'Privacy',
 		// OTP Verification

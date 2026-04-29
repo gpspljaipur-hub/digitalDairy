@@ -8,7 +8,9 @@ import HWSize from '../../comman/HWSize'
 
 const Welcomeback = ({ navigation }: any) => {
     const [mobile, setMobile] = useState('')
-    const [role, setRole] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [role, setRole] = useState('parent')
 
     const s = Strings.en;
 
@@ -63,32 +65,67 @@ const Welcomeback = ({ navigation }: any) => {
                     </View>
                 </View>
 
-                {/* Mobile Input */}
-                <View style={styles.inputSection}>
-                    <Text style={styles.label}>{s.mobileNumber}</Text>
-                    <View style={styles.mobileInputContainer}>
-                        <View style={styles.countryCodeBox}>
-                            <Text style={styles.countryCode}>{s.countryCode}</Text>
+                {/* Conditional Input Section */}
+                {role === 'teacher' ? (
+                    <View style={styles.inputSection}>
+                        <Text style={styles.label}>{s.email}</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={s.emailPlaceholder}
+                                placeholderTextColor={Colors.lightGreyText}
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                            />
                         </View>
-                        <TextInput
-                            style={styles.mobileInput}
-                            placeholder={s.mobilePlaceholder}
-                            placeholderTextColor={Colors.lightGreyText}
-                            keyboardType="phone-pad"
-                            maxLength={10}
-                            value={mobile}
-                            onChangeText={setMobile}
-                        />
-                    </View>
-                    <Text style={styles.otpNote}>{s.otpNote}</Text>
-                </View>
 
-                {/* Send OTP Button */}
+                        <Text style={[styles.label, { marginTop: 20 }]}>{s.password}</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={s.passwordPlaceholder}
+                                placeholderTextColor={Colors.lightGreyText}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry
+                            />
+                        </View>
+                    </View>
+                ) : (
+                    <View style={styles.inputSection}>
+                        <Text style={styles.label}>{s.mobileNumber}</Text>
+                        <View style={styles.mobileInputContainer}>
+                            <View style={styles.countryCodeBox}>
+                                <Text style={styles.countryCode}>{s.countryCode}</Text>
+                            </View>
+                            <TextInput
+                                style={styles.mobileInput}
+                                placeholder={s.mobilePlaceholder}
+                                placeholderTextColor={Colors.lightGreyText}
+                                keyboardType="phone-pad"
+                                maxLength={10}
+                                value={mobile}
+                                onChangeText={setMobile}
+                            />
+                        </View>
+                        <Text style={styles.otpNote}>{s.otpNote}</Text>
+                    </View>
+                )}
+
+                {/* Login/Send OTP Button */}
                 <TouchableOpacity
                     style={styles.sendOtpBtn}
-                    onPress={() => navigation.navigate('OTPVerification')}
+                    onPress={() => {
+                        if (role === 'teacher') {
+                            navigation.navigate('Dashboard')
+                        } else {
+                            navigation.navigate('OTPVerification')
+                        }
+                    }}
                 >
-                    <Text style={styles.sendOtpText}>{s.sendOTP}</Text>
+                    <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
                     <Text style={styles.btnArrow}>→</Text>
                 </TouchableOpacity>
 
@@ -278,6 +315,24 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.Lexend_Regular,
         color: '#64748B',
         marginTop: 8,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.white,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#D1D5DB',
+        overflow: 'hidden',
+        height: 55,
+    },
+    input: {
+        flex: 1,
+        height: '100%',
+        paddingHorizontal: 15,
+        fontSize: 16,
+        fontFamily: Fonts.Lexend_Regular,
+        color: '#0F172A',
     },
     sendOtpBtn: {
         flexDirection: 'row',
