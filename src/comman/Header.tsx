@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native'
 import { Colors } from './Colors'
 import Fonts from './fonts'
 import HWSize from './HWSize'
@@ -29,6 +30,16 @@ const Header = ({
     rightIcon,
     onRightIconPress
 }: HeaderProps) => {
+    const navigation = useNavigation<any>();
+
+    const handleNotificationPress = () => {
+        if (onNotificationPress) {
+            onNotificationPress();
+        } else {
+            navigation.navigate('Notification');
+        }
+    };
+
     return (
         <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -54,7 +65,7 @@ const Header = ({
                     <Text style={styles.bellIcon}>{rightIcon}</Text>
                 </TouchableOpacity>
             ) : showNotification && (
-                <TouchableOpacity onPress={onNotificationPress} style={styles.notificationBtn}>
+                <TouchableOpacity onPress={handleNotificationPress} style={styles.notificationBtn}>
                     <Text style={styles.bellIcon}>🔔</Text>
                 </TouchableOpacity>
             )}

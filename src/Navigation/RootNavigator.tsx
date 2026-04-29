@@ -13,6 +13,7 @@ import ViewAllNotice from '../Screens/Teacher/ViewAllNotice'
 import UPloadMarks from '../Screens/Teacher/UPloadMarks';
 import SaveMarks from '../Screens/Teacher/SaveMarks';
 import ViewMarkSheet from '../Screens/Teacher/ViewMarkSheet';
+import Notification from '../Screens/Teacher/Notification';
 import Splash from '../Screens/Auth/Splash';
 import LanguageSelection from '../Screens/Auth/LanguageSelection';
 import WelcomeScreen from '../Screens/Auth/WelcomeScreen';
@@ -20,6 +21,9 @@ import StudentRegister from '../Screens/Auth/StudentRegister';
 import Welcomeback from '../Screens/Auth/Welcomeback';
 import ParentRegister from '../Screens/Auth/ParentRegister';
 import OTPVerification from '../Screens/Auth/OTPVerification';
+import OfflineMode from '../Screens/Auth/OfflineMode';
+import CheckingConnection from '../Screens/Auth/CheckingConnection';
+import OfflineDashboard from '../Screens/Teacher/OfflineDashboard';
 export type RootStackParamList = {
   Dashboard: undefined;
   MarkAttendance: undefined;
@@ -41,8 +45,10 @@ export type RootStackParamList = {
   Welcomeback: undefined;
   ParentRegister: undefined;
   OTPVerification: undefined;
-
-
+  Notification: undefined;
+  OfflineMode: undefined;
+  CheckingConnection: undefined;
+  OfflineDashboard: undefined;
 };
 
 declare global {
@@ -82,7 +88,10 @@ const RootNavigator = () => {
       <Stack.Screen name="ParentRegister" component={ParentRegister} />
       <Stack.Screen name="Welcomeback" component={Welcomeback} />
       <Stack.Screen name="OTPVerification" component={OTPVerification} />
-
+      <Stack.Screen name="Notification" component={Notification} />
+      <Stack.Screen name="OfflineMode" component={OfflineMode} />
+      <Stack.Screen name="CheckingConnection" component={CheckingConnection} />
+      <Stack.Screen name="OfflineDashboard" component={OfflineDashboard} />
 
     </Stack.Navigator>
   );
