@@ -9,6 +9,7 @@ import {
     StatusBar,
     ScrollView,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ScreenWrapper from '../../comman/ScreenWrapper';
 import Header from '../../comman/Header';
 import { Colors } from '../../comman/Colors';
@@ -17,24 +18,28 @@ import HWSize from '../../comman/HWSize';
 import ParentBottom from '../../Component/ParentBottom';
 
 const NoticeScreen = () => {
+    const navigation = useNavigation<any>();
     const [searchQuery, setSearchQuery] = useState('');
 
     const notices = [
         {
             id: '1',
             type: 'URGENT',
-            title: 'School Closed: Heavy Rain Alert',
-            description: 'The District Collector has declared a holiday for all schools on Oct 25, 2023, due to extreme weather conditions.',
-            date: 'Oct 24, 2023',
+            title: 'Winter Vacation Announcement',
+            description: 'The school will remain closed for winter break from Dec 24 to Jan 05. Classes will resume on Jan 08, 2024.',
+            date: 'Dec 20, 2023',
             isUrgent: true,
+            screen: 'WinterVacation',
+
         },
         {
             id: '2',
             type: 'EVENT',
             title: 'Annual Sports Day 2023',
-            description: 'Get ready for the most awaited event of the year! Sports Day will be held at the school ground. Participants should report at 8:00 AM.',
-            date: 'Oct 20, 2023',
-            attachment: 'Schedule.pdf',
+            description: 'Join us for a day of athletic excellence and school spirit! Students from all grades will compete in various track and field events.',
+            date: 'Dec 05, 2023',
+            screen: 'AnnuvalSPortsDay',
+            actionLabel: 'View Details',
         },
         {
             id: '3',
@@ -75,7 +80,10 @@ const NoticeScreen = () => {
     const renderNoticeItem = ({ item }: { item: any }) => {
         if (item.isUrgent) {
             return (
-                <View style={styles.urgentCard}>
+                <TouchableOpacity
+                    style={styles.urgentCard}
+                    onPress={() => item.screen && navigation.navigate(item.screen)}
+                >
                     <View style={styles.urgentHeader}>
                         <Text style={styles.urgentIcon}>📢</Text>
                         <Text style={styles.urgentLabel}>URGENT NOTICE</Text>
@@ -84,16 +92,22 @@ const NoticeScreen = () => {
                     <Text style={styles.urgentDescription}>{item.description}</Text>
                     <View style={styles.urgentFooter}>
                         <Text style={styles.urgentDate}>{item.date}</Text>
-                        <TouchableOpacity style={styles.readMoreBtn}>
+                        <TouchableOpacity
+                            style={styles.readMoreBtn}
+                            onPress={() => item.screen && navigation.navigate(item.screen)}
+                        >
                             <Text style={styles.readMoreText}>Read More</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
             );
         }
 
         return (
-            <View style={styles.noticeCard}>
+            <TouchableOpacity
+                style={styles.noticeCard}
+                onPress={() => item.screen && navigation.navigate(item.screen)}
+            >
                 <View style={styles.cardHeader}>
                     <View style={[styles.typeBadge, { backgroundColor: getBadgeColor(item.type) }]}>
                         <Text style={[styles.typeText, { color: getBadgeTextColor(item.type) }]}>{item.type}</Text>
@@ -117,20 +131,21 @@ const NoticeScreen = () => {
                 )}
 
                 {item.actionLabel && (
-                    <TouchableOpacity style={styles.actionBtn}>
+                    <TouchableOpacity
+                        style={styles.actionBtn}
+                        onPress={() => item.screen && navigation.navigate(item.screen)}
+                    >
                         <Text style={styles.actionIcon}>👁️</Text>
                         <Text style={styles.actionText}>{item.actionLabel}</Text>
                     </TouchableOpacity>
                 )}
-            </View>
+            </TouchableOpacity>
         );
     };
 
     return (
         <ScreenWrapper scroll={false} style={styles.mainContainer}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
-            
-            {/* Custom Header to match mock-up */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.menuBtn}>
                     <Text style={styles.menuIcon}>≡</Text>
@@ -191,7 +206,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: HWSize.W_Width20,
-        paddingVertical: 15,
+        paddingVertical: 1,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#F1F5F9',

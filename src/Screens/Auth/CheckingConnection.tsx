@@ -18,7 +18,6 @@ const CheckingConnection = () => {
             />
 
             <View style={styles.content}>
-                {/* Icon Container */}
                 <View style={styles.iconWrapper}>
                     <View style={styles.iconOuterSquare}>
                         <View style={styles.iconInnerSquare}>
@@ -38,7 +37,6 @@ const CheckingConnection = () => {
                     Please wait while we try to reconnect to the school servers.
                 </Text>
 
-                {/* Progress Bar Section */}
                 <View style={styles.progressSection}>
                     <View style={styles.progressBarBg}>
                         <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
@@ -49,7 +47,6 @@ const CheckingConnection = () => {
                     </View>
                 </View>
 
-                {/* Info Cards */}
                 <View style={styles.cardsRow}>
                     <View style={styles.infoCard}>
                         <View style={styles.cardIconBox}>
@@ -68,7 +65,6 @@ const CheckingConnection = () => {
                 </View>
             </View>
 
-            {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.cancelBtn}>
                     <Text style={styles.cancelBtnText}>Cancel</Text>

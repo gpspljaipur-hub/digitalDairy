@@ -28,6 +28,21 @@ import ParentDashboard from '../Screens/Parent/ParentsDashboard';
 import StudentAttandance from '../Screens/Parent/StudentAttandance';
 import Homework_Screen from '../Screens/Parent/Homework_Screen';
 import NoticeScreen from '../Screens/Parent/NoticeScreen';
+import Result from '../Screens/Parent/Result';
+import LeaveApplication from '../Screens/Parent/LeaveApplication';
+import LeaveSubmit from '../Screens/Parent/LeaveSubmit';
+import LeaveHistory from '../Screens/Parent/LeaveHistory';
+import Complaint from '../Screens/Parent/Complaint';
+import SubmitComplaint from '../Screens/Parent/SubmitComplaint';
+import ViewMyComplaint from '../Screens/Parent/ViewMyComplaint';
+import Chat_Screen from '../Screens/Parent/Chat_Screen';
+import Academic_Calander from '../Screens/Parent/Academic_Calander';
+import AnnuvalSPortsDay from '../Screens/Parent/AnnuvalSPortsDay';
+import WinterVacation from '../Screens/Parent/WinterVacation';
+import Profile from '../Screens/Parent/Profile';
+import ParentDetails from '../Screens/Parent/ParentDetails';
+import EditProfile from '../Screens/Parent/EditProfile';
+import FAQScreen from '../Screens/Parent/FAQScreen';
 
 
 
@@ -60,7 +75,27 @@ export type RootStackParamList = {
   StudentAttandance: undefined;
   Homework_Screen: undefined;
   NoticeScreen: undefined;
+  Result: undefined;
+  LeaveApplication: undefined;
+  LeaveSubmit: undefined;
+  LeaveHistory: undefined;
+  Complaint: undefined;
+  SubmitComplaint: { category: string, date: string };
+  ViewMyComplaint: undefined;
+  Chat_Screen: undefined;
+  Academic_Calander: undefined;
+  AnnuvalSPortsDay: undefined;
+  WinterVacation: undefined;
+  Profile: undefined;
+  ParentDetails: undefined;
+  EditProfile: undefined;
+  FAQScreen: undefined;
 };
+
+
+
+
+
 
 
 
@@ -110,11 +145,27 @@ const RootNavigator = () => {
       <Stack.Screen name="StudentAttandance" component={StudentAttandance} />
       <Stack.Screen name="Homework_Screen" component={Homework_Screen} />
       <Stack.Screen name="NoticeScreen" component={NoticeScreen} />
-
-
-
-
+      <Stack.Screen name="Result" component={Result} />
+      <Stack.Screen name="LeaveApplication" component={LeaveApplication} />
+      <Stack.Screen name="LeaveSubmit" component={LeaveSubmit} />
+      <Stack.Screen name="LeaveHistory" component={LeaveHistory} />
+      <Stack.Screen name="Complaint" component={Complaint} />
+      <Stack.Screen name="SubmitComplaint" component={SubmitComplaint} />
+      <Stack.Screen name="ViewMyComplaint" component={ViewMyComplaint} />
+      <Stack.Screen name="Chat_Screen" component={Chat_Screen} />
+      <Stack.Screen name="Academic_Calander" component={Academic_Calander} />
+      <Stack.Screen name="AnnuvalSPortsDay" component={AnnuvalSPortsDay} />
+      <Stack.Screen name="WinterVacation" component={WinterVacation} />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="ParentDetails" component={ParentDetails} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="FAQScreen" component={FAQScreen} />
     </Stack.Navigator>
+
+
+
+
+
   );
 };
 

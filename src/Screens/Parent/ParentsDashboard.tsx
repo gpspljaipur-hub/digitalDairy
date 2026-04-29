@@ -62,8 +62,8 @@ const ParentDashboard = () => {
                 <Text style={styles.sectionTitle}>Dashboard</Text>
                 <View style={styles.gridContainer}>
                     {gridItems.map((item, index) => (
-                        <TouchableOpacity 
-                            key={index} 
+                        <TouchableOpacity
+                            key={index}
                             style={styles.gridItem}
                             onPress={() => {
                                 if (item.title === 'Attendance') {
@@ -72,6 +72,15 @@ const ParentDashboard = () => {
                                     navigation.navigate('Homework_Screen')
                                 } else if (item.title === 'Notices') {
                                     navigation.navigate('NoticeScreen')
+                                }
+                                else if (item.title === 'Result') {
+                                    navigation.navigate('Result')
+                                }
+                                else if (item.title === 'Leave') {
+                                    navigation.navigate('LeaveApplication')
+                                }
+                                else if (item.title === 'Complaint') {
+                                    navigation.navigate('Complaint')
                                 }
                             }}
                         >
@@ -84,7 +93,10 @@ const ParentDashboard = () => {
                 </View>
 
                 {/* Academic Calendar */}
-                <TouchableOpacity style={styles.calendarButton}>
+                <TouchableOpacity 
+                    style={styles.calendarButton}
+                    onPress={() => navigation.navigate('Academic_Calander')}
+                >
                     <View style={styles.calendarIconBox}>
                         <Text style={styles.calendarIcon}>📅</Text>
                     </View>

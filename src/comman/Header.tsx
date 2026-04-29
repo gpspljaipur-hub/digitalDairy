@@ -3,7 +3,6 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Colors } from './Colors'
 import Fonts from './fonts'
-import HWSize from './HWSize'
 
 interface HeaderProps {
     title?: string;
@@ -16,21 +15,33 @@ interface HeaderProps {
     onBack?: () => void;
     rightIcon?: string;
     onRightIconPress?: () => void;
+    subtitle?: string;
+    titleStyle?: any;
 }
 
 const Header = ({
     title = 'School Portal',
     showNotification = true,
     onNotificationPress,
-    showProfile = true,
+    showProfile = false,
     onProfilePress,
     profileImage,
     showBack = false,
     onBack,
     rightIcon,
-    onRightIconPress
+    onRightIconPress,
+    subtitle,
+    titleStyle
 }: HeaderProps) => {
     const navigation = useNavigation<any>();
+
+    const handleBack = () => {
+        if (onBack) {
+            onBack();
+        } else {
+            navigation.goBack();
+        }
+    };
 
     const handleNotificationPress = () => {
         if (onNotificationPress) {
@@ -40,16 +51,24 @@ const Header = ({
         }
     };
 
+    const handleProfilePress = () => {
+        if (onProfilePress) {
+            onProfilePress();
+        } else {
+            navigation.navigate('Profile');
+        }
+    };
+
     return (
         <View style={styles.header}>
             <View style={styles.headerLeft}>
                 {showBack && (
-                    <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+                    <TouchableOpacity onPress={handleBack} style={styles.backBtn} activeOpacity={0.7}>
                         <Text style={styles.backIcon}>←</Text>
                     </TouchableOpacity>
                 )}
                 {showProfile && (
-                    <TouchableOpacity onPress={onProfilePress} style={styles.avatarContainer}>
+                    <TouchableOpacity onPress={handleProfilePress} style={styles.avatarContainer}>
                         {profileImage ? (
                             <Image source={profileImage} style={styles.avatarImage} />
                         ) : (
@@ -57,18 +76,23 @@ const Header = ({
                         )}
                     </TouchableOpacity>
                 )}
-                <Text style={styles.headerTitle}>{title}</Text>
+                <View style={styles.titleContainer}>
+                    <Text numberOfLines={1} style={[styles.headerTitle, titleStyle]}>{title}</Text>
+                    {subtitle && <Text numberOfLines={1} style={styles.headerSubtitle}>{subtitle}</Text>}
+                </View>
             </View>
 
-            {rightIcon ? (
-                <TouchableOpacity onPress={onRightIconPress} style={styles.notificationBtn}>
-                    <Text style={styles.bellIcon}>{rightIcon}</Text>
-                </TouchableOpacity>
-            ) : showNotification && (
-                <TouchableOpacity onPress={handleNotificationPress} style={styles.notificationBtn}>
-                    <Text style={styles.bellIcon}>🔔</Text>
-                </TouchableOpacity>
-            )}
+            <View style={styles.headerRight}>
+                {rightIcon ? (
+                    <TouchableOpacity onPress={onRightIconPress} style={styles.notificationBtn}>
+                        <Text style={styles.bellIcon}>{rightIcon}</Text>
+                    </TouchableOpacity>
+                ) : showNotification && (
+                    <TouchableOpacity onPress={handleNotificationPress} style={styles.notificationBtn}>
+                        <Text style={styles.bellIcon}>🔔</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
     )
 }
@@ -80,8 +104,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: HWSize.W_Width20,
-        paddingVertical: 15,
+        paddingHorizontal: 16,
+        height: 56,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: Colors.border,
@@ -89,15 +113,19 @@ const styles = StyleSheet.create({
     headerLeft: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
+    },
+    titleContainer: {
+        flex: 1,
     },
     avatarContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
         backgroundColor: Colors.primaryLight,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 12,
+        marginRight: 10,
         borderWidth: 1,
         borderColor: Colors.border,
         overflow: 'hidden'
@@ -107,26 +135,36 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     avatarEmoji: {
-        fontSize: 20,
+        fontSize: 18,
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: 17,
         fontFamily: Fonts.LexendBold,
         color: Colors.primary,
     },
+    headerSubtitle: {
+        fontSize: 11,
+        fontFamily: Fonts.Lexend_Regular,
+        color: Colors.textSecondary,
+        marginTop: -2,
+    },
     backBtn: {
-        paddingRight: 15,
+        paddingRight: 12,
         paddingVertical: 5,
     },
     backIcon: {
-        fontSize: 24,
+        fontSize: 22,
         color: Colors.primary,
-        fontWeight: 'bold',
+    },
+    headerRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     notificationBtn: {
-        padding: 8,
+        padding: 6,
     },
     bellIcon: {
-        fontSize: 22,
+        fontSize: 20,
     },
 })
+

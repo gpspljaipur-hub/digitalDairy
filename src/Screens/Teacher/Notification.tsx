@@ -100,7 +100,6 @@ const Notification = ({ navigation }: any) => {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-            {/* Custom Header to match screenshot perfectly */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: HWSize.W_Width20,
-        paddingVertical: 18,
+        paddingVertical: 1,
         backgroundColor: Colors.white,
         // borderBottomWidth: 1,
         // borderBottomColor: '#F0F0F0',

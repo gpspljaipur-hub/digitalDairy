@@ -118,7 +118,13 @@ const Homework_Screen = () => {
 
     return (
         <ScreenWrapper scroll={false}>
-            <Header title="Homework" showProfile={true} />
+            <Header
+                title="Homework"
+                showBack={true}
+                onBack={() => navigation.goBack()}
+                showProfile={false}
+                showNotification={false}
+            />
 
             <View style={styles.container}>
                 {/* Categories Filter */}
@@ -178,7 +184,6 @@ const Homework_Screen = () => {
                     {/* Bottom Spacing */}
                     <View style={{ height: 100 }} />
                 </ScrollView>
-                <ParentBottom activeTab="HOME" />
             </View>
         </ScreenWrapper>
     )

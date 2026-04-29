@@ -99,8 +99,6 @@ const ViewAllNotice = () => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
-
-            {/* Custom Header */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
@@ -165,8 +163,8 @@ const ViewAllNotice = () => {
             </View>
 
             {/* Floating Action Button */}
-            <TouchableOpacity 
-                style={styles.fab} 
+            <TouchableOpacity
+                style={styles.fab}
                 activeOpacity={0.8}
                 onPress={() => navigation.navigate('CreateNotice')}
             >
@@ -188,7 +186,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 1,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#F1F5F9',

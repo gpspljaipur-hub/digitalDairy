@@ -15,7 +15,7 @@ const OfflineMode = () => {
         <ScreenWrapper scroll={true} style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-            {/* Header */}
+
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <Text style={styles.headerIcon}>🏛️</Text>
@@ -27,7 +27,7 @@ const OfflineMode = () => {
             </View>
 
             <View style={styles.content}>
-                {/* Offline Illustration */}
+
                 <View style={styles.offlineIconContainer}>
                     <View style={styles.iconBox}>
                         <Text style={styles.cloudEmoji}>☁️</Text>
@@ -35,11 +35,10 @@ const OfflineMode = () => {
                     </View>
                 </View>
 
-                {/* Main Text */}
                 <Text style={styles.title}>{lang.offlineTitle}</Text>
                 <Text style={styles.description}>{lang.offlineDesc}</Text>
 
-                {/* Saved Offline Card */}
+
                 <View style={styles.card}>
                     <View style={styles.cardIconContainer}>
                         <View style={styles.checkCircle}>
@@ -55,7 +54,6 @@ const OfflineMode = () => {
                     </View>
                 </View>
 
-                {/* Sync Status Card */}
                 <View style={styles.card}>
                     <View style={styles.cardIconContainer}>
                         <Text style={styles.syncStatusIcon}>☑️</Text>
@@ -66,7 +64,7 @@ const OfflineMode = () => {
                             <Text style={styles.percentText}>100%</Text>
                         </View>
 
-                        {/* Progress Bar */}
+
                         <View style={styles.progressBarBg}>
                             <View style={styles.progressBarFill} />
                         </View>
@@ -75,7 +73,6 @@ const OfflineMode = () => {
                     </View>
                 </View>
 
-                {/* Action Buttons */}
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         style={styles.primaryButton}
