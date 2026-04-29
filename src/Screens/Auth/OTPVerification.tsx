@@ -6,10 +6,28 @@ import Strings from '../../comman/String'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import { Alert, ActivityIndicator } from 'react-native'
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
+import Config from '../../Lib/ApiService/Config'
+import { useDispatch } from 'react-redux'
+import { loginSuccess } from '../../Redux/Reducers/Userslice'
 
-const OTPVerification = ({ navigation }: any) => {
-    const [otp, setOtp] = useState(['', '', '', '', '', ''])
-    const inputRefs = useRef<(TextInput | null)[]>([null, null, null, null, null, null])
+const OTPVerification = ({ navigation, route }: any) => {
+    const { mobile, role, otp: receivedOtp } = route?.params || {};
+    const dispatch = useDispatch();
+    console.log('=====>>>', route?.params)
+    const [otp, setOtp] = useState(['', '', '', '',])
+    const [loading, setLoading] = useState(false)
+    const inputRefs = useRef<(TextInput | null)[]>([null, null, null, null])
+
+    React.useEffect(() => {
+        if (receivedOtp && receivedOtp.length === 4) {
+            const otpArray = receivedOtp.split('');
+            setOtp(otpArray);
+        }
+    }, [receivedOtp]);
 
     const s = Strings.en;
 
@@ -34,6 +52,45 @@ const OTPVerification = ({ navigation }: any) => {
             inputRefs.current[index - 1]?.focus()
         }
     }
+
+    const handleVerifyOtp = async () => {
+        const enteredOtp = otp.join('');
+        if (enteredOtp.length !== 4) {
+            Alert.alert('Error', 'Please enter a valid 6-digit OTP');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.VerifyOtp, {
+                phone: mobile,
+                otp: enteredOtp,
+            });
+
+            console.log('Verify OTP Response:', res);
+
+            if (res && !res.error) {
+                // Save token if returned
+
+                await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
+                const userData = { ...res.user, };
+                dispatch(loginSuccess(userData));
+                // Navigate based on role or success
+                if (role === 'teacher') {
+                    navigation.navigate('StudentRegister'); // Or appropriate screen
+                } else {
+                    navigation.navigate('ParentRegister');
+                }
+            } else {
+                Alert.alert('Error', res?.message || 'Invalid OTP. Please try again.');
+            }
+        } catch (error) {
+            console.error('Verify OTP Error:', error);
+            Alert.alert('Error', 'Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>
@@ -82,11 +139,18 @@ const OTPVerification = ({ navigation }: any) => {
 
                 {/* Verify Button */}
                 <TouchableOpacity
-                    style={styles.verifyBtn}
-                    onPress={() => navigation.navigate('StudentRegister')}
+                    style={[styles.verifyBtn, loading && { opacity: 0.7 }]}
+                    onPress={handleVerifyOtp}
+                    disabled={loading}
                 >
-                    <Text style={styles.verifyBtnText}>{s.verifyProceed}</Text>
-                    <Text style={styles.btnArrow}>→</Text>
+                    {loading ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <>
+                            <Text style={styles.verifyBtnText}>{s.verifyProceed}</Text>
+                            <Text style={styles.btnArrow}>→</Text>
+                        </>
+                    )}
                 </TouchableOpacity>
 
                 {/* Resend Section */}

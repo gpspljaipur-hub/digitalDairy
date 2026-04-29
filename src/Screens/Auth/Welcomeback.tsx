@@ -5,12 +5,52 @@ import Strings from '../../comman/String'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import { Alert, ActivityIndicator } from 'react-native'
+import Helper from '../../Lib/HelperFiles/Helper'
 
 const Welcomeback = ({ navigation }: any) => {
     const [mobile, setMobile] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [role, setRole] = useState('parent')
+    const [role, setRole] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const handleSendOtp = async () => {
+        if (!role) {
+            Helper.showToast('Please select a role');
+            return;
+        }
+        if (mobile.length !== 10) {
+            Helper.showToast('Please enter a valid 10-digit mobile number');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.SendOtp, {
+                phone: mobile,
+            });
+
+            console.log('Send OTP Response:', res);
+
+            if (res && !res.error) {
+                navigation.navigate('OTPVerification', {
+                    mobile: mobile,
+                    role: role,
+                    otp: res.otp // Assuming API returns OTP
+                });
+            } else {
+                Helper.showToast(res?.message);
+            }
+        } catch (error) {
+            console.error('Send OTP Error:', error);
+            Helper.showToast('Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const s = Strings.en;
 
@@ -116,17 +156,18 @@ const Welcomeback = ({ navigation }: any) => {
 
                 {/* Login/Send OTP Button */}
                 <TouchableOpacity
-                    style={styles.sendOtpBtn}
-                    onPress={() => {
-                        if (role === 'teacher') {
-                            navigation.navigate('Dashboard')
-                        } else {
-                            navigation.navigate('OTPVerification')
-                        }
-                    }}
+                    style={[styles.sendOtpBtn, loading && { opacity: 0.7 }]}
+                    onPress={handleSendOtp}
+                    disabled={loading}
                 >
-                    <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
-                    <Text style={styles.btnArrow}>→</Text>
+                    {loading ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <>
+                            <Text style={styles.sendOtpText}>{s.sendOTP}</Text>
+                            <Text style={styles.btnArrow}>→</Text>
+                        </>
+                    )}
                 </TouchableOpacity>
 
                 {/* Security Card */}
