@@ -1,22 +1,54 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar, ActivityIndicator } from 'react-native'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import StringsRaw from '../../comman/String'
 import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
 
 const Strings = StringsRaw.en
 
 const PostHomework = () => {
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
+    const homework = route.params?.res;
+    const [loading, setLoading] = useState(false);
+    const [homeworkData, setHomeworkList] = useState<any>({});
+    console.log('res=====>>>', homework);
 
-    const homework = route.params?.homework || {
-        subject: '',
-        class: '',
-        dueDate: ''
+    useEffect(() => {
+        if (homework.classId) {
+            fetchHomeworkList(homework.classId);
+        }
+    }, [homework.classId]);
+
+    const fetchHomeworkList = async (classId: string) => {
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.HomeworkList, { classId });
+            console.log('Homework List Response:', res);
+
+            if (res && !res.error) {
+                const HomeWork = await res.find((item: any) => item?.classId?._id === homework?.classId);
+                console.log('HomeWork', HomeWork);
+                setHomeworkList(HomeWork);
+            }
+        } catch (error) {
+            console.error('Fetch Homework List Error:', error);
+        } finally {
+            setLoading(false);
+        };
+    }
+
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     };
 
     return (
@@ -43,19 +75,19 @@ const PostHomework = () => {
                         icon="📖"
                         iconBg="#EBF5FF"
                         label={Strings.subjectLabel}
-                        value={homework.subject}
+                        value={homeworkData?.subjectId?.name}
                     />
                     <SummaryRow
                         icon="👥"
                         iconBg="#F0EFFF"
                         label={Strings.classLabel}
-                        value={homework.class}
+                        value={homeworkData?.classId?.name || 'N/A'}
                     />
                     <SummaryRow
                         icon="📅"
                         iconBg="#F0F9FF"
                         label={Strings.dueDateLabel}
-                        value={homework.dueDate}
+                        value={formatDate(homeworkData?.date)}
                     />
                 </View>
 
@@ -71,7 +103,7 @@ const PostHomework = () => {
 
                 <TouchableOpacity
                     style={styles.secondaryBtn}
-                    onPress={() => navigation.navigate('HomeworkDetails')}
+                    onPress={() => navigation.navigate('HomeworkDetails', { homeworkData })}
                     activeOpacity={0.8}
                 >
                     <Text style={[styles.btnIcon, { color: '#1E40AF' }]}>👁</Text>

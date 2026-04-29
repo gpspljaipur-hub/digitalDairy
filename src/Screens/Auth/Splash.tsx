@@ -11,12 +11,15 @@ import {
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
+import Config from '../../Lib/ApiService/Config';
 
 const { width, height } = Dimensions.get('window');
 
 const Splash = () => {
     const navigation = useNavigation<any>();
-
+    const { teacher, student, isAuthenticated, userType } = useSelector((state: any) => state.user);
     // Animation Values
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -74,8 +77,16 @@ const Splash = () => {
         }).start();
 
         // Navigate after delay
-        const timer = setTimeout(() => {
-            navigation.replace('LanguageSelection');
+        const timer = setTimeout(async () => {
+            if (isAuthenticated) {
+                if (userType === 'teacher') {
+                    navigation.replace('Dashboard');
+                } else {
+                    navigation.replace('ParentDashboard');
+                }
+            } else {
+                navigation.replace('LanguageSelection');
+            }
         }, 3000);
 
         return () => clearTimeout(timer);

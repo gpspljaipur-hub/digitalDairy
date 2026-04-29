@@ -13,6 +13,10 @@ import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useDispatch } from 'react-redux'
+import { logout } from '../../Redux/Reducers/Userslice'
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
+import Config from '../../Lib/ApiService/Config'
 const NOTIFICATIONS = [
     {
         id: '1',
@@ -82,6 +86,16 @@ const NotificationCard = ({ item }: { item: any }) => {
 };
 
 const Notification = ({ navigation }: any) => {
+    const dispatch = useDispatch();
+
+    const handleLogout = async () => {
+        await AsyncStorageHelper.removeItemValue(Config.USER_DATA);
+        await AsyncStorageHelper.removeItemValue(Config.TOKEN);
+        await AsyncStorageHelper.removeItemValue(Config.ROLE);
+        dispatch(logout());
+        navigation.replace('Welcomeback');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
@@ -128,6 +142,10 @@ const Notification = ({ navigation }: any) => {
                         </View>
                     </View>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                    <Text style={styles.logoutText}>Logout</Text>
+                </TouchableOpacity>
+
             </ScrollView>
         </SafeAreaView>
     )
@@ -313,6 +331,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: Fonts.Lexend_Regular,
         lineHeight: 20,
+    },
+    logoutBtn: {
+        backgroundColor: '#FEE2E2',
+        marginVertical: 30,
+        height: 55,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#FECACA',
+    },
+    logoutText: {
+        fontSize: 16,
+        fontFamily: Fonts.LexendBold,
+        color: '#DC2626',
     },
 })
 

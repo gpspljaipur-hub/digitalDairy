@@ -4,7 +4,8 @@ const Config = {
     POST: 'POST',
     GET: 'GET',
     TOKEN: 'TOKEN',
-    USER_DATA: 'USER_DATA'
+    USER_DATA: 'USER_DATA',
+    ROLE: 'ROLE'
 }
 
 export default Config;

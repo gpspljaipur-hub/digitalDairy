@@ -121,6 +121,11 @@ const validation = {
         presence: {
             message: 'Please enter your Last Name'
         }
+    },
+    password: {
+        presence: {
+            message: 'Please enter password'
+        }
     }
 }
 
