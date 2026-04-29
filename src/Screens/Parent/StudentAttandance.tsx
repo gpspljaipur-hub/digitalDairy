@@ -6,8 +6,10 @@ import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import ParentBottom from '../../Component/ParentBottom'
+import { useNavigation } from '@react-navigation/native'
 
 const StudentAttandance = () => {
+    const navigation = useNavigation<any>();
     // Dummy data for calendar
     const calendarDays = [
         { day: '25', type: 'prev' }, { day: '26', type: 'prev' }, { day: '27', type: 'prev' }, { day: '28', type: 'prev' }, { day: '29', type: 'prev' }, { day: '30', type: 'prev' }, { day: '1', type: 'holiday' },
@@ -41,7 +43,13 @@ const StudentAttandance = () => {
 
     return (
         <ScreenWrapper scroll={false}>
-            <Header title="Student Attendance" showProfile={true} rightIcon="👤" />
+            <Header
+                title="Student Attendance"
+                showBack={true}
+                onBack={() => navigation.goBack()}
+                showProfile={false}
+                showNotification={false}
+            />
 
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
                 {/* Attendance Period */}
@@ -129,8 +137,6 @@ const StudentAttandance = () => {
 
                 <View style={{ height: 100 }} />
             </ScrollView>
-
-            <ParentBottom activeTab="HOME"/>
         </ScreenWrapper>
     )
 }

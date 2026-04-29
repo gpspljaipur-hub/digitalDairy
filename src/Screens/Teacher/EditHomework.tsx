@@ -30,8 +30,6 @@ const EditHomework = () => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-
-            {/* Custom Header matching screenshot */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.menuBtn}>
                     <Text style={styles.menuIcon}>☰</Text>

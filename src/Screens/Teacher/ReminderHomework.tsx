@@ -36,7 +36,6 @@ const ReminderHomework = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Custom Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIconBtn}>
                     <Text style={styles.closeIcon}>✕</Text>
@@ -44,7 +43,7 @@ const ReminderHomework = () => {
                 <Text style={styles.headerTitle}>{Strings.en.reminderHomeworkTitle}</Text>
                 <TouchableOpacity style={styles.profileBtn}>
                     <View style={styles.avatarContainer}>
-                         <Text style={styles.avatarEmoji}>👨‍🏫</Text>
+                        <Text style={styles.avatarEmoji}>👨‍🏫</Text>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -74,8 +73,8 @@ const ReminderHomework = () => {
                 </View>
 
                 {students.map((item) => (
-                    <TouchableOpacity 
-                        key={item.id} 
+                    <TouchableOpacity
+                        key={item.id}
                         style={styles.studentCard}
                         onPress={() => toggleStudentSelection(item.id)}
                         activeOpacity={0.7}
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: HWSize.W_Width20,
-        paddingVertical: 15,
+        paddingVertical: 1,
         backgroundColor: Colors.white,
     },
     headerIconBtn: {

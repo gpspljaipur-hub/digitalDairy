@@ -16,13 +16,11 @@ const Welcomeback = ({ navigation }: any) => {
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>
-            {/* Custom Header */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <Text style={styles.headerIcon}>🏛️</Text>
                     <Text style={styles.headerTitle}>{s.eduPortal}</Text>
                 </View>
-                <Text style={styles.headerRightText}>{s.dsds}</Text>
             </View>
 
             <View style={styles.content}>
@@ -160,7 +158,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 10,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#E2E8F0',

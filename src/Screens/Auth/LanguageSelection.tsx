@@ -28,7 +28,6 @@ const LanguageSelection = () => {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-            {/* Header */}
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <View style={styles.headerIconContainer}>
@@ -42,7 +41,6 @@ const LanguageSelection = () => {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {/* Welcome Section */}
                 <View style={styles.welcomeSection}>
                     <View style={styles.logoWrapper}>
                         <Text style={styles.logoIcon}>🎓</Text>
@@ -53,7 +51,6 @@ const LanguageSelection = () => {
                     </Text>
                 </View>
 
-                {/* Language Options */}
                 <View style={styles.languageContainer}>
                     {languages.map((lang) => (
                         <TouchableOpacity
@@ -71,7 +68,7 @@ const LanguageSelection = () => {
                     ))}
                 </View>
 
-                {/* Accessibility Box */}
+
                 <View style={styles.accessibilityBox}>
                     <Text style={styles.accessTitle}>Accessibility</Text>
                     <Text style={styles.accessText}>
@@ -79,7 +76,7 @@ const LanguageSelection = () => {
                     </Text>
                 </View>
 
-                {/* Portal Card */}
+
                 <TouchableOpacity style={styles.portalCard} activeOpacity={0.9}>
                     <View style={styles.portalContent}>
                         <View style={styles.portalIconWrapper}>

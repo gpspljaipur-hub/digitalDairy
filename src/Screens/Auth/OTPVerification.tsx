@@ -46,20 +46,19 @@ const OTPVerification = ({ navigation }: any) => {
             />
 
             <View style={styles.content}>
-                {/* Hero Icon */}
+
                 <View style={styles.heroIconContainer}>
                     <View style={styles.iconBox}>
                         <Text style={styles.shieldIcon}>🛡️</Text>
                     </View>
                 </View>
 
-                {/* Title Section */}
+
                 <View style={styles.titleSection}>
                     <Text style={styles.title}>{s.verifyYourNumber}</Text>
                     <Text style={styles.subtitle}>{s.otpSubtitle}</Text>
                 </View>
 
-                {/* OTP Inputs */}
                 <View style={styles.otpContainer}>
                     {otp.map((digit, index) => (
                         <TextInput

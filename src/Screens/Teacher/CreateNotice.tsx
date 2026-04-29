@@ -28,7 +28,6 @@ const CreateNotice = () => {
 
     return (
         <ScreenWrapper style={styles.container}>
-            {/* Custom Header to match screenshot exactly */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Text style={styles.backIcon}>←</Text>
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 1,
         backgroundColor: Colors.white,
     },
     backBtn: {
