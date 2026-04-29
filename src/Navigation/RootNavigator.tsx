@@ -24,6 +24,13 @@ import OTPVerification from '../Screens/Auth/OTPVerification';
 import OfflineMode from '../Screens/Auth/OfflineMode';
 import CheckingConnection from '../Screens/Auth/CheckingConnection';
 import OfflineDashboard from '../Screens/Teacher/OfflineDashboard';
+import ParentDashboard from '../Screens/Parent/ParentsDashboard';
+import StudentAttandance from '../Screens/Parent/StudentAttandance';
+import Homework_Screen from '../Screens/Parent/Homework_Screen';
+import NoticeScreen from '../Screens/Parent/NoticeScreen';
+
+
+
 export type RootStackParamList = {
   Dashboard: undefined;
   MarkAttendance: undefined;
@@ -49,7 +56,14 @@ export type RootStackParamList = {
   OfflineMode: undefined;
   CheckingConnection: undefined;
   OfflineDashboard: undefined;
+  ParentDashboard: undefined;
+  StudentAttandance: undefined;
+  Homework_Screen: undefined;
+  NoticeScreen: undefined;
 };
+
+
+
 
 declare global {
   namespace ReactNavigation {
@@ -92,6 +106,13 @@ const RootNavigator = () => {
       <Stack.Screen name="OfflineMode" component={OfflineMode} />
       <Stack.Screen name="CheckingConnection" component={CheckingConnection} />
       <Stack.Screen name="OfflineDashboard" component={OfflineDashboard} />
+      <Stack.Screen name="ParentDashboard" component={ParentDashboard} />
+      <Stack.Screen name="StudentAttandance" component={StudentAttandance} />
+      <Stack.Screen name="Homework_Screen" component={Homework_Screen} />
+      <Stack.Screen name="NoticeScreen" component={NoticeScreen} />
+
+
+
 
     </Stack.Navigator>
   );

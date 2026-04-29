@@ -6,6 +6,7 @@ import Strings from '../../comman/String'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
+import DatePicker from '../../comman/DatePicker'
 
 interface Student {
     id: string;
@@ -18,6 +19,8 @@ const MarkAttendance = () => {
     const navigation = useNavigation();
     const str = Strings.en;
     const [searchQuery, setSearchQuery] = useState('')
+    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [showDatePicker, setShowDatePicker] = useState(false)
     const [students, setStudents] = useState<Student[]>([
         { id: '1', name: 'Aditi Sharma', rollNo: '01', status: 'P' },
         { id: '2', name: 'Arjun Verma', rollNo: '02', status: 'P' },
@@ -38,13 +41,6 @@ const MarkAttendance = () => {
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.rollNo.includes(searchQuery)
     ), [students, searchQuery])
-
-    const stats = useMemo(() => {
-        const total = students.length;
-        const present = students.filter(s => s.status === 'P').length;
-        const absent = students.filter(s => s.status === 'A').length;
-        return { total, present, absent };
-    }, [students]);
 
     const handleSubmit = () => {
         navigation.navigate('Dashboard')
@@ -90,6 +86,29 @@ const MarkAttendance = () => {
                 onBack={() => navigation.goBack()}
             />
             <View style={styles.content}>
+                <View style={styles.dateSection}>
+                    <TouchableOpacity
+                        style={styles.dateCard}
+                        onPress={() => setShowDatePicker(true)}
+                        activeOpacity={0.7}
+                    >
+                        <View style={styles.dateInfo}>
+                            <Text style={styles.dateLabel}>Attendance Date</Text>
+                            <Text style={styles.dateValue}>
+                                {selectedDate.toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                })}
+                            </Text>
+                        </View>
+                        <View style={styles.calendarIconContainer}>
+                            <Text style={styles.calendarEmoji}>📅</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
                 <View style={styles.searchSection}>
                     <View style={styles.searchBar}>
                         <Text style={styles.searchEmoji}>🔍</Text>
@@ -132,6 +151,16 @@ const MarkAttendance = () => {
                     <Text style={styles.submitBtnText}>Submit Attendance</Text>
                 </TouchableOpacity>
             </View>
+
+            <DatePicker
+                visible={showDatePicker}
+                selectedDate={selectedDate}
+                onClose={() => setShowDatePicker(false)}
+                onSelect={(date) => {
+                    setSelectedDate(date)
+                    setShowDatePicker(false)
+                }}
+            />
         </SafeAreaView>
     )
 }
@@ -147,32 +176,53 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
     },
-    statsRow: {
-        flexDirection: 'row',
-        gap: 10,
-        marginTop: 20,
-        marginBottom: 20,
-    },
-    statBox: {
-        flex: 1,
-        paddingVertical: 12,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    statNum: {
-        fontSize: 18,
-        fontFamily: Fonts.LexendBold,
-    },
-    statLabel: {
-        fontSize: 10,
-        fontFamily: Fonts.Lexend_Medium,
-        color: Colors.textSecondary,
-        marginTop: 2,
-    },
     searchSection: {
         marginBottom: 15,
-        marginTop: 20
+        marginTop: 5
+    },
+    dateSection: {
+        marginTop: 20,
+        marginBottom: 15,
+    },
+    dateCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#F8FAFC',
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+    },
+    dateInfo: {
+        flex: 1,
+    },
+    dateLabel: {
+        fontSize: 12,
+        fontFamily: Fonts.Lexend_Medium,
+        color: '#64748B',
+        marginBottom: 4,
+    },
+    dateValue: {
+        fontSize: 16,
+        fontFamily: Fonts.LexendBold,
+        color: '#1E293B',
+    },
+    calendarIconContainer: {
+        width: 44,
+        height: 44,
+        backgroundColor: Colors.white,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    calendarEmoji: {
+        fontSize: 20,
     },
     searchBar: {
         flexDirection: 'row',

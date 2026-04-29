@@ -119,15 +119,15 @@ const ParentRegister = ({ navigation }: any) => {
                 </View>
 
                 {/* Complete Button */}
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.completeBtn}
-                    onPress={() => navigation.navigate('Dashboard')}
+                    onPress={() => navigation.navigate('ParentDashboard')}
                 >
                     <Text style={styles.completeBtnText}>{s.completeRegistration}</Text>
                 </TouchableOpacity>
 
                 {/* Building Image */}
-                <Image 
+                <Image
                     source={require('../../assets/WelcomeSchool.png')}
                     style={styles.buildingImage}
                     resizeMode="cover"

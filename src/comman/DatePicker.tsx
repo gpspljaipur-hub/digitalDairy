@@ -81,17 +81,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
                         {calendarData.map((date, index) => {
                             const isToday = date?.toDateString() === new Date().toDateString();
                             const isSelected = date?.toDateString() === selectedDate.toDateString();
-                            const isPast = !!date && new Date(date.getTime()).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
 
                             return (
                                 <TouchableOpacity
                                     key={index}
-                                    disabled={!date || isPast}
+                                    disabled={!date}
                                     style={[
                                         styles.dayCell,
                                         isSelected && styles.selectedDay,
                                         isToday && styles.todayCell,
-                                        isPast && styles.pastDay
                                     ]}
                                     onPress={() => {
                                         if (date) {
@@ -103,7 +101,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
                                         styles.dayText,
                                         !date && { opacity: 0 },
                                         isSelected && styles.selectedDayText,
-                                        isPast && styles.pastDayText
                                     ]}>
                                         {date ? date.getDate() : ''}
                                     </Text>
@@ -204,12 +201,6 @@ const styles = StyleSheet.create({
     todayCell: {
         borderWidth: 1,
         borderColor: '#2563EB',
-    },
-    pastDay: {
-        opacity: 0.3,
-    },
-    pastDayText: {
-        color: '#94A3B8',
     },
     closeCalendarBtn: {
         marginTop: 15,
