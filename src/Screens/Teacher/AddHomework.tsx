@@ -1,28 +1,106 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image, Switch, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image, Switch, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import DatePicker from '../../comman/DatePicker'
-const CLASSES = ['Grade 10-A', 'Grade 10-B', 'Grade 11-A', 'Grade 11-B', 'Grade 12-A'];
-const SUBJECTS = ['Mathematics', 'Science', 'English', 'History', 'Physics', 'Chemistry'];
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
 
 const AddHomework = () => {
     const navigation = useNavigation<any>();
-    const [notifyParents, setNotifyParents] = useState(true)
+    const [loadingClasses, setLoadingClasses] = useState(false)
+    const [loadingSubjects, setLoadingSubjects] = useState(false)
     const [homeworkDetails, setHomeworkDetails] = useState('')
-    const [selectedClass, setSelectedClass] = useState('Select a grade')
-    const [selectedSubject, setSelectedSubject] = useState('Select subject')
+    const [classes, setClasses] = useState<any[]>([])
+    const [subjects, setSubjects] = useState<any[]>([])
+    const [selectedClass, setSelectedClass] = useState<any>(null)
+    const [selectedSubject, setSelectedSubject] = useState<any>(null)
     const [showClassList, setShowClassList] = useState(false)
     const [showSubjectList, setShowSubjectList] = useState(false)
     const [dueDate, setDueDate] = useState(new Date())
     const [showDatePicker, setShowDatePicker] = useState(false)
+    const [notifyParents, setNotifyParents] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        fetchClasses();
+    }, []);
+
+    const fetchClasses = async () => {
+        setLoadingClasses(true);
+        try {
+            const res = await Get_Send_Api(ApiUrl.ClassesAll, {});
+            console.log('fetchClasses', res);
+            if (res && !res.error) {
+                setClasses(res || res || []);
+            } else {
+                Helper.showToast(res?.message || 'Failed to fetch classes');
+            }
+        } catch (error) {
+            console.error('Fetch Classes Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoadingClasses(false);
+        }
+    };
+
+    const fetchSubjects = async (classId: string) => {
+        setLoadingSubjects(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.SubjectsList, { classId });
+            if (res && !res.error) {
+                setSubjects(res.data || res || []);
+            } else {
+                Helper.showToast(res?.message || 'Failed to fetch subjects');
+            }
+        } catch (error) {
+            console.error('Fetch Subjects Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoadingSubjects(false);
+        }
+    };
+
+    const handlePostHomework = async () => {
+        if (!selectedClass || !selectedSubject || !homeworkDetails) {
+            Helper.showToast('Please fill all details');
+            return;
+        }
+
+        const payload = {
+            classId: selectedClass?._id,
+            subjectId: selectedSubject?._id,
+            message: homeworkDetails,
+            date: dueDate.toISOString().split('T')[0]
+        };
+        console.log('Post Homework Payload:', payload);
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.HomeworkAdd, payload);
+            console.log('Post Homework Response:', res);
+            if (res && !res.error) {
+                Helper.showToast('Homework posted successfully');
+                navigation.navigate('PostHomework', { res });
+            } else {
+                Helper.showToast(res?.message || 'Failed to post homework');
+            }
+        } catch (error) {
+            console.error('Post Homework Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const formatDate = (date: Date) => {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     };
+
+
 
     return (
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -62,25 +140,31 @@ const AddHomework = () => {
                             setShowSubjectList(false);
                         }}
                     >
-                        <Text style={[styles.dropdownText, selectedClass !== 'Select a grade' && { color: '#1A1A1A' }]}>
-                            {selectedClass}
+                        <Text style={[styles.dropdownText, selectedClass && { color: '#1A1A1A' }]}>
+                            {selectedClass ? selectedClass.name : 'Select a class'}
                         </Text>
-                        <Text style={[styles.chevronIcon, showClassList && { transform: [{ rotate: '180deg' }] }]}>︾</Text>
+                        {loadingClasses ? (
+                            <ActivityIndicator size="small" color={Colors.primary} />
+                        ) : (
+                            <Text style={[styles.chevronIcon, showClassList && { transform: [{ rotate: '180deg' }] }]}>︾</Text>
+                        )}
                     </TouchableOpacity>
 
                     {showClassList && (
                         <View style={styles.dropdownList}>
-                            {CLASSES.map((item) => (
+                            {classes.map((item) => (
                                 <TouchableOpacity
-                                    key={item}
+                                    key={item._id}
                                     style={styles.dropdownItem}
                                     onPress={() => {
                                         setSelectedClass(item);
                                         setShowClassList(false);
+                                        setSelectedSubject(null);
+                                        fetchSubjects(item._id);
                                     }}
                                 >
-                                    <Text style={[styles.dropdownItemText, selectedClass === item && styles.selectedItemText]}>{item}</Text>
-                                    {selectedClass === item && <Text style={styles.selectedCheck}>✓</Text>}
+                                    <Text style={[styles.dropdownItemText, selectedClass?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                    {selectedClass?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -91,30 +175,35 @@ const AddHomework = () => {
                     <TouchableOpacity
                         style={styles.dropdown}
                         activeOpacity={0.7}
+                        disabled={!selectedClass}
                         onPress={() => {
                             setShowSubjectList(!showSubjectList);
                             setShowClassList(false);
                         }}
                     >
-                        <Text style={[styles.dropdownText, selectedSubject !== 'Select subject' && { color: '#1A1A1A' }]}>
-                            {selectedSubject}
+                        <Text style={[styles.dropdownText, selectedSubject && { color: '#1A1A1A' }]}>
+                            {selectedSubject ? selectedSubject.name : 'Select subject'}
                         </Text>
-                        <Text style={[styles.chevronIcon, showSubjectList && { transform: [{ rotate: '180deg' }] }]}>︾</Text>
+                        {loadingSubjects ? (
+                            <ActivityIndicator size="small" color={Colors.primary} />
+                        ) : (
+                            <Text style={[styles.chevronIcon, showSubjectList && { transform: [{ rotate: '180deg' }] }]}>︾</Text>
+                        )}
                     </TouchableOpacity>
 
                     {showSubjectList && (
                         <View style={styles.dropdownList}>
-                            {SUBJECTS.map((item) => (
+                            {subjects.map((item) => (
                                 <TouchableOpacity
-                                    key={item}
+                                    key={item._id}
                                     style={styles.dropdownItem}
                                     onPress={() => {
                                         setSelectedSubject(item);
                                         setShowSubjectList(false);
                                     }}
                                 >
-                                    <Text style={[styles.dropdownItemText, selectedSubject === item && styles.selectedItemText]}>{item}</Text>
-                                    {selectedSubject === item && <Text style={styles.selectedCheck}>✓</Text>}
+                                    <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                    {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -136,14 +225,14 @@ const AddHomework = () => {
                     </View>
 
                     {/* Attachments */}
-                    <Text style={styles.label}>Attachments</Text>
+                    {/* <Text style={styles.label}>Attachments</Text>
                     <View style={styles.attachmentsRow}>
                         <TouchableOpacity style={styles.attachBtn}>
                             <Text style={styles.attachIcon}>📷⁺</Text>
                             <Text style={styles.attachText}>Attach Photo</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.supportedText}>Supported: JPG, PNG, PDF (Max 10MB)</Text>
+                    <Text style={styles.supportedText}>Supported: JPG, PNG, PDF (Max 10MB)</Text> */}
 
                     {/* Date and Notify Section */}
                     <View style={styles.settingsCard}>
@@ -180,15 +269,14 @@ const AddHomework = () => {
                     <TouchableOpacity
                         style={styles.postBtn}
                         activeOpacity={0.8}
-                        onPress={() => navigation.navigate('PostHomework', {
-                            homework: {
-                                subject: selectedSubject,
-                                class: selectedClass,
-                                dueDate: formatDate(dueDate)
-                            }
-                        })}
+                        onPress={handlePostHomework}
+                        disabled={loading}
                     >
-                        <Text style={styles.postBtnText}>➤ Post Homework</Text>
+                        {loading ? (
+                            <ActivityIndicator color={Colors.white} />
+                        ) : (
+                            <Text style={styles.postBtnText}>➤ Post Homework</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 

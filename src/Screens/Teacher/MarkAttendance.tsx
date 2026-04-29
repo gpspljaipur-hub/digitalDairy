@@ -7,73 +7,131 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 import DatePicker from '../../comman/DatePicker'
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import { ActivityIndicator } from 'react-native'
+import Helper from '../../Lib/HelperFiles/Helper'
 
 interface Student {
     id: string;
+    _id?: string;
     name: string;
-    rollNo: string;
-    status: 'P' | 'A' | null;
+    className: string;
+    status: 'Present' | 'Absent' | null;
 }
 
 const MarkAttendance = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
+    const { teacher } = useSelector((state: any) => state.user);
     const str = Strings.en;
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [showDatePicker, setShowDatePicker] = useState(false)
-    const [students, setStudents] = useState<Student[]>([
-        { id: '1', name: 'Aditi Sharma', rollNo: '01', status: 'P' },
-        { id: '2', name: 'Arjun Verma', rollNo: '02', status: 'P' },
-        { id: '3', name: 'Bhavya Rao', rollNo: '03', status: null },
-        { id: '4', name: 'Chetan Singh', rollNo: '04', status: 'A' },
-        { id: '5', name: 'Divya Patel', rollNo: '05', status: 'P' },
-        { id: '6', name: 'Ishaan Gupta', rollNo: '06', status: 'P' },
-        { id: '7', name: 'Kavya Nair', rollNo: '07', status: 'P' },
-        { id: '8', name: 'Rahul Khanna', rollNo: '08', status: null },
-        { id: '9', name: 'Sana Khan', rollNo: '09', status: 'P' },
-    ])
+    const [loading, setLoading] = useState(false)
+    const [students, setStudents] = useState<Student[]>([])
 
-    const setStatus = (id: string, status: 'P' | 'A') => {
-        setStudents(prev => prev.map(s => s.id === id ? { ...s, status: s.status === status ? null : status } : s))
+    React.useEffect(() => {
+        fetchStudents();
+    }, []);
+
+    const fetchStudents = async () => {
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.StudentsList, {
+                teacherId: teacher?._id,
+            });
+
+            console.log('Students List Response:', res);
+            if (res && !res.error) {
+                setStudents(res || []);
+            } else {
+                Helper.showToast(res?.message || 'Failed to fetch students');
+            }
+        } catch (error) {
+            console.error('Fetch Students Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const setStatus = (id: string, status: 'Present' | 'Absent') => {
+        setStudents(prev => prev.map(s => (s._id === id || s.id === id) ? { ...s, status: s.status === status ? null : status } : s))
     }
 
     const filteredStudents = useMemo(() => students.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.rollNo.includes(searchQuery)
+        s.className.includes(searchQuery)
     ), [students, searchQuery])
 
-    const handleSubmit = () => {
-        navigation.navigate('Dashboard')
+    const handleSubmit = async () => {
+        const unMarked = students.filter(s => s.status === null);
+        if (unMarked.length > 0) {
+            Helper.showToast(`Please mark attendance for all students (${unMarked.length} remaining)`);
+            return;
+        }
+
+        const attendanceData = students.map((s, index) => ({
+            studentId: s._id || s.id || index.toString(),
+            status: s.status
+        }));
+
+        const payload = {
+            students: attendanceData,
+            teacherId: teacher?._id,
+            date: selectedDate.toISOString().split('T')[0]
+        };
+        console.log("payload", payload)
+
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.MarkAttendance, payload);
+            console.log('Mark Attendance Response:', res);
+            if (res && !res.error) {
+                Helper.showToast('Attendance marked successfully');
+                navigation.navigate('Dashboard');
+            } else {
+                Helper.showToast(res?.message || 'Failed to mark attendance');
+            }
+        } catch (error) {
+            console.error('Mark Attendance Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
     }
 
-    const renderStudent = ({ item }: { item: Student }) => (
-        <View style={styles.studentCard}>
-            <View style={styles.studentMainInfo}>
-                <View style={styles.rollBadge}>
-                    <Text style={styles.rollText}>{item.rollNo}</Text>
+    const renderStudent = ({ item }: { item: Student }) => {
+        return (
+            <View style={styles.studentCard}>
+                <View style={styles.studentMainInfo}>
+                    <View style={styles.rollBadge}>
+                        <Text style={styles.rollText}>{item.name.charAt(0).toUpperCase()}</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.studentName}>{item.name}</Text>
+                        {/* <Text style={styles.studentDetail}>{item.className}</Text> */}
+                    </View>
                 </View>
-                <View>
-                    <Text style={styles.studentName}>{item.name}</Text>
-                    <Text style={styles.studentDetail}>Roll No: {item.rollNo}</Text>
-                </View>
-            </View>
 
-            <View style={styles.actionGroup}>
-                <TouchableOpacity
-                    onPress={() => setStatus(item.id, 'P')}
-                    style={[styles.statusBtn, item.status === 'P' && styles.presentActive]}
-                >
-                    <Text style={[styles.statusBtnText, item.status === 'P' && styles.textWhite]}>P</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setStatus(item.id, 'A')}
-                    style={[styles.statusBtn, item.status === 'A' && styles.absentActive]}
-                >
-                    <Text style={[styles.statusBtnText, item.status === 'A' && styles.textWhite]}>A</Text>
-                </TouchableOpacity>
+                <View style={styles.actionGroup}>
+                    <TouchableOpacity
+                        onPress={() => setStatus(item._id || item.id, 'Present')}
+                        style={[styles.statusBtn, item.status === 'Present' && styles.presentActive]}
+                    >
+                        <Text style={[styles.statusBtnText, item.status === 'Present' && styles.textWhite]}>P</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setStatus(item._id || item.id, 'Absent')}
+                        style={[styles.statusBtn, item.status === 'Absent' && styles.absentActive]}
+                    >
+                        <Text style={[styles.statusBtnText, item.status === 'Absent' && styles.textWhite]}>A</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    );
+        )
+    }
 
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
@@ -127,9 +185,10 @@ const MarkAttendance = () => {
                     </View>
                 </View>
 
+
                 <FlatList
                     data={filteredStudents}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item._id || item.id}
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
                     renderItem={renderStudent}
@@ -140,6 +199,7 @@ const MarkAttendance = () => {
                         </View>
                     }
                 />
+
             </View>
 
             <View style={styles.footer}>
@@ -147,8 +207,13 @@ const MarkAttendance = () => {
                     style={styles.submitBtn}
                     activeOpacity={0.8}
                     onPress={handleSubmit}
+                    disabled={loading}
                 >
-                    <Text style={styles.submitBtnText}>Submit Attendance</Text>
+                    {loading ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <Text style={styles.submitBtnText}>Submit Attendance</Text>
+                    )}
                 </TouchableOpacity>
             </View>
 
@@ -281,12 +346,12 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     rollText: {
-        fontSize: 14,
+        fontSize: 18,
         fontFamily: Fonts.LexendBold,
         color: Colors.primary,
     },
     studentName: {
-        fontSize: 15,
+        fontSize: 18,
         fontFamily: Fonts.Lexend_SemiBold,
         color: Colors.textMain,
     },
