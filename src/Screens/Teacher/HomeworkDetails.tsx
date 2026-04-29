@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar, FlatList } from 'react-native'
 import React from 'react'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import Strings from '../comman/String'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import Strings from '../../comman/String'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Header from '../comman/Header'
+import Header from '../../comman/Header'
 
 const HomeworkDetails = () => {
     const navigation = useNavigation<any>();

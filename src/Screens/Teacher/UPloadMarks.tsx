@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import StringsRaw from '../comman/String'
-import HWSize from '../comman/HWSize'
-import Header from '../comman/Header'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import StringsRaw from '../../comman/String'
+import HWSize from '../../comman/HWSize'
+import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 
 const Strings = StringsRaw.en

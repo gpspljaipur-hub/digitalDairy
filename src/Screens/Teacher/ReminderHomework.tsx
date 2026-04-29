@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, Image } from 'react-native'
 import React, { useState } from 'react'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import HWSize from '../comman/HWSize'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Strings from '../comman/String'
+import Strings from '../../comman/String'
 
 
 interface Student {

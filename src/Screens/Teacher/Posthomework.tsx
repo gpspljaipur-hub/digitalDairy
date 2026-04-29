@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar } from 'react-native'
 import React from 'react'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import StringsRaw from '../comman/String'
-import HWSize from '../comman/HWSize'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import StringsRaw from '../../comman/String'
+import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useRoute } from '@react-navigation/native'
 

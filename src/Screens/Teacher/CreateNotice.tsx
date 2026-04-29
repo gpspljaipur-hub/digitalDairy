@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Switch } from 'react-native'
 import React, { useState } from 'react'
-import ScreenWrapper from '../comman/ScreenWrapper'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import HWSize from '../comman/HWSize'
+import ScreenWrapper from '../../comman/ScreenWrapper'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import HWSize from '../../comman/HWSize'
 import { useNavigation } from '@react-navigation/native'
 
 const CreateNotice = () => {

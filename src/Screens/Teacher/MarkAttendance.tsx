@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBar, Alert } from 'react-native'
 import React, { useState, useMemo } from 'react'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import Strings from '../comman/String'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import Strings from '../../comman/String'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Header from '../comman/Header'
+import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 
 interface Student {

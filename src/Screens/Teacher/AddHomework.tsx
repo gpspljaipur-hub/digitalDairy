@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image, Switch, KeyboardAvoidingView, Platform } from 'react-native'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import DatePicker from '../comman/DatePicker'
+import DatePicker from '../../comman/DatePicker'
 const CLASSES = ['Grade 10-A', 'Grade 10-B', 'Grade 11-A', 'Grade 11-B', 'Grade 12-A'];
 const SUBJECTS = ['Mathematics', 'Science', 'English', 'History', 'Physics', 'Chemistry'];
 

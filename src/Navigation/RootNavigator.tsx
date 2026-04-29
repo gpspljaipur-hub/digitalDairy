@@ -1,25 +1,25 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Dashboard from '../Screens/Dashboard';
-import MarkAttendance from '../Screens/MarkAttendance';
-import AddHomework from '../Screens/AddHomework';
-import PostHomework from '../Screens/Posthomework';
-import HomeworkDetails from '../Screens/HomeworkDetails';
-import ReminderHomework from '../Screens/ReminderHomework';
-import EditHomework from '../Screens/EditHomework';
-import CreateNotice from '../Screens/CreateNotice';
-import SendNotice from '../Screens/SendNotice'
-import ViewAllNotice from '../Screens/ViewAllNotice'
-import UPloadMarks from '../Screens/UPloadMarks';
-import SaveMarks from '../Screens/SaveMarks';
-import ViewMarkSheet from '../Screens/ViewMarkSheet';
-import Splash from '../Screens/Parent/Splash';
-import LanguageSelection from '../Screens/Parent/LanguageSelection';
-import WelcomeScreen from '../Screens/Parent/WelcomeScreen';
-import StudentRegister from '../Screens/Parent/StudentRegister';
-import Welcomeback from '../Screens/Parent/Welcomeback';
-import ParentRegister from '../Screens/Parent/ParentRegister';
-import OTPVerification from '../Screens/Parent/OTPVerification';
+import Dashboard from '../Screens/Teacher/Dashboard';
+import MarkAttendance from '../Screens/Teacher/MarkAttendance';
+import AddHomework from '../Screens/Teacher/AddHomework';
+import PostHomework from '../Screens/Teacher/Posthomework';
+import HomeworkDetails from '../Screens/Teacher/HomeworkDetails';
+import ReminderHomework from '../Screens/Teacher/ReminderHomework';
+import EditHomework from '../Screens/Teacher/EditHomework';
+import CreateNotice from '../Screens/Teacher/CreateNotice';
+import SendNotice from '../Screens/Teacher/SendNotice'
+import ViewAllNotice from '../Screens/Teacher/ViewAllNotice'
+import UPloadMarks from '../Screens/Teacher/UPloadMarks';
+import SaveMarks from '../Screens/Teacher/SaveMarks';
+import ViewMarkSheet from '../Screens/Teacher/ViewMarkSheet';
+import Splash from '../Screens/Auth/Splash';
+import LanguageSelection from '../Screens/Auth/LanguageSelection';
+import WelcomeScreen from '../Screens/Auth/WelcomeScreen';
+import StudentRegister from '../Screens/Auth/StudentRegister';
+import Welcomeback from '../Screens/Auth/Welcomeback';
+import ParentRegister from '../Screens/Auth/ParentRegister';
+import OTPVerification from '../Screens/Auth/OTPVerification';
 export type RootStackParamList = {
   Dashboard: undefined;
   MarkAttendance: undefined;

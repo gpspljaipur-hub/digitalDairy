@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image, StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState } from 'react'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import StringsRaw from '../comman/String'
-import DatePicker from '../comman/DatePicker'
+import StringsRaw from '../../comman/String'
+import DatePicker from '../../comman/DatePicker'
 
 const Strings = StringsRaw.en
 

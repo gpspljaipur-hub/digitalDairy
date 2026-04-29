@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
-import StringsRaw from '../comman/String'
-import HWSize from '../comman/HWSize'
-import Header from '../comman/Header'
-import ScreenWrapper from '../comman/ScreenWrapper'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
+import StringsRaw from '../../comman/String'
+import HWSize from '../../comman/HWSize'
+import Header from '../../comman/Header'
+import ScreenWrapper from '../../comman/ScreenWrapper'
 
 const Strings = StringsRaw.en
 

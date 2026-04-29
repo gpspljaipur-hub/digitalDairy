@@ -11,10 +11,10 @@ import {
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import { Colors } from '../comman/Colors'
-import StringsRaw from '../comman/String'
-import Fonts from '../comman/fonts'
-import HWSize from '../comman/HWSize'
+import { Colors } from '../../comman/Colors'
+import StringsRaw from '../../comman/String'
+import Fonts from '../../comman/fonts'
+import HWSize from '../../comman/HWSize'
 
 const Strings = StringsRaw.en
 

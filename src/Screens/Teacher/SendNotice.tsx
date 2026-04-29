@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
-import ScreenWrapper from '../comman/ScreenWrapper'
-import { Colors } from '../comman/Colors'
-import Fonts from '../comman/fonts'
+import ScreenWrapper from '../../comman/ScreenWrapper'
+import { Colors } from '../../comman/Colors'
+import Fonts from '../../comman/fonts'
 import { useNavigation } from '@react-navigation/native'
 
 const SendNotice = () => {
