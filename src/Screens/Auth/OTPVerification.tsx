@@ -52,6 +52,7 @@ const OTPVerification = ({ navigation, route }: any) => {
             inputRefs.current[index - 1]?.focus()
         }
     }
+    
 
     const handleVerifyOtp = async () => {
         const enteredOtp = otp.join('');
