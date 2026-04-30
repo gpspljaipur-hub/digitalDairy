@@ -4,13 +4,14 @@ import ScreenWrapper from '../../comman/ScreenWrapper';
 import Header from '../../comman/Header';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
 import useStrings from '../../comman/useStrings';
 
-const ParentDetails = () => {
-    const strings = useStrings();
+const ParentDetails = ({ route }: any) => {
     const navigation = useNavigation<any>();
+    const { profileDetails } = route?.params
+    console.log(profileDetails, "profileDetailsprofileDetails");
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
@@ -33,10 +34,10 @@ const ParentDetails = () => {
                             <Text style={styles.verifiedIcon}>✓</Text>
                         </View>
                     </View>
-                    <Text style={styles.userName}>Aravind Kumar</Text>
+                    <Text style={styles.userName}>{profileDetails?.parentName}</Text>
                     <View style={styles.roleBadge}>
                         <Text style={styles.roleIcon}>⚖️</Text>
-                        <Text style={styles.roleText}>{strings.role}: {strings.parent}</Text>
+                        <Text style={styles.roleText}>Role: {profileDetails?.relationId?.name}</Text>
                     </View>
                 </View>
 
@@ -48,8 +49,8 @@ const ParentDetails = () => {
                             <Text style={styles.icon}>📱</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>{strings.mobileNumber}</Text>
-                            <Text style={styles.infoValue}>+91 98765 43210</Text>
+                            <Text style={styles.infoLabel}>Mobile Number</Text>
+                            <Text style={styles.infoValue}>+91-{profileDetails?.mobile}</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
@@ -58,8 +59,8 @@ const ParentDetails = () => {
                             <Text style={styles.icon}>✉️</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>{strings.email}</Text>
-                            <Text style={styles.infoValue}>aravind.kumar@example.edu</Text>
+                            <Text style={styles.infoLabel}>Email</Text>
+                            <Text style={styles.infoValue}>{profileDetails?.parentName}@example.edu</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
@@ -82,8 +83,8 @@ const ParentDetails = () => {
                             <Text style={styles.studentEmoji}>🧒</Text>
                         </View>
                         <View>
-                            <Text style={styles.studentName}>Arjun Kumar</Text>
-                            <Text style={styles.studentGrade}>{strings.grade}: 10-B</Text>
+                            <Text style={styles.studentName}>{profileDetails?.studentFullName}</Text>
+                            <Text style={styles.studentGrade}>{profileDetails?.classId?.name}</Text>
                         </View>
                     </View>
                     <Text style={styles.chevron}>›</Text>
