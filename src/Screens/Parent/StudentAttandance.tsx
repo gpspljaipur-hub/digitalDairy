@@ -309,9 +309,9 @@ const styles = StyleSheet.create({
         color: '#64748B',
     },
     totalDaysCard: {
-        backgroundColor: '#1E293B',
+        backgroundColor: '#1e2f3bff',
         padding: 20,
-        borderRadius: 20,
+        borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',

@@ -1,79 +1,131 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView, Animated } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
+import { ActivityIndicator } from 'react-native'
+import DocumentPicker, { types } from 'react-native-document-picker'
 
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
+import moment from 'moment'
 
 const Complaint = () => {
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
     const [category, setCategory] = useState('');
+    const [categoryId, setCategoryId] = useState('');
     const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [categoryList, setCategoryList] = useState<any[]>([]);
+    const [complaintList, setComplaintList] = useState<any[]>([]);
+    const [attachment, setAttachment] = useState<any>(null);
 
-    const categories = [
-        'Infrastructure',
-        'Academic',
-        'Staff Behavior',
-        'Transport',
-        'Fee Related',
-        'Other'
-    ];
+    useEffect(() => {
+        fetchCategories();
+        fetchComplaints();
+    }, []);
 
-    const recentComplaints = [
-        {
-            id: '1',
-            category: 'Infrastructure',
-            title: 'Broken window in Room 204',
-            date: 'Oct 24, 2023',
-            status: 'In Progress',
-            statusColor: '#FBC02D',
-            statusBg: '#FFFDE7',
-            icon: '🏢'
-        },
-        {
-            id: '2',
-            category: 'Academic',
-            title: 'Missing textbook materials',
-            date: 'Oct 15, 2023',
-            status: 'Resolved',
-            statusColor: '#4CAF50',
-            statusBg: '#E8F5E9',
-            icon: '📖'
-        },
-        {
-            id: '3',
-            category: 'Staff',
-            title: 'Staff behavior inquiry',
-            date: 'Oct 10, 2023',
-            status: 'Received',
-            statusColor: '#2196F3',
-            statusBg: '#E3F2FD',
-            icon: '👤'
+    const pickDocument = async () => {
+        // try {
+        //     const res = await DocumentPicker.pick({
+        //         type: [types.pdf, types.images],
+        //     });
+        //     console.log('Picked Document:', res);
+        //     setAttachment(res[0]);
+        // } catch (err) {
+        //     if (DocumentPicker.isCancel(err)) {
+        //         console.log('User cancelled the picker');
+        //     } else {
+        //         console.error('Picker Error:', err);
+        //     }
+        // }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const res = await Get_Send_Api(ApiUrl.ComplaintCategoryList, {});
+            console.log('Categories Response:', res);
+            if (res && !res.error) {
+                setCategoryList(res || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Categories Error:', error);
         }
-    ];
+    };
 
-    const handleSubmit = () => {
-        if (!category || !description) return;
+    const fetchComplaints = async () => {
+        try {
+            const res = await Get_Send_Api(ApiUrl.ComplaintList, {});
+            console.log('Complaints Response:', res);
+            if (res && !res.error) {
+                setComplaintList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Complaints Error:', error);
+        }
+    };
+
+    const getStatusStyles = (status: string) => {
+        switch (status?.toLowerCase()) {
+            case 'pending':
+                return { color: '#FBC02D', bg: '#FFFDE7' };
+            case 'resolved':
+                return { color: '#4CAF50', bg: '#E8F5E9' };
+            case 'in progress':
+                return { color: '#2196F3', bg: '#E3F2FD' };
+            default:
+                return { color: '#666666', bg: '#EEEEEE' };
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!categoryId || !description) {
+            Helper.showToast('Please select a category and enter description');
+            return;
+        }
+
         setIsSubmitting(true);
-        setTimeout(() => {
+        const studentId = parent?.data?.studentId || parent?.studentId;
+
+        const payload = {
+            categoryId: categoryId,
+            message: description
+        };
+
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.ComplaintAdd, payload);
+            console.log('Complaint Add Response:', res);
+            if (res && !res.error) {
+                Helper.showToast(res.message || 'Complaint submitted successfully');
+                const currentDate = new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                navigation.navigate('SubmitComplaint', {
+                    category: category,
+                    date: currentDate,
+                    res: res
+                });
+                setDescription('');
+                setCategory('');
+                setCategoryId('');
+            } else {
+                Helper.showToast(res?.message || 'Failed to submit complaint');
+            }
+        } catch (error) {
+            console.error('Submit Complaint Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
             setIsSubmitting(false);
-            const currentDate = new Date().toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
-            navigation.navigate('SubmitComplaint', {
-                category: category,
-                date: currentDate
-            });
-            setDescription('');
-            setCategory('');
-        }, 1000);
+        }
     }
 
     return (
@@ -126,26 +178,27 @@ const Complaint = () => {
                                     nestedScrollEnabled={true}
                                     bounces={false}
                                 >
-                                    {categories.map((item, index) => (
+                                    {categoryList.map((item, index) => (
                                         <TouchableOpacity
                                             key={index}
                                             style={[
                                                 styles.dropdownItem,
-                                                category === item && styles.activeDropdownItem,
-                                                index === categories.length - 1 && { borderBottomWidth: 0 }
+                                                categoryId === item._id && styles.activeDropdownItem,
+                                                index === categoryList.length - 1 && { borderBottomWidth: 0 }
                                             ]}
                                             onPress={() => {
-                                                setCategory(item);
+                                                setCategory(item.name);
+                                                setCategoryId(item._id);
                                                 setShowDropdown(false);
                                             }}
                                         >
                                             <Text style={[
                                                 styles.dropdownItemText,
-                                                category === item && styles.activeDropdownItemText
+                                                categoryId === item._id && styles.activeDropdownItemText
                                             ]}>
-                                                {item}
+                                                {item.name}
                                             </Text>
-                                            {category === item && <Text style={styles.checkIcon}>✓</Text>}
+                                            {categoryId === item._id && <Text style={styles.checkIcon}>✓</Text>}
                                         </TouchableOpacity>
                                     ))}
                                 </ScrollView>
@@ -165,20 +218,32 @@ const Complaint = () => {
                         onChangeText={setDescription}
                     />
 
-                    <TouchableOpacity style={styles.attachBtn}>
-                        <Text style={styles.attachIcon}>📎</Text>
-                        <Text style={styles.attachText}>Attach Photo/Document</Text>
+                    <TouchableOpacity
+                        style={[styles.attachBtn, attachment && { borderColor: Colors.primary, borderStyle: 'solid' }]}
+                        onPress={pickDocument}
+                    >
+                        <Text style={styles.attachIcon}>{attachment ? '📎' : '📎'}</Text>
+                        <Text style={[styles.attachText, attachment && { color: Colors.primary }]}>
+                            {attachment ? attachment.name : 'Attach Photo/Document'}
+                        </Text>
+                        {attachment && (
+                            <TouchableOpacity onPress={() => setAttachment(null)} style={{ padding: 5 }}>
+                                <Text style={{ color: '#DC2626', fontSize: 12 }}>Remove</Text>
+                            </TouchableOpacity>
+                        )}
                     </TouchableOpacity>
                     <Text style={styles.attachNote}>Optional: Max size 5MB (PDF, JPG, PNG)</Text>
 
                     <TouchableOpacity
-                        style={[styles.submitBtn, (!category || !description) && styles.disabledBtn]}
+                        style={[styles.submitBtn, (!categoryId || !description) && styles.disabledBtn, isSubmitting && { opacity: 0.7 }]}
                         onPress={handleSubmit}
-                        disabled={isSubmitting || !category || !description}
+                        disabled={isSubmitting || !categoryId || !description}
                     >
-                        <Text style={styles.submitBtnText}>
-                            {isSubmitting ? 'Submitting...' : 'Submit Complaint'}
-                        </Text>
+                        {isSubmitting ? (
+                            <ActivityIndicator color="#FFFFFF" />
+                        ) : (
+                            <Text style={styles.submitBtnText}>Submit Complaint</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
 
@@ -190,29 +255,37 @@ const Complaint = () => {
                     </TouchableOpacity>
                 </View>
 
-                {recentComplaints.map((item) => (
-                    <TouchableOpacity key={item.id} style={styles.complaintCard}>
-                        <View style={styles.complaintIconBox}>
-                            <Text style={styles.complaintIcon}>{item.icon}</Text>
-                        </View>
-                        <View style={styles.complaintInfo}>
-                            <View style={styles.complaintHeaderRow}>
-                                <Text style={styles.complaintTitle} numberOfLines={1}>{item.title}</Text>
-                                <View style={[styles.statusBadge, { backgroundColor: item.statusBg }]}>
-                                    <Text style={[styles.statusText, { color: item.statusColor }]}>{item.status}</Text>
-                                </View>
+                {complaintList.slice(0, 5).map((item) => {
+                    const statusStyles = getStatusStyles(item.status);
+                    return (
+                        <TouchableOpacity key={item._id} style={styles.complaintCard}>
+                            <View style={styles.complaintIconBox}>
+                                <Text style={styles.complaintIcon}>📋</Text>
                             </View>
-                            <Text style={styles.complaintMeta}>
-                                {item.category} • {item.date}
-                            </Text>
-                            {item.status === 'In Progress' && (
-                                <View style={styles.progressTrack}>
-                                    <View style={[styles.progressFill, { width: '60%' }]} />
+                            <View style={styles.complaintInfo}>
+                                <View style={styles.complaintHeaderRow}>
+                                    <Text style={styles.complaintTitle} numberOfLines={1}>{item.message}</Text>
+                                    <View style={[styles.statusBadge, { backgroundColor: statusStyles.bg }]}>
+                                        <Text style={[styles.statusText, { color: statusStyles.color }]}>
+                                            {item.status || 'Pending'}
+                                        </Text>
+                                    </View>
                                 </View>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-                ))}
+                                <Text style={styles.complaintMeta}>
+                                    {item.categoryName || 'Other'} • {moment(item.createdAt).format('MMM DD, YYYY')}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })}
+
+                {complaintList.length === 0 && (
+                    <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                        <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.lightGreyText }}>
+                            No complaints found.
+                        </Text>
+                    </View>
+                )}
 
                 {/* Trust Footer */}
                 <View style={styles.trustCard}>

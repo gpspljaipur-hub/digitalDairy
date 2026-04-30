@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    TouchableOpacity,
-    TextInput,
-    SafeAreaView,
-    StatusBar,
-} from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
+import moment from 'moment';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../comman/Header';
 import { Colors } from '../../comman/Colors';
@@ -19,11 +15,66 @@ import ScreenWrapper from '../../comman/ScreenWrapper';
 
 const LeaveApplication = () => {
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [reason, setReason] = useState('');
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [showEndPicker, setShowEndPicker] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [leaveList, setLeaveList] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetchLeaveHistory();
+    }, []);
+
+    const fetchLeaveHistory = async () => {
+        const studentId = parent?.data?.studentId || parent?.studentId;
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.LeaveList, { studentId });
+            console.log('Leave List Response:', res);
+            if (res && !res.error) {
+                setLeaveList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Leave History Error:', error);
+        }
+    };
+
+    const handleApplyLeave = async () => {
+        if (!reason.trim()) {
+            Helper.showToast('Please enter a reason for leave');
+            return;
+        }
+
+        setLoading(true);
+        const studentId = parent?.data?.studentId || parent?.studentId;
+
+        const payload = {
+            studentId: studentId,
+            startDate: moment(startDate).format('YYYY-MM-DD'),
+            endDate: moment(endDate).format('YYYY-MM-DD'),
+            message: reason
+        };
+
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.LeaveApply, payload);
+            console.log('Leave Apply Response:', res);
+            if (res && !res.error) {
+                Helper.showToast(res.message || 'Leave applied successfully');
+                setReason('');
+                fetchLeaveHistory(); // Refresh the list
+            } else {
+                Helper.showToast(res?.message || 'Failed to apply leave');
+            }
+        } catch (error) {
+            console.error('Apply Leave Error:', error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const formatDate = (date: Date) => {
         return date.toLocaleDateString('en-US', {
@@ -33,14 +84,7 @@ const LeaveApplication = () => {
         });
     };
 
-    const previousRequests = [
-        {
-            id: '1',
-            title: 'Family Wedding',
-            date: 'Oct 12 - Oct 14, 2023',
-            status: 'Approved',
-        },
-    ];
+
 
     return (
         <ScreenWrapper scroll={false}>
@@ -106,29 +150,67 @@ const LeaveApplication = () => {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.submitButton}
-                        onPress={() => navigation.navigate('LeaveSubmit')}>
-                        <Text style={styles.submitButtonText}>Submit Application</Text>
-                        <Text style={styles.submitIcon}>➤</Text>
+                    <TouchableOpacity
+                        style={[styles.submitButton, loading && { opacity: 0.7 }]}
+                        onPress={handleApplyLeave}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={Colors.white} />
+                        ) : (
+                            <>
+                                <Text style={styles.submitButtonText}>Submit Application</Text>
+                                <Text style={styles.submitIcon}>➤</Text>
+                            </>
+                        )}
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.previousSection}>
                     <Text style={styles.sectionTitle}>Previous Requests</Text>
-                    {previousRequests.map((request) => (
-                        <TouchableOpacity key={request.id} style={styles.requestCard}>
+                    {leaveList.length > 0 ? leaveList.map((request) => (
+                        <TouchableOpacity
+                            key={request._id}
+                            style={styles.requestCard}
+                            onPress={() => navigation.navigate('LeaveHistory', { leaveData: request })}
+                        >
                             <View style={styles.requestInfo}>
-                                <View style={styles.statusIconContainer}>
-                                    <Text style={styles.statusIcon}>✓</Text>
+                                <View style={[
+                                    styles.statusIconContainer,
+                                    { backgroundColor: request.status?.toLowerCase() === 'approved' ? '#E8F5E9' : request.status?.toLowerCase() === 'rejected' ? '#FFEBEE' : '#FFF3E0' }
+                                ]}>
+                                    <Text style={[
+                                        styles.statusIcon,
+                                        { color: request.status?.toLowerCase() === 'approved' ? '#4CAF50' : request.status?.toLowerCase() === 'rejected' ? '#F44336' : '#FF9800' }
+                                    ]}>
+                                        {request.status?.toLowerCase() === 'approved' ? '✓' : request.status?.toLowerCase() === 'rejected' ? '✕' : '⏳'}
+                                    </Text>
                                 </View>
                                 <View>
-                                    <Text style={styles.requestTitle}>{request.title}</Text>
-                                    <Text style={styles.requestDate}>{request.date}</Text>
+                                    <Text style={styles.requestTitle}>{request.message || 'Leave Request'}</Text>
+                                    <Text style={styles.requestDate}>
+                                        {moment(request.startDate).format('MMM DD')} - {moment(request.endDate).format('MMM DD, YYYY')}
+                                    </Text>
                                 </View>
                             </View>
-                            <Text style={styles.chevron}>›</Text>
+                            <View style={{ alignItems: 'flex-end' }}>
+                                <Text style={[
+                                    styles.statusText,
+                                    { color: request.status?.toLowerCase() === 'approved' ? '#4CAF50' : request.status?.toLowerCase() === 'rejected' ? '#F44336' : '#FF9800' }
+                                ]}>
+                                    {request.status}
+                                </Text>
+                                <Text style={styles.chevron}>›</Text>
+                            </View>
                         </TouchableOpacity>
-                    ))}
+                    )) : (
+                        <View style={{ alignItems: 'center', marginTop: 20 }}>
+                            <Text style={{ fontFamily: Fonts.Lexend_Medium, color: '#94A3B8' }}>No previous requests found</Text>
+                        </View>
+                    )}
+                    {leaveList.length === 0 && (
+                        <Text style={styles.noRequestText}>No previous leave requests found.</Text>
+                    )}
                 </View>
 
                 {/* Extra space at bottom */}
@@ -172,6 +254,13 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     sectionSubtitle: {
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Regular,
+        color: Colors.textSecondary,
+        lineHeight: 20,
+        marginBottom: 24,
+    },
+    statusText: {
         fontSize: 14,
         fontFamily: Fonts.Lexend_Regular,
         color: Colors.textSecondary,
@@ -325,6 +414,13 @@ const styles = StyleSheet.create({
     chevron: {
         fontSize: 24,
         color: Colors.border,
+    },
+    noRequestText: {
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Regular,
+        color: Colors.textSecondary,
+        marginTop: 20,
+        textAlign: 'center',
     },
 });
 

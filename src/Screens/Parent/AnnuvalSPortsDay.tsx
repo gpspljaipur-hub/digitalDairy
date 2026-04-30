@@ -7,8 +7,12 @@ import Fonts from '../../comman/fonts';
 import HWSize from '../../comman/HWSize';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import moment from 'moment';
 
-const AnnuvalSPortsDay = () => {
+const AnnuvalSPortsDay = ({ route }: any) => {
+    const notice = route.params?.notice;
+    console.log(notice);
+
     const navigation = useNavigation<any>();
 
     return (
@@ -34,10 +38,10 @@ const AnnuvalSPortsDay = () => {
                 {/* Event Card */}
                 <View style={styles.eventCard}>
                     <View style={styles.badge}>
-                        <Text style={styles.badgeText}>Upcoming Event</Text>
+                        <Text style={styles.badgeText}>Event</Text>
                     </View>
 
-                    <Text style={styles.eventTitle}>Annual Sports Day 2023</Text>
+                    <Text style={styles.eventTitle}>{'Notice'}</Text>
 
                     {/* Info Rows */}
                     <View style={styles.infoRow}>
@@ -45,8 +49,8 @@ const AnnuvalSPortsDay = () => {
                             <Text style={styles.icon}>📅</Text>
                         </View>
                         <View>
-                            <Text style={styles.infoText}>December 05, 2023</Text>
-                            <Text style={styles.subInfoText}>08:00 AM - 02:00 PM</Text>
+                            <Text style={styles.infoText}>{moment(notice.date).format('MMM DD, YYYY')}  {moment(notice.date).format('h:mm A')}</Text>
+                            <Text style={styles.subInfoText}>{moment(notice.date).format('h:mm A')} - {moment(notice.date).format('h:mm A')}</Text>
                         </View>
                     </View>
 
@@ -62,9 +66,9 @@ const AnnuvalSPortsDay = () => {
 
                     <View style={styles.divider} />
 
-                    <Text style={styles.sectionTitle}>About the Event</Text>
+                    <Text style={styles.sectionTitle}>{notice.title}</Text>
                     <Text style={styles.description}>
-                        Join us for a day of athletic excellence and school spirit! Students from all grades will compete in various track and field events. Please ensure students arrive in their physical education uniforms.
+                        {notice.message}
                     </Text>
 
                     <TouchableOpacity
