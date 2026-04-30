@@ -14,9 +14,9 @@ import Config from '../../Lib/ApiService/Config'
 import { useDispatch } from 'react-redux'
 
 const OTPVerification = ({ navigation, route }: any) => {
-    const { mobile, role, otp: receivedOtp } = route?.params || {};
+    const { phone, role, otp: receivedOtp } = route?.params || {};
     const dispatch = useDispatch();
-    console.log('=====>>>', route?.params)
+    console.log('=====>>>', route?.params.phone)
     const [otp, setOtp] = useState(['', '', '', '',])
     const [loading, setLoading] = useState(false)
     const inputRefs = useRef<(TextInput | null)[]>([null, null, null, null])
@@ -62,7 +62,7 @@ const OTPVerification = ({ navigation, route }: any) => {
 
         setLoading(true);
         try {
-            const res = await Auth_ApiRequest(ApiUrl.VerifyOtp, { phone: mobile, otp: enteredOtp, });
+            const res = await Auth_ApiRequest(ApiUrl.VerifyOtp, { phone: phone, otp: enteredOtp, });
             console.log('Verify OTP Response:', res);
 
             if (res && !res.error) {
@@ -70,7 +70,7 @@ const OTPVerification = ({ navigation, route }: any) => {
                 // const userData = res;
                 // dispatch(loginStudentSuccess(userData));
                 // dispatch(setUserType(role));
-                navigation.navigate('StudentRegister', { phone: mobile });
+                navigation.navigate('StudentRegister', { phone: phone });
             }
 
         } catch (error) {
