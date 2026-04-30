@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import ScreenWrapper from '../../comman/ScreenWrapper';
 import Header from '../../comman/Header';
@@ -11,17 +11,30 @@ import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
 import Config from '../../Lib/ApiService/Config';
 import { logout } from '../../Redux/Reducers/Userslice';
 import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Profile = () => {
     const navigation = useNavigation<any>();
     const dispatch = useDispatch<any>();
+    const [profileDetails, setProfileDetails] = useState<any>()
+    useEffect(() => {
+        const getRole = async () => {
+            const role = await AsyncStorageHelper.getData(Config.USER_DATA);
+            setProfileDetails(role)
+        };
+
+        getRole();
+    }, []);
 
     const menuItems = [
         {
             title: 'Personal Details',
             subtitle: 'Contact info, address, students',
             icon: '👤',
-            onPress: () => navigation.navigate('ParentDetails'),
+            onPress: () => navigation.navigate('ParentDetails', {
+                profileDetails
+            }),
             showChevron: true,
         },
         {
@@ -79,10 +92,10 @@ const Profile = () => {
                             <Text style={styles.editIcon}>✏️</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.userName}>Aravind Kumar</Text>
+                    <Text style={styles.userName}>{profileDetails?.studentFullName}</Text>
                     <View style={styles.roleRow}>
                         <Text style={styles.roleIcon}>👥</Text>
-                        <Text style={styles.roleText}>Parent (Grade 10-B)</Text>
+                        <Text style={styles.roleText}>{profileDetails?.classId?.name}</Text>
                     </View>
                 </View>
 
