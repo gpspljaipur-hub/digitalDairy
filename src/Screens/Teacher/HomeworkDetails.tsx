@@ -1,20 +1,58 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar, FlatList } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import Strings from '../../comman/String'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import Header from '../../comman/Header'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
 
 const HomeworkDetails = () => {
     const navigation = useNavigation<any>();
+    const route = useRoute<any>();
+    const { homeworkData } = route.params;
+    const [homeworkList, setHomeworkList] = useState<any>({});
 
+    console.log('homeworkData', homeworkData);
     const submissions = [
         { id: '1', name: 'Aditi Sharma', time: 'Today, 09:15 AM', status: 'Submitted', color: '#4ADE80', bgColor: '#E8F5E9', initials: 'AS' },
         { id: '2', name: 'Arjun Verma', time: 'Late submission', status: 'Late', color: '#EF4444', bgColor: '#FEE2E2', initials: 'AV' },
         { id: '3', name: 'Riya Kapoor', time: 'Not started', status: 'Pending', color: '#64748B', bgColor: '#F1F5F9', initials: 'RK' },
     ]
+
+    useEffect(() => {
+        if (homeworkData.classId) {
+            fetchHomeworkList(homeworkData.classId._id);
+        }
+    }, [homeworkData.classId]);
+
+    const fetchHomeworkList = async (classId: string) => {
+        console.log('fetchHomeworkList', classId);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.HomeworkList, { classId });
+            console.log('Homework List Response:', res);
+
+            if (res && !res.error) {
+                const list = Array.isArray(res.data) ? res.data : (Array.isArray(res) ? res : []);
+                const HomeWork = list.find((item: any) => item?._id === homeworkData?._id);
+                console.log('HomeWork Found:', HomeWork);
+                setHomeworkList(HomeWork || homeworkData);
+            }
+        } catch (error) {
+            console.error('Fetch Homework List Error:', error);
+        }
+    }
+
+    const formatDate = (date: any) => {
+        if (!date) return 'N/A';
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return 'N/A';
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    };
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -34,22 +72,22 @@ const HomeworkDetails = () => {
                 <View style={styles.infoCard}>
                     <View style={styles.cardTopRow}>
                         <View style={styles.gradeBadge}>
-                            <Text style={styles.gradeText}>Grade 10-B</Text>
+                            <Text style={styles.gradeText}>{homeworkList?.classId?.name} {homeworkList?.classId?.section} </Text>
                         </View>
                         <View style={styles.dateRow}>
                             <Text style={styles.calendarIcon}>📅</Text>
-                            <Text style={styles.dateText}>Due: Oct 30, 2023</Text>
+                            <Text style={styles.dateText}>Due: {formatDate(homeworkList?.date)}</Text>
                         </View>
                     </View>
-                    <Text style={styles.subjectText}>Mathematics</Text>
-                    <Text style={styles.topicText}>Quadratic Equations & Polynomials</Text>
+                    <Text style={styles.subjectText}>{homeworkList?.subjectId?.name}</Text>
+                    <Text style={styles.topicText}>{homeworkList?.message}</Text>
                 </View>
 
                 {/* Instructions Section */}
                 <Text style={styles.sectionTitle}>INSTRUCTIONS</Text>
                 <View style={styles.instructionCard}>
                     <Text style={styles.instructionText}>
-                        Complete all exercises from Chapter 4, Section 4.2 (Problems 1-15). Please show all step-by-step calculations for solving the quadratic formulas. Ensure your handwriting is legible and graphs are drawn using a ruler. Submit clear photos of your notebook pages.
+                        {homeworkList?.message}
                     </Text>
                 </View>
 
