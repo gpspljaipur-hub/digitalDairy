@@ -3,13 +3,14 @@ import React from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
-import Strings from '../../comman/String'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import { useNavigation } from '@react-navigation/native'
 
+import useStrings from '../../comman/useStrings'
+
 const OfflineMode = () => {
     const navigation = useNavigation<any>();
-    const lang = Strings.en;
+    const lang = useStrings();
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ActivityInd
 import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
-import Strings from '../../comman/String'
+
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux'
 import { loginParentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
 import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
+import useStrings from '../../comman/useStrings'
 
 const ParentRegister = ({ navigation, route }: any) => {
     const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const ParentRegister = ({ navigation, route }: any) => {
         phone
     } = route?.params || {};
 
+    const s = useStrings();
     const [fullName, setFullName] = useState('')
     const [mobile, setMobile] = useState(phone)
     const [relationship, setRelationship] = useState<any>(null)
@@ -34,7 +36,7 @@ const ParentRegister = ({ navigation, route }: any) => {
     const [loadingRelations, setLoadingRelations] = useState(false)
     const [isRegistering, setIsRegistering] = useState(false)
 
-    const s = Strings.en;
+ 
 
     useEffect(() => {
         fetchRelations()

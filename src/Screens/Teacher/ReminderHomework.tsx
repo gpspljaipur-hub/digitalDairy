@@ -5,8 +5,7 @@ import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import Strings from '../../comman/String'
-
+import useStrings from '../../comman/useStrings'
 
 interface Student {
     id: string;
@@ -16,8 +15,9 @@ interface Student {
 }
 
 const ReminderHomework = () => {
+    const Strings = useStrings();
     const navigation = useNavigation();
-    const [message, setMessage] = useState(Strings.en.defaultReminderMsg)
+    const [message, setMessage] = useState(Strings.defaultReminderMsg)
     const [students, setStudents] = useState<Student[]>([
         { id: '1', name: 'Arjun Verma', initials: 'AV', selected: true },
         { id: '2', name: 'Riya Kapoor', initials: 'RK', selected: true },
@@ -40,7 +40,7 @@ const ReminderHomework = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIconBtn}>
                     <Text style={styles.closeIcon}>✕</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{Strings.en.reminderHomeworkTitle}</Text>
+                <Text style={styles.headerTitle}>{Strings.reminderHomeworkTitle}</Text>
                 <TouchableOpacity style={styles.profileBtn}>
                     <View style={styles.avatarContainer}>
                         <Text style={styles.avatarEmoji}>👨‍🏫</Text>
@@ -53,22 +53,22 @@ const ReminderHomework = () => {
                 <View style={styles.activeSessionCard}>
                     <View style={styles.activeSessionHeader}>
                         <Text style={styles.megaphoneIcon}>📢</Text>
-                        <Text style={styles.activeSessionTitle}>{Strings.en.activeSession.toUpperCase()}</Text>
+                        <Text style={styles.activeSessionTitle}>{Strings.activeSession.toUpperCase()}</Text>
                     </View>
                     <Text style={styles.activeSessionMain}>
-                        {Strings.en.sendingReminderFor}
+                        {Strings.sendingReminderFor}
                         <Text style={styles.boldBlueText}>Mathematics (Grade 10-B)</Text>
                     </Text>
                     <Text style={styles.activeSessionSub}>
-                        {Strings.en.targetingStudents}<Text style={styles.boldText}>Quadratic Equations</Text>
+                        {Strings.targetingStudents}<Text style={styles.boldText}>Quadratic Equations</Text>
                     </Text>
                 </View>
 
                 {/* Pending Submissions Section */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{Strings.en.pendingSubmissions} (12)</Text>
+                    <Text style={styles.sectionTitle}>{Strings.pendingSubmissions} (12)</Text>
                     <TouchableOpacity onPress={selectAll}>
-                        <Text style={styles.selectAllText}>{Strings.en.selectAll}</Text>
+                        <Text style={styles.selectAllText}>{Strings.selectAll}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -93,13 +93,13 @@ const ReminderHomework = () => {
 
                 <TouchableOpacity style={styles.showMoreBtn} activeOpacity={0.6}>
                     <Text style={styles.showMoreText}>
-                        <Text style={styles.chevronIcon}>⌄</Text> {Strings.en.showMoreStudents.replace('{count}', '8')}
+                        <Text style={styles.chevronIcon}>⌄</Text> {Strings.showMoreStudents.replace('{count}', '8')}
                     </Text>
                 </TouchableOpacity>
 
                 {/* Reminder Message Section */}
                 <View style={styles.messageSection}>
-                    <Text style={styles.sectionTitle}>{Strings.en.reminderMessageLabel}</Text>
+                    <Text style={styles.sectionTitle}>{Strings.reminderMessageLabel}</Text>
                     <View style={styles.textAreaContainer}>
                         <TextInput
                             style={styles.textArea}
@@ -115,7 +115,7 @@ const ReminderHomework = () => {
                     </View>
                     <View style={styles.helperContainer}>
                         <Text style={styles.infoIcon}>ⓘ</Text>
-                        <Text style={styles.helperText}>{Strings.en.reminderMessageHelper}</Text>
+                        <Text style={styles.helperText}>{Strings.reminderMessageHelper}</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -124,7 +124,7 @@ const ReminderHomework = () => {
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.sendBtn} activeOpacity={0.8}>
                     <Text style={styles.sendBtnIcon}>➤</Text>
-                    <Text style={styles.sendBtnText}>{Strings.en.sendReminder}</Text>
+                    <Text style={styles.sendBtnText}>{Strings.sendReminder}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

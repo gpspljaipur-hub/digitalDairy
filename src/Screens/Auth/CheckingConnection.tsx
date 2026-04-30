@@ -5,14 +5,17 @@ import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import useStrings from '../../comman/useStrings'
+
 const CheckingConnection = () => {
+    const s = useStrings();
     const [progress, setProgress] = useState(0.65);
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
             <Header
-                title="School Portal"
+                title={s.schoolPortal}
                 showNotification={false}
                 rightIcon="🌐"
             />
@@ -32,9 +35,9 @@ const CheckingConnection = () => {
                     </View>
                 </View>
 
-                <Text style={styles.title}>Checking Connection...</Text>
+                <Text style={styles.title}>{s.checkingConnection}</Text>
                 <Text style={styles.subtitle}>
-                    Please wait while we try to reconnect to the school servers.
+                    {s.reconnectSubtitle}
                 </Text>
 
                 <View style={styles.progressSection}>
@@ -42,7 +45,7 @@ const CheckingConnection = () => {
                         <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
                     </View>
                     <View style={styles.progressTextRow}>
-                        <Text style={styles.statusText}>Establishing Handshake</Text>
+                        <Text style={styles.statusText}>{s.establishingHandshake}</Text>
                         <Text style={styles.percentageText}>{Math.round(progress * 100)}%</Text>
                     </View>
                 </View>
@@ -52,25 +55,25 @@ const CheckingConnection = () => {
                         <View style={styles.cardIconBox}>
                             <Text style={styles.cardEmoji}>📡</Text>
                         </View>
-                        <Text style={styles.cardLabel}>NODE</Text>
+                        <Text style={styles.cardLabel}>{s.node}</Text>
                         <Text style={styles.cardValue}>CAMPUS-GW-04</Text>
                     </View>
                     <View style={styles.infoCard}>
                         <View style={styles.cardIconBox}>
                             <Text style={styles.cardEmoji}>⏱️</Text>
                         </View>
-                        <Text style={styles.cardLabel}>LATENCY</Text>
-                        <Text style={styles.cardValue}>Searching...</Text>
+                        <Text style={styles.cardLabel}>{s.latency}</Text>
+                        <Text style={styles.cardValue}>{s.searching}</Text>
                     </View>
                 </View>
             </View>
 
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.cancelBtn}>
-                    <Text style={styles.cancelBtnText}>Cancel</Text>
+                    <Text style={styles.cancelBtnText}>{s.cancel}</Text>
                 </TouchableOpacity>
                 <Text style={styles.footerNote}>
-                    If this takes longer than 30 seconds, please check your device's WiFi settings.
+                    {s.wifiSettingsNote}
                 </Text>
             </View>
         </SafeAreaView>

@@ -3,12 +3,10 @@ import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import StringsRaw from '../../comman/String'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import ScreenWrapper from '../../comman/ScreenWrapper'
-
-const Strings = StringsRaw.en
+import useStrings from '../../comman/useStrings'
 
 const STUDENTS_MARKS = [
     { id: '01', name: 'Alex Johnson', rollNo: '1024', marks: '85', status: 'Pass', initial: 'AJ' },
@@ -26,6 +24,7 @@ const STUDENTS_MARKS = [
 ]
 
 const ViewMarkSheet = () => {
+    const Strings = useStrings()
     const navigation = useNavigation();
     const [searchQuery, setSearchQuery] = useState('');
 

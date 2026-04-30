@@ -3,16 +3,16 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import StringsRaw from '../../comman/String'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import ScreenWrapper from '../../comman/ScreenWrapper'
+import useStrings from '../../comman/useStrings'
 
-const Strings = StringsRaw.en
+
 
 const SaveMarks = () => {
     const navigation = useNavigation();
-
+    const Strings = useStrings()
     return (
         <ScreenWrapper style={styles.container} useScrollView={true}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
@@ -42,7 +42,7 @@ const SaveMarks = () => {
                         <Text style={styles.summaryHeaderText}>{Strings.recordSummary}</Text>
                     </View>
                     <View style={styles.divider} />
-                    
+
                     <View style={styles.summaryGrid}>
                         <View style={styles.summaryItem}>
                             <Text style={styles.label}>{Strings.subjectLabel.toUpperCase()}</Text>
@@ -67,7 +67,7 @@ const SaveMarks = () => {
                 </View>
 
                 {/* Action Buttons */}
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.primaryButton}
                     onPress={() => navigation.navigate('Dashboard' as never)}
                 >
@@ -76,7 +76,7 @@ const SaveMarks = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.secondaryButton}
-                onPress={() => navigation.navigate('ViewMarkSheet')}>
+                    onPress={() => navigation.navigate('ViewMarkSheet')}>
                     <Text style={styles.buttonIconSecondary}>👁</Text>
                     <Text style={styles.secondaryButtonText}>{Strings.viewMarksheet}</Text>
                 </TouchableOpacity>

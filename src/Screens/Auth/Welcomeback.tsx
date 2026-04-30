@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native'
 import React, { useState } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
-import Strings from '../../comman/String'
+
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
@@ -15,7 +15,10 @@ import { useDispatch } from 'react-redux'
 import { loginTeacherSuccess, setUserType } from '../../Redux/Reducers/Userslice'
 import validate from '../../Lib/HelperFiles/validation/validate_wrapper'
 
+import useStrings from '../../comman/useStrings'
+
 const Welcomeback = ({ navigation }: any) => {
+    const s = useStrings();
     const [mobile, setMobile] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -101,8 +104,6 @@ const Welcomeback = ({ navigation }: any) => {
             setLoading(false);
         }
     };
-
-    const s = Strings.en;
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>

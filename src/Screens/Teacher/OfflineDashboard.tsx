@@ -1,14 +1,12 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar } from 'react-native'
 import React from 'react'
 import { Colors } from '../../comman/Colors'
-import StringsRaw from '../../comman/String'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import BottomTab from '../../Component/Bottom'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const Strings = StringsRaw.en
 
 const OfflineDashboard = () => {
     return (

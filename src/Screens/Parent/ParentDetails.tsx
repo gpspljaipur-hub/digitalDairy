@@ -6,6 +6,7 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const ParentDetails = ({ route }: any) => {
     const navigation = useNavigation<any>();
@@ -15,7 +16,7 @@ const ParentDetails = ({ route }: any) => {
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Personal Details"
+                title={strings.personalDetails}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -41,7 +42,7 @@ const ParentDetails = ({ route }: any) => {
                 </View>
 
                 {/* Contact Information */}
-                <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
+                <Text style={styles.sectionTitle}>{strings.contactInformation}</Text>
                 <View style={styles.infoCard}>
                     <View style={styles.infoItem}>
                         <View style={styles.iconBox}>
@@ -68,14 +69,14 @@ const ParentDetails = ({ route }: any) => {
                             <Text style={styles.icon}>📍</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Address</Text>
+                            <Text style={styles.infoLabel}>{strings.address}</Text>
                             <Text style={styles.infoValue}>#42, Garden View Residency, Bangalore North, 560024</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Linked Students */}
-                <Text style={styles.sectionTitle}>LINKED STUDENTS</Text>
+                <Text style={styles.sectionTitle}>{strings.linkedStudents}</Text>
                 <TouchableOpacity style={styles.studentCard}>
                     <View style={styles.studentInfo}>
                         <View style={styles.studentImagePlaceholder}>
@@ -94,12 +95,12 @@ const ParentDetails = ({ route }: any) => {
                     onPress={() => navigation.navigate('EditProfile')}
                 >
                     <Text style={styles.editBtnIcon}>✏️</Text>
-                    <Text style={styles.editBtnText}>Edit Details</Text>
+                    <Text style={styles.editBtnText}>{strings.editDetails}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.signOutBtn} onPress={() => navigation.navigate('Splash')}>
                     <Text style={styles.signOutIcon}>🚪</Text>
-                    <Text style={styles.signOutText}>Sign Out</Text>
+                    <Text style={styles.signOutText}>{strings.signOut}</Text>
                 </TouchableOpacity>
 
                 {/* Space for bottom nav */}

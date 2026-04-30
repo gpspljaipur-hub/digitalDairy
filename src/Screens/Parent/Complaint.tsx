@@ -14,8 +14,10 @@ import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import moment from 'moment'
+import useStrings from '../../comman/useStrings'
 
 const Complaint = () => {
+    const strings = useStrings()
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     const [category, setCategory] = useState('');
@@ -131,7 +133,7 @@ const Complaint = () => {
     return (
         <ScreenWrapper scroll={!showDropdown} style={styles.mainContainer}>
             <Header
-                title="School Support"
+                title={strings.schoolSupport}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -141,15 +143,15 @@ const Complaint = () => {
             <View style={styles.container}>
                 {/* Intro Section */}
                 <View style={styles.introSection}>
-                    <Text style={styles.title}>Report a Concern</Text>
+                    <Text style={styles.title}>{strings.reportConcern}</Text>
                     <Text style={styles.subtitle}>
-                        Your feedback helps us maintain a safe and productive learning environment for everyone.
+                        {strings.feedbackSubtitle}
                     </Text>
                 </View>
 
                 {/* Form Card */}
                 <View style={styles.formCard}>
-                    <Text style={styles.label}>Complaint Category</Text>
+                    <Text style={styles.label}>{strings.complaintSubject}</Text>
                     <View style={styles.dropdownContainer}>
                         <TouchableOpacity
                             style={[
@@ -163,7 +165,7 @@ const Complaint = () => {
                                 styles.dropdownText,
                                 !category && { color: Colors.lightGreyText }
                             ]}>
-                                {category || 'Select a category'}
+                                {category || strings.selectCategoryPlaceholder}
                             </Text>
                             <Text style={[
                                 styles.dropdownIcon,
@@ -206,10 +208,10 @@ const Complaint = () => {
                         )}
                     </View>
 
-                    <Text style={styles.label}>Details of the Complaint</Text>
+                    <Text style={styles.label}>{strings.detailsOfComplaint}</Text>
                     <TextInput
                         style={styles.textArea}
-                        placeholder="Please describe the issue in detail..."
+                        placeholder={strings.describeIssuePlaceholder}
                         placeholderTextColor={Colors.lightGreyText}
                         multiline
                         numberOfLines={3}
@@ -232,7 +234,7 @@ const Complaint = () => {
                             </TouchableOpacity>
                         )}
                     </TouchableOpacity>
-                    <Text style={styles.attachNote}>Optional: Max size 5MB (PDF, JPG, PNG)</Text>
+                    <Text style={styles.attachNote}>{strings.optionalMaxSize}</Text>
 
                     <TouchableOpacity
                         style={[styles.submitBtn, (!categoryId || !description) && styles.disabledBtn, isSubmitting && { opacity: 0.7 }]}
@@ -242,16 +244,16 @@ const Complaint = () => {
                         {isSubmitting ? (
                             <ActivityIndicator color="#FFFFFF" />
                         ) : (
-                            <Text style={styles.submitBtnText}>Submit Complaint</Text>
+                            <Text style={styles.submitBtnText}>{strings.submitComplaint}</Text>
                         )}
                     </TouchableOpacity>
                 </View>
 
                 {/* Recent Complaints Section */}
                 <View style={styles.recentHeader}>
-                    <Text style={styles.sectionTitle}>My Recent Complaints</Text>
+                    <Text style={styles.sectionTitle}>{strings.myRecentComplaints}</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('ViewMyComplaint')}>
-                        <Text style={styles.viewAllText}>View All</Text>
+                        <Text style={styles.viewAllText}>{strings.viewAll}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -289,9 +291,9 @@ const Complaint = () => {
 
                 {/* Trust Footer */}
                 <View style={styles.trustCard}>
-                    <Text style={styles.trustTitle}>Commitment to Service</Text>
+                    <Text style={styles.trustTitle}>{strings.commitmentToService}</Text>
                     <Text style={styles.trustDesc}>
-                        Every report is reviewed by the school administration within 48 business hours. We value your privacy and trust.
+                        {strings.trustDescription}
                     </Text>
                 </View>
 

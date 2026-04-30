@@ -12,8 +12,10 @@ import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import ParentBottom from '../../Component/ParentBottom'
 import moment from 'moment'
+import useStrings from '../../comman/useStrings'
 
 const Homework_Screen = () => {
+    const strings = useStrings()
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     console.log('🚀 ~ Homework_Screen ~ parent:', parent)
@@ -79,119 +81,119 @@ const Homework_Screen = () => {
 
             <View style={styles.dateContainer}>
                 <View>
-                    <Text style={styles.dateLabel}>ASSIGNED</Text>
+                    <Text style={styles.dateLabel}>{strings.assignedLabel}</Text>
                     <Text style={styles.dateValue}>{moment(item.createdAt).format('DD-MM-YYYY')}</Text>
-                </View>
+                </View >
                 <View>
-                    <Text style={styles.dateLabel}>DUE DATE</Text>
+                    <Text style={styles.dateLabel}>{strings.dueDateLabel}</Text>
                     <Text style={[styles.dateValue, { color: '#DC2626', fontFamily: Fonts.LexendBold }]}>{moment(item.date).format('DD-MM-YYYY')}</Text>
-                </View>
-            </View>
+    </View>
+            </View >
 
-            <View style={styles.cardFooter}>
-                {/* <View style={styles.teacherInfo}>
+    <View style={styles.cardFooter}>
+        {/* <View style={styles.teacherInfo}>
                     <View style={styles.teacherAvatarBox}>
                         <Text style={styles.teacherAvatar}>{item.teacherAvatar}</Text>
                     </View>
                     <Text style={styles.teacherName}>{item.teacher}</Text>
                 </View> */}
-                <TouchableOpacity style={[
-                    styles.actionButton,
-                    { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
-                ]}>
-                    <Text style={[
-                        styles.actionButtonText,
-                        { color: item.type === 'submission' ? Colors.primary : Colors.white }
-                    ]}>
-                        {item.type === 'submission' ? 'View Submission' : 'View Details'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        <TouchableOpacity style={[
+            styles.actionButton,
+            { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
+        ]}>
+            <Text style={[
+                styles.actionButtonText,
+                { color: item.type === 'submission' ? Colors.primary : Colors.white }
+            ]}>
+                {item.type === 'submission' ? strings.viewSubmission : strings.viewDetails}
+            </Text>
+        </TouchableOpacity>
+    </View>
+        </View >
     );
 
-    return (
-        <ScreenWrapper scroll={false}>
-            <Header
-                title="Homework"
-                showBack={true}
-                onBack={() => navigation.goBack()}
-                showProfile={false}
-                showNotification={false}
-            />
+return (
+    <ScreenWrapper scroll={false}>
+        <Header
+            title={strings.homeworkTitle}
+            showBack={true}
+            onBack={() => navigation.goBack()}
+            showProfile={false}
+            showNotification={false}
+        />
 
-            <View style={styles.container}>
-                {/* Categories Filter */}
-                <View style={styles.categoryWrapper}>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={styles.categoryList}
-                    >
-                        {categories.map((cat) => (
-                            <TouchableOpacity
-                                key={cat}
-                                style={[
-                                    styles.categoryItem,
-                                    selectedCategory === cat && styles.categoryItemActive
-                                ]}
-                                onPress={() => setSelectedCategory(cat)}
-                            >
-                                <Text style={[
-                                    styles.categoryText,
-                                    selectedCategory === cat && styles.categoryTextActive
-                                ]}>
-                                    {cat}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
+        <View style={styles.container}>
+            {/* Categories Filter */}
+            <View style={styles.categoryWrapper}>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoryList}
+                >
+                    {categories.map((cat) => (
+                        <TouchableOpacity
+                            key={cat}
+                            style={[
+                                styles.categoryItem,
+                                selectedCategory === cat && styles.categoryItemActive
+                            ]}
+                            onPress={() => setSelectedCategory(cat)}
+                        >
+                            <Text style={[
+                                styles.categoryText,
+                                selectedCategory === cat && styles.categoryTextActive
+                            ]}>
+                                {cat}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                {/* Info Banner */}
+                <View style={styles.infoBanner}>
+                    <View style={styles.infoIconBox}>
+                        <Text style={styles.infoIcon}>ℹ️</Text>
+                    </View>
+                    <Text style={styles.infoText}>{filteredHomework.length}{strings.assignmentsDue}.</Text>
                 </View>
 
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.scrollContent}
-                >
-                    {/* Info Banner */}
-                    <View style={styles.infoBanner}>
-                        <View style={styles.infoIconBox}>
-                            <Text style={styles.infoIcon}>ℹ️</Text>
-                        </View>
-                        <Text style={styles.infoText}>{filteredHomework.length} assignments found.</Text>
+                {loading ? (
+                    <View style={{ marginTop: 50 }}>
+                        <ActivityIndicator size="large" color={Colors.primary} />
                     </View>
-
-                    {loading ? (
-                        <View style={{ marginTop: 50 }}>
-                            <ActivityIndicator size="large" color={Colors.primary} />
-                        </View>
+                ) : (
+                    filteredHomework.length > 0 ? (
+                        filteredHomework.map(renderHomeworkCard)
                     ) : (
-                        filteredHomework.length > 0 ? (
-                            filteredHomework.map(renderHomeworkCard)
-                        ) : (
-                            <View style={{ alignItems: 'center', marginTop: 50 }}>
-                                <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.textSecondary }}>No homework found for this category.</Text>
-                            </View>
-                        )
-                    )}
+                        <View style={{ alignItems: 'center', marginTop: 50 }}>
+                            <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.textSecondary }}>No homework found for this category.</Text>
+                        </View>
+                    )
+                )}
 
-                    {/* Guidelines Card */}
-                    {/* <TouchableOpacity style={styles.guidelinesCard}>
+                {/* Guidelines Card */}
+                {/* <TouchableOpacity style={styles.guidelinesCard}>
                         <View style={styles.guidelinesIconBox}>
                             <Text style={styles.guidelinesIcon}>📄</Text>
                         </View>
                         <View style={styles.guidelinesContent}>
-                            <Text style={styles.guidelinesTitle}>Homework Guidelines.pdf</Text>
+                            <Text style={styles.guidelinesTitle}>{strings.homeworkGuidelines}.pdf</Text>
                             <Text style={styles.guidelinesInfo}>1.2 MB • Updated yesterday</Text>
                         </View>
                         <Text style={styles.downloadIcon}>⬇️</Text>
                     </TouchableOpacity> */}
 
-                    {/* Bottom Spacing */}
-                    <View style={{ height: 100 }} />
-                </ScrollView>
-            </View>
-        </ScreenWrapper>
-    )
+                {/* Bottom Spacing */}
+                <View style={{ height: 100 }} />
+            </ScrollView>
+        </View>
+    </ScreenWrapper>
+)
 }
 
 export default Homework_Screen

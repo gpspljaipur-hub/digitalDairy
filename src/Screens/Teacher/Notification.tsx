@@ -17,6 +17,8 @@ import { useDispatch } from 'react-redux'
 import { logout } from '../../Redux/Reducers/Userslice'
 import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
+import useStrings from '../../comman/useStrings'
+
 const NOTIFICATIONS = [
     {
         id: '1',
@@ -87,6 +89,7 @@ const NotificationCard = ({ item }: { item: any }) => {
 
 const Notification = ({ navigation }: any) => {
     const dispatch = useDispatch();
+    const Strings = useStrings();
 
     const handleLogout = async () => {
         await AsyncStorageHelper.removeItemValue(Config.USER_DATA);
@@ -105,7 +108,7 @@ const Notification = ({ navigation }: any) => {
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                         <Text style={styles.backIcon}>←</Text>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Notifications</Text>
+                    <Text style={styles.headerTitle}>{Strings.notificationsTitle}</Text>
                 </View>
                 <TouchableOpacity style={styles.moreBtn}>
                     <Text style={styles.moreIcon}>⋮</Text>
@@ -114,9 +117,9 @@ const Notification = ({ navigation }: any) => {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Recent Updates</Text>
+                    <Text style={styles.sectionTitle}>{Strings.recentUpdates}</Text>
                     <TouchableOpacity>
-                        <Text style={styles.markAllRead}>Mark all read</Text>
+                        <Text style={styles.markAllRead}>{Strings.markAllRead}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -124,7 +127,7 @@ const Notification = ({ navigation }: any) => {
                     <NotificationCard key={item.id} item={item} />
                 ))}
 
-                <Text style={styles.earlierTitle}>EARLIER</Text>
+                <Text style={styles.earlierTitle}>{Strings.earlier}</Text>
 
                 {NOTIFICATIONS.slice(2, 4).map(item => (
                     <NotificationCard key={item.id} item={item} />
@@ -134,15 +137,15 @@ const Notification = ({ navigation }: any) => {
                     <View style={styles.bannerBackground}>
                         <View style={styles.bannerOverlay}>
                             <View style={styles.tagContainer}>
-                                <Text style={styles.tagText}>SCHOOL NEWS</Text>
+                                <Text style={styles.tagText}>{Strings.schoolNews}</Text>
                             </View>
-                            <Text style={styles.bannerTitle}>Admission 2024-25</Text>
-                            <Text style={styles.bannerSubtitle}>Sibling priority applications are now open until next month.</Text>
+                            <Text style={styles.bannerTitle}>{Strings.admissionTitle}</Text>
+                            <Text style={styles.bannerSubtitle}>{Strings.admissionDesc}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>Logout</Text>
+                    <Text style={styles.logoutText}>{Strings.logoutLabel}</Text>
                 </TouchableOpacity>
 
             </ScrollView>
@@ -205,7 +208,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     sectionTitle: {
-        fontSize: 24,
+        fontSize: 20,
         fontFamily: Fonts.LexendBold,
         color: Colors.nearBlack,
     },

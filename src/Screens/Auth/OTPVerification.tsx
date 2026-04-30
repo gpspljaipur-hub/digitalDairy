@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-nativ
 import React, { useState, useRef } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
-import Strings from '../../comman/String'
+
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
@@ -13,7 +13,10 @@ import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
 import { useDispatch } from 'react-redux'
 
+import useStrings from '../../comman/useStrings'
+
 const OTPVerification = ({ navigation, route }: any) => {
+    const s = useStrings();
     const { phone, role, otp: receivedOtp } = route?.params || {};
     const dispatch = useDispatch();
     console.log('=====>>>', route?.params.phone)
@@ -27,8 +30,6 @@ const OTPVerification = ({ navigation, route }: any) => {
             setOtp(otpArray);
         }
     }, [receivedOtp]);
-
-    const s = Strings.en;
 
     const handleOtpChange = (value: string, index: number) => {
         if (value.length > 1) {

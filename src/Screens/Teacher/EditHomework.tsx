@@ -1,15 +1,14 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image, StatusBar, KeyboardAvoidingView, Platform } from 'react-native'
 import React, { useState } from 'react'
-import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
-import StringsRaw from '../../comman/String'
+import useStrings from '../../comman/useStrings'
 import DatePicker from '../../comman/DatePicker'
 
-const Strings = StringsRaw.en
 
 const EditHomework = () => {
+    const Strings = useStrings()
     const navigation = useNavigation<any>();
     const [homeworkDetails, setHomeworkDetails] = useState('Type your message here...')
     const [dueDate, setDueDate] = useState(new Date())
@@ -34,7 +33,7 @@ const EditHomework = () => {
                 <TouchableOpacity style={styles.menuBtn}>
                     <Text style={styles.menuIcon}>☰</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>TEACHER PORTAL</Text>
+                <Text style={styles.headerTitle}>{Strings.TEACHER_PORTAL}</Text>
                 <TouchableOpacity style={styles.profileBtn}>
                     <Image
                         source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}

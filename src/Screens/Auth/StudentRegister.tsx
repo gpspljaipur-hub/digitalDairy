@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ScrollView,
 import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
-import Strings from '../../comman/String'
+
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
@@ -10,24 +10,22 @@ import FontsSize from '../../comman/FontsSize'
 import { Get_Send_Api, Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
-
+import useStrings from '../../comman/useStrings'
 const StudentRegister = ({ navigation, route }: any) => {
     const mobile = route?.params?.phone || '';
     const [selectedStudent, setSelectedStudent] = useState<any>(null)
     const [isStudentPickerVisible, setIsStudentPickerVisible] = useState(false)
     const [selectedClass, setSelectedClass] = useState<any>(null)
+    const s = useStrings();
     const [isClassPickerVisible, setIsClassPickerVisible] = useState(false)
     const [selectedSchool, setSelectedSchool] = useState<any>(null)
     const [isSchoolPickerVisible, setIsSchoolPickerVisible] = useState(false)
-
     const [classList, setClassList] = useState<any[]>([])
     const [loadingClasses, setLoadingClasses] = useState(false)
     const [studentList, setStudentList] = useState<any[]>([])
     const [loadingStudents, setLoadingStudents] = useState(false)
     const [schoolList, setSchoolList] = useState<any[]>([])
     const [loadingSchools, setLoadingSchools] = useState(false)
-
-    const s = Strings.en;
 
     useEffect(() => {
         fetchClasses()

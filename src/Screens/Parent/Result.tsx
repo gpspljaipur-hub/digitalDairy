@@ -8,11 +8,13 @@ import { useNavigation } from '@react-navigation/native'
 import { useRef, useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
+import useStrings from '../../comman/useStrings'
 import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 
 const Result = () => {
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
+    const strings = useStrings()
     const progressAnim = useRef(new Animated.Value(0)).current;
 
     const [marksList, setMarksList] = useState<any[]>([]);
@@ -65,7 +67,7 @@ const Result = () => {
     return (
         <ScreenWrapper scroll={false} style={{ backgroundColor: Colors.backgroundColor }}>
             <Header
-                title="Exam Results"
+                title={strings.examResult}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -87,7 +89,7 @@ const Result = () => {
 
                     <View style={styles.scoreContainer}>
                         <Text style={styles.scoreText}>{averageScore}%</Text>
-                        <Text style={styles.scoreLabel}>Average Score</Text>
+                        <Text style={styles.scoreLabel}>{strings.totalScore}</Text>
                     </View>
 
                     <View style={styles.progressContainer}>
@@ -112,7 +114,7 @@ const Result = () => {
                 </View>
 
                 {/* Subject-wise Marks Section */}
-                <Text style={styles.sectionTitle}>Subject-wise Marks</Text>
+                <Text style={styles.sectionTitle}>{strings.subjectWiseMarks}</Text>
 
                 {loading ? (
                     <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 20 }} />
@@ -147,8 +149,8 @@ const Result = () => {
                         <Text style={styles.downloadIcon}>📄</Text>
                     </View>
                     <View style={styles.downloadInfo}>
-                        <Text style={styles.downloadTitle}>Detailed Report Card</Text>
-                        <Text style={styles.downloadSubtitle}>Download as PDF</Text>
+                        <Text style={styles.downloadTitle}>{strings.detailedReportCard}</Text>
+                        <Text style={styles.downloadSubtitle}>{strings.downloadAsPDF}</Text>
                     </View>
                     <View style={styles.downloadBtn}>
                         <Text style={styles.downloadBtnIcon}>📥</Text>

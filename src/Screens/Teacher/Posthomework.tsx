@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar, ActivityIndicator } from 'react-native'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import StringsRaw from '../../comman/String'
+import useStrings from '../../comman/useStrings'
 import HWSize from '../../comman/HWSize'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation, useRoute } from '@react-navigation/native'
@@ -10,9 +10,9 @@ import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
 
-const Strings = StringsRaw.en
 
 const PostHomework = () => {
+    const Strings = useStrings()
     const navigation = useNavigation<any>();
     const route = useRoute<any>();
     const homework = route.params?.res;

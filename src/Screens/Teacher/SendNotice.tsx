@@ -4,9 +4,11 @@ import ScreenWrapper from '../../comman/ScreenWrapper'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import { useNavigation } from '@react-navigation/native'
+import useStrings from '../../comman/useStrings'
 
 const SendNotice = () => {
     const navigation = useNavigation<any>();
+    const Strings = useStrings();
 
     return (
         <ScreenWrapper style={styles.container}>
@@ -15,7 +17,7 @@ const SendNotice = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Text style={styles.backIcon}>←</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Notice Sent</Text>
+                <Text style={styles.headerTitle}>{Strings.noticeSent}</Text>
             </View>
 
             <View style={styles.content}>
@@ -26,9 +28,9 @@ const SendNotice = () => {
                             <Text style={styles.checkIcon}>✓</Text>
                         </View>
                     </View>
-                    <Text style={styles.successTitle}>Notice Sent Successfully</Text>
+                    <Text style={styles.successTitle}>{Strings.noticeSentSuccess}</Text>
                     <Text style={styles.successSubtitle}>
-                        Your notice has been broadcasted to the selected classes and parents have been notified.
+                        {Strings.noticeBroadcastedDesc}
                     </Text>
                 </View>
 
@@ -36,23 +38,23 @@ const SendNotice = () => {
                 <View style={styles.summaryCard}>
                     <View style={styles.summaryHeader}>
                         <Text style={styles.summaryIcon}>📄</Text>
-                        <Text style={styles.summaryHeaderText}>Notice Summary</Text>
+                        <Text style={styles.summaryHeaderText}>{Strings.noticeSummary}</Text>
                     </View>
 
                     <View style={styles.summaryContent}>
-                        <Text style={styles.label}>Title</Text>
+                        <Text style={styles.label}>{Strings.noticeTitleLabel}</Text>
                         <Text style={styles.noticeTitle}>Annual Sports Day Postponed</Text>
 
                         <View style={styles.summaryFooter}>
                             <View style={styles.footerCol}>
-                                <Text style={styles.label}>Classes</Text>
+                                <Text style={styles.label}>{Strings.classesLabel}</Text>
                                 <View style={styles.chipsRow}>
                                     <View style={styles.chip}><Text style={styles.chipText}>Grade 10-A</Text></View>
                                     <View style={styles.chip}><Text style={styles.chipText}>Grade 10-B</Text></View>
                                 </View>
                             </View>
                             <View style={styles.footerColRight}>
-                                <Text style={styles.label}>Date</Text>
+                                <Text style={styles.label}>{Strings.dateLabel}</Text>
                                 <Text style={styles.dateText}>Oct 27, 2023</Text>
                             </View>
                         </View>
@@ -74,7 +76,7 @@ const SendNotice = () => {
                     onPress={() => navigation.navigate('Dashboard')}
                     activeOpacity={0.8}
                 >
-                    <Text style={styles.primaryBtnText}>Back to Dashboard</Text>
+                    <Text style={styles.primaryBtnText}>{Strings.backToDashboard}</Text>
                     <Text style={styles.btnIcon}>⊞</Text>
                 </TouchableOpacity>
 
@@ -83,7 +85,7 @@ const SendNotice = () => {
                     activeOpacity={0.8}
                     onPress={() => navigation.navigate('ViewAllNotice')}
                 >
-                    <Text style={styles.secondaryBtnText}>View All Notices</Text>
+                    <Text style={styles.secondaryBtnText}>{Strings.viewAllNotices}</Text>
                     <Text style={styles.btnIconSec}>📋</Text>
                 </TouchableOpacity>
             </View>
