@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,7 +8,12 @@ import {
     TextInput,
     StatusBar,
     ScrollView,
+    ActivityIndicator
 } from 'react-native';
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import moment from 'moment'
 import { useNavigation } from '@react-navigation/native';
 import ScreenWrapper from '../../comman/ScreenWrapper';
 import Header from '../../comman/Header';
@@ -21,43 +26,34 @@ const NoticeScreen = () => {
     const navigation = useNavigation<any>();
     const [searchQuery, setSearchQuery] = useState('');
 
-    const notices = [
-        {
-            id: '1',
-            type: 'URGENT',
-            title: 'Winter Vacation Announcement',
-            description: 'The school will remain closed for winter break from Dec 24 to Jan 05. Classes will resume on Jan 08, 2024.',
-            date: 'Dec 20, 2023',
-            isUrgent: true,
-            screen: 'WinterVacation',
+    const { parent } = useSelector((state: any) => state.user);
+    const [noticeList, setNoticeList] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
-        },
-        {
-            id: '2',
-            type: 'EVENT',
-            title: 'Annual Sports Day 2023',
-            description: 'Join us for a day of athletic excellence and school spirit! Students from all grades will compete in various track and field events.',
-            date: 'Dec 05, 2023',
-            screen: 'AnnuvalSPortsDay',
-            actionLabel: 'View Details',
-        },
-        {
-            id: '3',
-            type: 'ACADEMIC',
-            title: 'Half-Yearly Examination Results',
-            description: 'Results for Grades 6 to 12 have been uploaded to the portal. Parents can also collect physical marksheets from school.',
-            date: 'Oct 18, 2023',
-            actionLabel: 'View Results',
-        },
-        {
-            id: '4',
-            type: 'FEES',
-            title: 'Quarter 3 Fee Submission',
-            description: 'The last date for Quarter 3 fee payment is Oct 31, 2023. Late fees will apply after the deadline.',
-            date: 'Oct 15, 2023',
-            attachment: 'Fee_Structure.pdf',
-        },
-    ];
+    useEffect(() => {
+        fetchNotices();
+    }, []);
+
+    const fetchNotices = async () => {
+        setLoading(true);
+        const classId = parent?.classId?._id;
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.NoticeList, { classId });
+            console.log('Notice List Response:', res);
+            if (res && !res.error) {
+                setNoticeList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Notice Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredNotices = noticeList.filter(notice =>
+        notice.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        notice.message?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const getBadgeColor = (type: string) => {
         switch (type) {
@@ -78,7 +74,8 @@ const NoticeScreen = () => {
     };
 
     const renderNoticeItem = ({ item }: { item: any }) => {
-        if (item.isUrgent) {
+        const isUrgent = item.type === 'URGENT' || item.isUrgent;
+        if (isUrgent) {
             return (
                 <TouchableOpacity
                     style={styles.urgentCard}
@@ -89,9 +86,9 @@ const NoticeScreen = () => {
                         <Text style={styles.urgentLabel}>URGENT NOTICE</Text>
                     </View>
                     <Text style={styles.urgentTitle}>{item.title}</Text>
-                    <Text style={styles.urgentDescription}>{item.description}</Text>
+                    <Text style={styles.urgentDescription}>{item.message}</Text>
                     <View style={styles.urgentFooter}>
-                        <Text style={styles.urgentDate}>{item.date}</Text>
+                        <Text style={styles.urgentDate}>{moment(item.date).format('MMM DD, YYYY')}</Text>
                         <TouchableOpacity
                             style={styles.readMoreBtn}
                             onPress={() => item.screen && navigation.navigate(item.screen)}
@@ -110,13 +107,13 @@ const NoticeScreen = () => {
             >
                 <View style={styles.cardHeader}>
                     <View style={[styles.typeBadge, { backgroundColor: getBadgeColor(item.type) }]}>
-                        <Text style={[styles.typeText, { color: getBadgeTextColor(item.type) }]}>{item.type}</Text>
+                        <Text style={[styles.typeText, { color: getBadgeTextColor('EVENT') }]}>{'EVENT'}</Text>
                     </View>
-                    <Text style={styles.dateText}>{item.date}</Text>
+                    <Text style={styles.dateText}>{moment(item.date).format('MMM DD, YYYY')}</Text>
                 </View>
 
                 <Text style={styles.cardTitle}>{item.title}</Text>
-                <Text style={styles.cardDescription}>{item.description}</Text>
+                <Text style={styles.cardDescription}>{item.message}</Text>
 
                 {item.attachment && (
                     <View style={styles.attachmentSection}>
@@ -130,15 +127,15 @@ const NoticeScreen = () => {
                     </View>
                 )}
 
-                {item.actionLabel && (
-                    <TouchableOpacity
-                        style={styles.actionBtn}
-                        onPress={() => item.screen && navigation.navigate(item.screen)}
-                    >
-                        <Text style={styles.actionIcon}>👁️</Text>
-                        <Text style={styles.actionText}>{item.actionLabel}</Text>
-                    </TouchableOpacity>
-                )}
+
+                <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => navigation.navigate('AnnuvalSPortsDay', { notice: item })}
+                >
+                    <Text style={styles.actionIcon}>👁️</Text>
+                    <Text style={styles.actionText}>View Details</Text>
+                </TouchableOpacity>
+
             </TouchableOpacity>
         );
     };
@@ -180,11 +177,22 @@ const NoticeScreen = () => {
                 </View>
 
                 <FlatList
-                    data={notices}
+                    data={filteredNotices}
                     renderItem={renderNoticeItem}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item._id || item.id}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.listContainer}
+                    ListEmptyComponent={
+                        loading ? (
+                            <View style={{ marginTop: 50 }}>
+                                <ActivityIndicator size="large" color={Colors.primary} />
+                            </View>
+                        ) : (
+                            <View style={styles.emptyState}>
+                                <Text style={styles.emptyText}>No notices found.</Text>
+                            </View>
+                        )
+                    }
                     ListFooterComponent={<View style={{ height: 100 }} />}
                 />
             </View>
@@ -450,6 +458,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: Fonts.Lexend_SemiBold,
         color: '#0284C7',
+    },
+    emptyState: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 50,
+    },
+    emptyText: {
+        fontSize: 16,
+        fontFamily: Fonts.Lexend_Medium,
+        color: 'red',
     },
 });
 

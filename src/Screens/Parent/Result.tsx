@@ -1,31 +1,66 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated } from 'react-native'
-import React, { useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import { ActivityIndicator, StyleSheet, Animated, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import HWSize from '../../comman/HWSize'
+import { Colors } from '../../comman/Colors'
+import fonts from '../../comman/fonts'
+import { useNavigation } from '@react-navigation/native'
+import { useRef, useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
-import { Colors } from '../../comman/Colors'
-import Fonts from '../../comman/fonts'
-import HWSize from '../../comman/HWSize'
-import { useNavigation } from '@react-navigation/native'
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 
 const Result = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
     const progressAnim = useRef(new Animated.Value(0)).current;
 
+    const [marksList, setMarksList] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        Animated.timing(progressAnim, {
-            toValue: 0.85,
-            duration: 1500,
-            useNativeDriver: false,
-        }).start();
+        fetchMarks();
     }, []);
 
-    const subjects = [
-        { id: 1, name: 'Mathematics', grade: 'A', marks: '88/100', rating: 'Distinction', icon: '🧮', color: '#E3F2FD' },
-        { id: 2, name: 'English', grade: 'B+', marks: '76/100', rating: 'First Class', icon: '🔤', color: '#F3E5F5' },
-        { id: 3, name: 'Science', grade: 'A', marks: '92/100', rating: 'Excellent', icon: '🔬', color: '#E8F5E9' },
-        { id: 4, name: 'Social Studies', grade: 'B', marks: '68/100', rating: 'Average', icon: '🌍', color: '#FFF3E0' },
-        { id: 5, name: 'Hindi', grade: 'A', marks: '85/100', rating: 'Great', icon: '📖', color: '#E0F2F1' },
-    ];
+    const fetchMarks = async () => {
+        setLoading(true);
+        const classId = parent?.classId?._id || parent?._id;
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId })
+            console.log('Marks List Response:', res);
+            if (res && !res.error) {
+                const list = res.data || res || [];
+                setMarksList(list);
+
+                // Calculate average for progress bar
+                if (list.length > 0) {
+                    const total = list.reduce((acc: number, curr: any) => acc + (curr.marks || 0), 0);
+                    const avg = total / (list.length * 100);
+                    Animated.timing(progressAnim, {
+                        toValue: avg,
+                        duration: 1500,
+                        useNativeDriver: false,
+                    }).start();
+                }
+            }
+        } catch (error) {
+            console.error('Fetch Marks Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getGrade = (marks: number) => {
+        if (marks >= 90) return { grade: 'A+', rating: 'Outstanding', color: '#E8F5E9' };
+        if (marks >= 80) return { grade: 'A', rating: 'Excellent', color: '#E3F2FD' };
+        if (marks >= 70) return { grade: 'B+', rating: 'Very Good', color: '#F3E5F5' };
+        if (marks >= 60) return { grade: 'B', rating: 'Good', color: '#FFF3E0' };
+        return { grade: 'C', rating: 'Average', color: '#FFEBEE' };
+    };
+
+    const averageScore = marksList.length > 0
+        ? Math.round(marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) / marksList.length)
+        : 0;
 
     return (
         <ScreenWrapper scroll={false} style={{ backgroundColor: Colors.backgroundColor }}>
@@ -43,16 +78,16 @@ const Result = () => {
                     <View style={styles.summaryHeader}>
                         <View>
                             <Text style={styles.summaryTitle}>Performance Summary</Text>
-                            <Text style={styles.summarySubtitle}>Half-Yearly Examination 2023</Text>
+                            <Text style={styles.summarySubtitle}>Academic Session 2026</Text>
                         </View>
-                        <View style={styles.passBadge}>
-                            <Text style={styles.passText}>Pass</Text>
+                        <View style={[styles.passBadge, { backgroundColor: averageScore >= 40 ? '#4CAF50' : '#D32F2F' }]}>
+                            <Text style={styles.passText}>{averageScore >= 40 ? 'Pass' : 'Fail'}</Text>
                         </View>
                     </View>
 
                     <View style={styles.scoreContainer}>
-                        <Text style={styles.scoreText}>85%</Text>
-                        <Text style={styles.scoreLabel}>Total Score</Text>
+                        <Text style={styles.scoreText}>{averageScore}%</Text>
+                        <Text style={styles.scoreLabel}>Average Score</Text>
                     </View>
 
                     <View style={styles.progressContainer}>
@@ -79,21 +114,32 @@ const Result = () => {
                 {/* Subject-wise Marks Section */}
                 <Text style={styles.sectionTitle}>Subject-wise Marks</Text>
 
-                {subjects.map((item) => (
-                    <View key={item.id} style={styles.subjectCard}>
-                        <View style={[styles.subjectIconContainer, { backgroundColor: item.color }]}>
-                            <Text style={styles.subjectIcon}>{item.icon}</Text>
+                {loading ? (
+                    <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 20 }} />
+                ) : (
+                    marksList.length > 0 ? marksList.map((item) => {
+                        const info = getGrade(item.marks);
+                        return (
+                            <View key={item._id} style={styles.subjectCard}>
+                                <View style={[styles.subjectIconContainer, { backgroundColor: info.color }]}>
+                                    <Text style={styles.subjectIcon}>📝</Text>
+                                </View>
+                                <View style={styles.subjectInfo}>
+                                    <Text style={styles.subjectName}>{item?.subjectId?.name || 'Subject'}</Text>
+                                    <Text style={styles.subjectGrade}>Grade: {info.grade}</Text>
+                                </View>
+                                <View style={styles.subjectMarksContainer}>
+                                    <Text style={styles.subjectMarks}>{item.marks}/100</Text>
+                                    <Text style={styles.subjectRating}>{info.rating}</Text>
+                                </View>
+                            </View>
+                        )
+                    }) : (
+                        <View style={{ alignItems: 'center', marginTop: 20 }}>
+                            <Text style={{ fontFamily: fonts.Lexend_Medium, color: Colors.textSecondary }}>No marks records found.</Text>
                         </View>
-                        <View style={styles.subjectInfo}>
-                            <Text style={styles.subjectName}>{item.name}</Text>
-                            <Text style={styles.subjectGrade}>Grade: {item.grade}</Text>
-                        </View>
-                        <View style={styles.subjectMarksContainer}>
-                            <Text style={styles.subjectMarks}>{item.marks}</Text>
-                            <Text style={styles.subjectRating}>{item.rating}</Text>
-                        </View>
-                    </View>
-                ))}
+                    )
+                )}
 
                 {/* Detailed Report Card */}
                 <TouchableOpacity style={styles.downloadCard}>
@@ -138,12 +184,12 @@ const styles = StyleSheet.create({
     },
     summaryTitle: {
         fontSize: 16,
-        fontFamily: Fonts.Lexend_Medium,
+        fontFamily: fonts.Lexend_Medium,
         color: Colors.textSecondary,
     },
     summarySubtitle: {
         fontSize: 18,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: Colors.textMain,
         marginTop: 4,
     },
@@ -156,7 +202,7 @@ const styles = StyleSheet.create({
     passText: {
         color: Colors.white,
         fontSize: 14,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
     },
     scoreContainer: {
         flexDirection: 'row',
@@ -165,12 +211,12 @@ const styles = StyleSheet.create({
     },
     scoreText: {
         fontSize: 32,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: Colors.primary,
     },
     scoreLabel: {
         fontSize: 16,
-        fontFamily: Fonts.Lexend_Regular,
+        fontFamily: fonts.Lexend_Regular,
         color: Colors.textSecondary,
         marginLeft: 10,
     },
@@ -195,12 +241,12 @@ const styles = StyleSheet.create({
     },
     limitText: {
         fontSize: 12,
-        fontFamily: Fonts.Lexend_Regular,
+        fontFamily: fonts.Lexend_Regular,
         color: Colors.textSecondary,
     },
     sectionTitle: {
         fontSize: 18,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: Colors.textMain,
         marginBottom: 15,
     },
@@ -233,12 +279,12 @@ const styles = StyleSheet.create({
     },
     subjectName: {
         fontSize: 16,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: Colors.textMain,
     },
     subjectGrade: {
         fontSize: 14,
-        fontFamily: Fonts.Lexend_Regular,
+        fontFamily: fonts.Lexend_Regular,
         color: Colors.textSecondary,
         marginTop: 2,
     },
@@ -247,12 +293,12 @@ const styles = StyleSheet.create({
     },
     subjectMarks: {
         fontSize: 16,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: Colors.primary,
     },
     subjectRating: {
         fontSize: 12,
-        fontFamily: Fonts.Lexend_Regular,
+        fontFamily: fonts.Lexend_Regular,
         color: Colors.textSecondary,
         marginTop: 2,
     },
@@ -284,12 +330,12 @@ const styles = StyleSheet.create({
     },
     downloadTitle: {
         fontSize: 16,
-        fontFamily: Fonts.LexendBold,
+        fontFamily: fonts.LexendBold,
         color: '#1565C0',
     },
     downloadSubtitle: {
         fontSize: 14,
-        fontFamily: Fonts.Lexend_Regular,
+        fontFamily: fonts.Lexend_Regular,
         color: '#1E88E5',
     },
     downloadBtn: {
