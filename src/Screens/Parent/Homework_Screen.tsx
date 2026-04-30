@@ -1,71 +1,65 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import { ActivityIndicator } from 'react-native'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import ParentBottom from '../../Component/ParentBottom'
+import moment from 'moment'
 
 const Homework_Screen = () => {
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+    console.log('🚀 ~ Homework_Screen ~ parent:', parent)
     const [selectedCategory, setSelectedCategory] = useState('All');
+    const [homeworkList, setHomeworkList] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetchHomework();
+    }, []);
+
+    const fetchHomework = async () => {
+        setLoading(true);
+        const classId = parent?.classId?._id;
+        console.log('🚀 ~ fetchHomework ~ classId:', classId)
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.HomeworkList, { classId });
+            console.log('Homework List Response:', res);
+            if (res && !res.error) {
+                setHomeworkList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Homework Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const categories = ['All', 'Maths', 'English', 'Science', 'Social'];
 
-    const homeworkData = [
-        {
-            id: '1',
-            subject: 'MATHEMATICS',
-            icon: '📐',
-            status: 'Pending',
-            title: 'Solve exercises 4.1 to 4.3',
-            description: 'Focus on quadratic equations and their real-world applications in physics.',
-            assignedDate: 'Oct 12, 2023',
-            dueDate: 'Oct 15, 2023',
-            teacher: 'Ms. Sunita',
-            teacherAvatar: '👩‍🏫',
-            type: 'details'
-        },
-        {
-            id: '2',
-            subject: 'ENGLISH',
-            icon: '📖',
-            status: 'Completed',
-            title: 'Essay on Shakespeare',
-            description: 'Write a 500-word analysis on the theme of power in "Macbeth".',
-            assignedDate: 'Oct 10, 2023',
-            dueDate: 'Oct 14, 2023',
-            teacher: 'Mr. Rajesh',
-            teacherAvatar: '👨‍🏫',
-            type: 'submission'
-        },
-        {
-            id: '3',
-            subject: 'SCIENCE',
-            icon: '🔬',
-            status: 'Pending',
-            title: 'Lab Report: Chemical Bonds',
-            description: 'Submit the final report for the Ionic and Covalent bonding experiment.',
-            assignedDate: 'Oct 13, 2023',
-            dueDate: 'Oct 18, 2023',
-            teacher: 'Dr. Gupta',
-            teacherAvatar: '👨‍🔬',
-            type: 'details'
-        }
-    ];
+    const filteredHomework = homeworkList.filter(item => {
+        if (selectedCategory === 'All') return true;
+        const subjectName = item?.subjectId?.name?.toLowerCase() || '';
+        return subjectName.includes(selectedCategory.toLowerCase());
+    });
 
     const renderHomeworkCard = (item: any) => (
         <View key={item.id} style={styles.card}>
             <View style={styles.cardHeader}>
-                <View style={styles.subjectInfo}>
+                {/* <View style={styles.subjectInfo}>
                     <View style={styles.subjectIconBox}>
                         <Text style={styles.subjectIcon}>{item.icon}</Text>
                     </View>
                     <Text style={styles.subjectName}>{item.subject}</Text>
-                </View>
-                <View style={[
+                </View> */}
+                {/* <View style={[
                     styles.statusBadge,
                     { backgroundColor: item.status === 'Completed' ? '#D1FAE5' : '#FEE2E2' }
                 ]}>
@@ -75,32 +69,32 @@ const Homework_Screen = () => {
                     ]}>
                         {item.status}
                     </Text>
-                </View>
+                </View> */}
             </View>
 
             <View style={styles.cardBody}>
-                <Text style={styles.homeworkTitle}>{item.title}</Text>
-                <Text style={styles.homeworkDesc}>{item.description}</Text>
+                <Text style={styles.homeworkTitle}>{item?.subjectId?.name}</Text>
+                <Text style={styles.homeworkDesc}>{item.message}</Text>
             </View>
 
             <View style={styles.dateContainer}>
                 <View>
                     <Text style={styles.dateLabel}>ASSIGNED</Text>
-                    <Text style={styles.dateValue}>{item.assignedDate}</Text>
+                    <Text style={styles.dateValue}>{moment(item.createdAt).format('DD-MM-YYYY')}</Text>
                 </View>
                 <View>
                     <Text style={styles.dateLabel}>DUE DATE</Text>
-                    <Text style={[styles.dateValue, { color: '#DC2626', fontFamily: Fonts.LexendBold }]}>{item.dueDate}</Text>
+                    <Text style={[styles.dateValue, { color: '#DC2626', fontFamily: Fonts.LexendBold }]}>{moment(item.date).format('DD-MM-YYYY')}</Text>
                 </View>
             </View>
 
             <View style={styles.cardFooter}>
-                <View style={styles.teacherInfo}>
+                {/* <View style={styles.teacherInfo}>
                     <View style={styles.teacherAvatarBox}>
                         <Text style={styles.teacherAvatar}>{item.teacherAvatar}</Text>
                     </View>
                     <Text style={styles.teacherName}>{item.teacher}</Text>
-                </View>
+                </View> */}
                 <TouchableOpacity style={[
                     styles.actionButton,
                     { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
@@ -163,14 +157,25 @@ const Homework_Screen = () => {
                         <View style={styles.infoIconBox}>
                             <Text style={styles.infoIcon}>ℹ️</Text>
                         </View>
-                        <Text style={styles.infoText}>3 assignments due this week.</Text>
+                        <Text style={styles.infoText}>{filteredHomework.length} assignments found.</Text>
                     </View>
 
-                    {/* Homework Cards */}
-                    {homeworkData.map(renderHomeworkCard)}
+                    {loading ? (
+                        <View style={{ marginTop: 50 }}>
+                            <ActivityIndicator size="large" color={Colors.primary} />
+                        </View>
+                    ) : (
+                        filteredHomework.length > 0 ? (
+                            filteredHomework.map(renderHomeworkCard)
+                        ) : (
+                            <View style={{ alignItems: 'center', marginTop: 50 }}>
+                                <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.textSecondary }}>No homework found for this category.</Text>
+                            </View>
+                        )
+                    )}
 
                     {/* Guidelines Card */}
-                    <TouchableOpacity style={styles.guidelinesCard}>
+                    {/* <TouchableOpacity style={styles.guidelinesCard}>
                         <View style={styles.guidelinesIconBox}>
                             <Text style={styles.guidelinesIcon}>📄</Text>
                         </View>
@@ -179,7 +184,7 @@ const Homework_Screen = () => {
                             <Text style={styles.guidelinesInfo}>1.2 MB • Updated yesterday</Text>
                         </View>
                         <Text style={styles.downloadIcon}>⬇️</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                     {/* Bottom Spacing */}
                     <View style={{ height: 100 }} />

@@ -16,8 +16,13 @@ const ApiUrl = {
   StudentsListByClass: 'students/list-by-class',
   ParentRegister: 'register/add',
   ParentRegisterGet: 'register/get',
-  AttendanceStudentMonthly: 'attendance/student-monthly'
-
+  AttendanceStudentMonthly: 'attendance/student-monthly',
+  LeaveApply: 'leave/apply',
+  LeaveList: 'leave/list',
+  ComplaintCategoryList: 'complaint-category/list',
+  ComplaintAdd: 'complaint/add',
+  ComplaintList: 'complaint/list',
+  MarksList: 'marks/list'
 };
 
 export default ApiUrl;
