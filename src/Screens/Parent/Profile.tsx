@@ -6,9 +6,15 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import Helper from '../../Lib/HelperFiles/Helper';
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
+import Config from '../../Lib/ApiService/Config';
+import { logout } from '../../Redux/Reducers/Userslice';
+import { useDispatch } from 'react-redux';
 
 const Profile = () => {
     const navigation = useNavigation<any>();
+    const dispatch = useDispatch<any>();
 
     const menuItems = [
         {
@@ -40,6 +46,15 @@ const Profile = () => {
             showExternal: true,
         },
     ];
+
+    const LogoutFun = async () => {
+        await AsyncStorageHelper.removeItemValue(Config.USER_DATA);
+        await AsyncStorageHelper.removeItemValue(Config.TOKEN);
+        await AsyncStorageHelper.removeItemValue(Config.ROLE);
+        dispatch(logout());
+        Helper.showToast('Logout');
+        navigation.navigate('Welcomeback');
+    }
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
@@ -89,7 +104,7 @@ const Profile = () => {
                 </View>
 
                 {/* Logout Button */}
-                <TouchableOpacity style={styles.logoutBtn} onPress={() => navigation.navigate('Splash')}>
+                <TouchableOpacity style={styles.logoutBtn} onPress={() => { LogoutFun() }}>
                     <Text style={styles.logoutIcon}>🚪</Text>
                     <Text style={styles.logoutText}>Logout</Text>
                 </TouchableOpacity>
