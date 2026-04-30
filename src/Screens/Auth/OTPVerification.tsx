@@ -52,7 +52,7 @@ const OTPVerification = ({ navigation, route }: any) => {
             inputRefs.current[index - 1]?.focus()
         }
     }
-    
+
 
     const handleVerifyOtp = async () => {
         const enteredOtp = otp.join('');
@@ -71,7 +71,7 @@ const OTPVerification = ({ navigation, route }: any) => {
                 const userData = res.user;
                 dispatch(loginStudentSuccess(userData));
                 dispatch(setUserType(role));
-                navigation.navigate('ParentRegister');
+                navigation.navigate('StudentRegister');
             }
 
         } catch (error) {
