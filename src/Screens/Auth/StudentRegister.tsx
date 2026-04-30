@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
@@ -10,7 +10,8 @@ import FontsSize from '../../comman/FontsSize'
 
 const StudentRegister = ({ navigation }: any) => {
     const [fullName, setFullName] = useState('')
-    const [studentID, setStudentID] = useState('')
+    const [selectedClass, setSelectedClass] = useState('')
+    const [isClassPickerVisible, setIsClassPickerVisible] = useState(false)
     const [schoolName, setSchoolName] = useState('')
     const [isSchoolPickerVisible, setIsSchoolPickerVisible] = useState(false)
 
@@ -23,8 +24,24 @@ const StudentRegister = ({ navigation }: any) => {
         { id: '4', name: s.school4 },
     ];
 
+    const classList = [
+        { id: '1', name: 'Grade 9-A' },
+        { id: '2', name: 'Grade 9-B' },
+        { id: '3', name: 'Grade 10-A' },
+        { id: '4', name: 'Grade 10-B' },
+        { id: '5', name: 'Grade 11-A' },
+        { id: '6', name: 'Grade 11-B' },
+        { id: '7', name: 'Grade 12-A' },
+        { id: '8', name: 'Grade 12-B' },
+    ];
+
+
     return (
-        <ScreenWrapper scroll={true} style={styles.container}>
+        <ScreenWrapper
+            scroll={true}
+            scrollEnabled={!isClassPickerVisible && !isSchoolPickerVisible}
+            style={styles.container}
+        >
             <Header
                 title={s.studentRegistration}
                 showBack={true}
@@ -65,21 +82,48 @@ const StudentRegister = ({ navigation }: any) => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{s.studentID}</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={s.studentIDPlaceholder}
-                            placeholderTextColor={Colors.lightGreyText}
-                            value={studentID}
-                            onChangeText={setStudentID}
-                        />
+                        <Text style={styles.label}>{s.classLabel}</Text>
+                        <TouchableOpacity
+                            style={[styles.dropdown, isClassPickerVisible && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }]}
+                            onPress={() => {
+                                setIsClassPickerVisible(!isClassPickerVisible);
+                                if (isSchoolPickerVisible) setIsSchoolPickerVisible(false);
+                            }}
+                        >
+                            <Text style={[styles.dropdownText, !selectedClass && { color: Colors.lightGreyText }]}>
+                                {selectedClass || s.selectClass}
+                            </Text>
+                            <Text style={styles.dropdownIcon}>{isClassPickerVisible ? '⌃' : '⌄'}</Text>
+                        </TouchableOpacity>
+
+                        {isClassPickerVisible && (
+                            <View style={styles.dropdownList}>
+                                <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
+                                    {classList.map((item) => (
+                                        <TouchableOpacity
+                                            key={item.id}
+                                            style={styles.schoolOption}
+                                            onPress={() => {
+                                                setSelectedClass(item.name);
+                                                setIsClassPickerVisible(false);
+                                            }}
+                                        >
+                                            <Text style={styles.schoolOptionText}>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        )}
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>{s.schoolName}</Text>
                         <TouchableOpacity
                             style={[styles.dropdown, isSchoolPickerVisible && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }]}
-                            onPress={() => setIsSchoolPickerVisible(!isSchoolPickerVisible)}
+                            onPress={() => {
+                                setIsSchoolPickerVisible(!isSchoolPickerVisible);
+                                if (isClassPickerVisible) setIsClassPickerVisible(false);
+                            }}
                         >
                             <Text style={[styles.dropdownText, !schoolName && { color: Colors.lightGreyText }]}>
                                 {schoolName || s.selectSchool}
@@ -89,18 +133,20 @@ const StudentRegister = ({ navigation }: any) => {
 
                         {isSchoolPickerVisible && (
                             <View style={styles.dropdownList}>
-                                {schools.map((item) => (
-                                    <TouchableOpacity
-                                        key={item.id}
-                                        style={styles.schoolOption}
-                                        onPress={() => {
-                                            setSchoolName(item.name);
-                                            setIsSchoolPickerVisible(false);
-                                        }}
-                                    >
-                                        <Text style={styles.schoolOptionText}>{item.name}</Text>
-                                    </TouchableOpacity>
-                                ))}
+                                <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
+                                    {schools.map((item) => (
+                                        <TouchableOpacity
+                                            key={item.id}
+                                            style={styles.schoolOption}
+                                            onPress={() => {
+                                                setSchoolName(item.name);
+                                                setIsSchoolPickerVisible(false);
+                                            }}
+                                        >
+                                            <Text style={styles.schoolOptionText}>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
                             </View>
                         )}
                     </View>
