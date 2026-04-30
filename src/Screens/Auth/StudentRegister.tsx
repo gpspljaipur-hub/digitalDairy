@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ScrollView, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import Strings from '../../comman/String'
@@ -7,39 +7,109 @@ import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import FontsSize from '../../comman/FontsSize'
+import { Get_Send_Api, Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
 
-const StudentRegister = ({ navigation }: any) => {
-    const [fullName, setFullName] = useState('')
-    const [selectedClass, setSelectedClass] = useState('')
+const StudentRegister = ({ navigation, route }: any) => {
+    const mobile = route?.params?.phone || '';
+    const [selectedStudent, setSelectedStudent] = useState<any>(null)
+    const [isStudentPickerVisible, setIsStudentPickerVisible] = useState(false)
+    const [selectedClass, setSelectedClass] = useState<any>(null)
     const [isClassPickerVisible, setIsClassPickerVisible] = useState(false)
-    const [schoolName, setSchoolName] = useState('')
+    const [selectedSchool, setSelectedSchool] = useState<any>(null)
     const [isSchoolPickerVisible, setIsSchoolPickerVisible] = useState(false)
+
+    const [classList, setClassList] = useState<any[]>([])
+    const [loadingClasses, setLoadingClasses] = useState(false)
+    const [studentList, setStudentList] = useState<any[]>([])
+    const [loadingStudents, setLoadingStudents] = useState(false)
+    const [schoolList, setSchoolList] = useState<any[]>([])
+    const [loadingSchools, setLoadingSchools] = useState(false)
 
     const s = Strings.en;
 
-    const schools = [
-        { id: '1', name: s.school1 },
-        { id: '2', name: s.school2 },
-        { id: '3', name: s.school3 },
-        { id: '4', name: s.school4 },
-    ];
+    useEffect(() => {
+        fetchClasses()
+        fetchSchools()
+    }, [])
 
-    const classList = [
-        { id: '1', name: 'Grade 9-A' },
-        { id: '2', name: 'Grade 9-B' },
-        { id: '3', name: 'Grade 10-A' },
-        { id: '4', name: 'Grade 10-B' },
-        { id: '5', name: 'Grade 11-A' },
-        { id: '6', name: 'Grade 11-B' },
-        { id: '7', name: 'Grade 12-A' },
-        { id: '8', name: 'Grade 12-B' },
-    ];
+    const fetchClasses = async () => {
+        setLoadingClasses(true)
+        try {
+            const res = await Get_Send_Api(ApiUrl.ClassesAll, {})
+            if (res && !res.error) {
+                setClassList(res || [])
+            }
+        } catch (error) {
+            console.error('Fetch Classes Error:', error)
+        } finally {
+            setLoadingClasses(false)
+        }
+    }
 
+    const fetchSchools = async () => {
+        setLoadingSchools(true)
+        try {
+            const res = await Get_Send_Api(ApiUrl.SchoolList, {})
+            if (res && !res.error) {
+                setSchoolList(res.data || res || [])
+            }
+        } catch (error) {
+            console.error('Fetch Schools Error:', error)
+        } finally {
+            setLoadingSchools(false)
+        }
+    }
+
+    const fetchStudents = async (classId: string) => {
+        setLoadingStudents(true)
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.StudentsListByClass, { classId })
+            if (res && !res.error) {
+                const list = (res.data || res || []).map((item: any) => ({
+                    id: item._id,
+                    name: item.name,
+                    ...item
+                }))
+                setStudentList(list)
+            }
+        } catch (error) {
+            console.error('Fetch Students Error:', error)
+        } finally {
+            setLoadingStudents(false)
+        }
+    }
+
+    const HandleParentRegister = () => {
+        if (!selectedClass) {
+            Helper.showToast(s.selectClass)
+            return
+        }
+        if (!selectedStudent) {
+            Helper.showToast(s.fullNamePlaceholder)
+            return
+        }
+        if (!selectedSchool) {
+            Helper.showToast(s.selectSchool)
+            return
+        }
+
+        navigation.navigate('ParentRegister', {
+            phone: mobile,
+            classId: selectedClass?._id,
+            className: selectedClass?.name,
+            studentId: selectedStudent?.id,
+            studentName: selectedStudent?.name,
+            schoolId: selectedSchool?._id,
+            schoolName: selectedSchool?.name
+        })
+    }
 
     return (
         <ScreenWrapper
             scroll={true}
-            scrollEnabled={!isClassPickerVisible && !isSchoolPickerVisible}
+            scrollEnabled={!isClassPickerVisible && !isSchoolPickerVisible && !isStudentPickerVisible}
             style={styles.container}
         >
             <Header
@@ -70,30 +140,25 @@ const StudentRegister = ({ navigation }: any) => {
 
                 {/* Form Section */}
                 <View style={styles.form}>
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{s.studentFullName}</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder={s.fullNamePlaceholder}
-                            placeholderTextColor={Colors.lightGreyText}
-                            value={fullName}
-                            onChangeText={setFullName}
-                        />
-                    </View>
-
+                    {/* Select Class */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>{s.classLabel}</Text>
                         <TouchableOpacity
                             style={[styles.dropdown, isClassPickerVisible && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }]}
                             onPress={() => {
                                 setIsClassPickerVisible(!isClassPickerVisible);
+                                if (isStudentPickerVisible) setIsStudentPickerVisible(false);
                                 if (isSchoolPickerVisible) setIsSchoolPickerVisible(false);
                             }}
                         >
                             <Text style={[styles.dropdownText, !selectedClass && { color: Colors.lightGreyText }]}>
-                                {selectedClass || s.selectClass}
+                                {selectedClass ? selectedClass.name : s.selectClass}
                             </Text>
-                            <Text style={styles.dropdownIcon}>{isClassPickerVisible ? '⌃' : '⌄'}</Text>
+                            {loadingClasses ? (
+                                <ActivityIndicator size="small" color={Colors.primary} />
+                            ) : (
+                                <Text style={styles.dropdownIcon}>{isClassPickerVisible ? '⌃' : '⌄'}</Text>
+                            )}
                         </TouchableOpacity>
 
                         {isClassPickerVisible && (
@@ -101,11 +166,13 @@ const StudentRegister = ({ navigation }: any) => {
                                 <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
                                     {classList.map((item) => (
                                         <TouchableOpacity
-                                            key={item.id}
+                                            key={item._id}
                                             style={styles.schoolOption}
                                             onPress={() => {
-                                                setSelectedClass(item.name);
+                                                setSelectedClass(item);
                                                 setIsClassPickerVisible(false);
+                                                setSelectedStudent('');
+                                                fetchStudents(item._id);
                                             }}
                                         >
                                             <Text style={styles.schoolOptionText}>{item.name}</Text>
@@ -116,6 +183,59 @@ const StudentRegister = ({ navigation }: any) => {
                         )}
                     </View>
 
+                    {/* Select Student */}
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>{s.studentFullName}</Text>
+                        <TouchableOpacity
+                            style={[styles.dropdown, isStudentPickerVisible && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }]}
+                            disabled={!selectedClass}
+                            onPress={() => {
+                                if (!selectedClass) {
+                                    Helper.showToast('Please select a class first');
+                                    return;
+                                }
+                                setIsStudentPickerVisible(!isStudentPickerVisible);
+                                if (isClassPickerVisible) setIsClassPickerVisible(false);
+                                if (isSchoolPickerVisible) setIsSchoolPickerVisible(false);
+                            }}
+                        >
+                            <Text style={[styles.dropdownText, !selectedStudent && { color: Colors.lightGreyText }]}>
+                                {selectedStudent ? selectedStudent.name : s.fullNamePlaceholder}
+                            </Text>
+                            {loadingStudents ? (
+                                <ActivityIndicator size="small" color={Colors.primary} />
+                            ) : (
+                                <Text style={styles.dropdownIcon}>{isStudentPickerVisible ? '⌃' : '⌄'}</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        {isStudentPickerVisible && (
+                            <View style={styles.dropdownList}>
+                                <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
+                                    {studentList.length > 0 ? (
+                                        studentList.map((item) => (
+                                            <TouchableOpacity
+                                                key={item.id}
+                                                style={styles.schoolOption}
+                                                onPress={() => {
+                                                    setSelectedStudent(item);
+                                                    setIsStudentPickerVisible(false);
+                                                }}
+                                            >
+                                                <Text style={styles.schoolOptionText}>{item.name}</Text>
+                                            </TouchableOpacity>
+                                        ))
+                                    ) : (
+                                        <View style={{ padding: 15, alignItems: 'center' }}>
+                                            <Text style={{ color: Colors.textSecondary }}>No students found in this class</Text>
+                                        </View>
+                                    )}
+                                </ScrollView>
+                            </View>
+                        )}
+                    </View>
+
+                    {/* Select School */}
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>{s.schoolName}</Text>
                         <TouchableOpacity
@@ -123,23 +243,28 @@ const StudentRegister = ({ navigation }: any) => {
                             onPress={() => {
                                 setIsSchoolPickerVisible(!isSchoolPickerVisible);
                                 if (isClassPickerVisible) setIsClassPickerVisible(false);
+                                if (isStudentPickerVisible) setIsStudentPickerVisible(false);
                             }}
                         >
-                            <Text style={[styles.dropdownText, !schoolName && { color: Colors.lightGreyText }]}>
-                                {schoolName || s.selectSchool}
+                            <Text style={[styles.dropdownText, !selectedSchool && { color: Colors.lightGreyText }]}>
+                                {selectedSchool ? selectedSchool.name : s.selectSchool}
                             </Text>
-                            <Text style={styles.dropdownIcon}>{isSchoolPickerVisible ? '⌃' : '⌄'}</Text>
+                            {loadingSchools ? (
+                                <ActivityIndicator size="small" color={Colors.primary} />
+                            ) : (
+                                <Text style={styles.dropdownIcon}>{isSchoolPickerVisible ? '⌃' : '⌄'}</Text>
+                            )}
                         </TouchableOpacity>
 
                         {isSchoolPickerVisible && (
                             <View style={styles.dropdownList}>
                                 <ScrollView style={{ maxHeight: 200 }} nestedScrollEnabled={true}>
-                                    {schools.map((item) => (
+                                    {schoolList.map((item) => (
                                         <TouchableOpacity
-                                            key={item.id}
+                                            key={item._id}
                                             style={styles.schoolOption}
                                             onPress={() => {
-                                                setSchoolName(item.name);
+                                                setSelectedSchool(item);
                                                 setIsSchoolPickerVisible(false);
                                             }}
                                         >
@@ -165,7 +290,7 @@ const StudentRegister = ({ navigation }: any) => {
 
                 {/* Action Button */}
                 <TouchableOpacity style={styles.registerBtn}
-                    onPress={() => navigation.navigate('ParentRegister')}>
+                    onPress={() => { HandleParentRegister() }}>
                     <Text style={styles.registerBtnText}>{s.registerContinue}</Text>
                     <Text style={styles.btnArrow}>→</Text>
                 </TouchableOpacity>

@@ -1,26 +1,101 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import Strings from '../../comman/String'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
+import { Get_Send_Api, Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
+import { useDispatch } from 'react-redux'
+import { loginParentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
+import Config from '../../Lib/ApiService/Config'
 
-const ParentRegister = ({ navigation }: any) => {
+const ParentRegister = ({ navigation, route }: any) => {
+    const dispatch = useDispatch();
+    const {
+        classId,
+        className,
+        studentId,
+        studentName,
+        schoolId,
+        schoolName,
+        phone
+    } = route?.params || {};
+
     const [fullName, setFullName] = useState('')
-    const [mobile, setMobile] = useState('')
-    const [relationship, setRelationship] = useState('')
+    const [mobile, setMobile] = useState(phone)
+    const [relationship, setRelationship] = useState<any>(null)
     const [isPickerVisible, setIsPickerVisible] = useState(false)
+    const [relationList, setRelationList] = useState<any[]>([])
+    const [loadingRelations, setLoadingRelations] = useState(false)
+    const [isRegistering, setIsRegistering] = useState(false)
 
     const s = Strings.en;
 
-    const relationships = [
-        { id: '1', name: s.father },
-        { id: '2', name: s.mother },
-        { id: '3', name: s.guardian },
-        { id: '4', name: s.other },
-    ];
+    useEffect(() => {
+        fetchRelations()
+    }, [])
+
+    const fetchRelations = async () => {
+        setLoadingRelations(true)
+        try {
+            const res = await Get_Send_Api(ApiUrl.RelationList, {})
+            if (res && !res.error) {
+                setRelationList(res.data || res || [])
+            }
+        } catch (error) {
+            console.error('Fetch Relations Error:', error)
+        } finally {
+            setLoadingRelations(false)
+        }
+    }
+
+    const handleCompleteRegistration = async () => {
+        if (!fullName.trim()) {
+            Helper.showToast(s.parentFullNamePlaceholder)
+            return
+        }
+        if (!relationship) {
+            Helper.showToast(s.selectRelationship)
+            return
+        }
+
+        const payload = {
+            mobile: mobile,
+            parentName: fullName,
+            studentFullName: studentName,
+            classId: classId,
+            schoolId: schoolId,
+            relationId: relationship?._id,
+            studentId: studentId
+        }
+
+        console.log('Registration Payload:', payload)
+
+        setIsRegistering(true)
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.ParentRegister, payload)
+            console.log('Registration Response:', res)
+            if (res && !res.error) {
+                if (res) {
+
+                    dispatch(setUserType('parent'));
+                }
+                navigation.navigate('ParentDashboard', { phone: mobile });
+            } else {
+                Helper.showToast(res?.message || 'Registration failed')
+            }
+        } catch (error) {
+            console.error('Registration Error:', error)
+            Helper.showToast('Something went wrong')
+        } finally {
+            setIsRegistering(false)
+        }
+    }
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>
@@ -70,7 +145,7 @@ const ParentRegister = ({ navigation }: any) => {
                             placeholder={s.mobilePlaceholder}
                             placeholderTextColor={Colors.lightGreyText}
                             value={mobile}
-                            onChangeText={setMobile}
+                            editable={false}
                             keyboardType="phone-pad"
                             maxLength={10}
                         />
@@ -83,19 +158,23 @@ const ParentRegister = ({ navigation }: any) => {
                             onPress={() => setIsPickerVisible(!isPickerVisible)}
                         >
                             <Text style={[styles.dropdownText, !relationship && { color: Colors.lightGreyText }]}>
-                                {relationship || s.selectRelationship}
+                                {relationship ? relationship.name : s.selectRelationship}
                             </Text>
-                            <Text style={styles.dropdownIcon}>{isPickerVisible ? '⌃' : '⌄'}</Text>
+                            {loadingRelations ? (
+                                <ActivityIndicator size="small" color={Colors.primary} />
+                            ) : (
+                                <Text style={styles.dropdownIcon}>{isPickerVisible ? '⌃' : '⌄'}</Text>
+                            )}
                         </TouchableOpacity>
 
                         {isPickerVisible && (
                             <View style={styles.dropdownList}>
-                                {relationships.map((item) => (
+                                {relationList.map((item) => (
                                     <TouchableOpacity
-                                        key={item.id}
+                                        key={item._id || item.id}
                                         style={styles.option}
                                         onPress={() => {
-                                            setRelationship(item.name);
+                                            setRelationship(item);
                                             setIsPickerVisible(false);
                                         }}
                                     >
@@ -121,9 +200,14 @@ const ParentRegister = ({ navigation }: any) => {
                 {/* Complete Button */}
                 <TouchableOpacity
                     style={styles.completeBtn}
-                    onPress={() => navigation.navigate('ParentDashboard')}
+                    disabled={isRegistering}
+                    onPress={handleCompleteRegistration}
                 >
-                    <Text style={styles.completeBtnText}>{s.completeRegistration}</Text>
+                    {isRegistering ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <Text style={styles.completeBtnText}>{s.completeRegistration}</Text>
+                    )}
                 </TouchableOpacity>
 
                 {/* Building Image */}
