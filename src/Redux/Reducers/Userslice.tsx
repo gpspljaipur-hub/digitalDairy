@@ -12,7 +12,7 @@ export interface User {
 export interface UserState {
     user: User | null;
     teacher: User | null;
-    student: User | null;
+    parent: User | null;
     isAuthenticated: boolean;
     hasFinishedOnboarding: boolean;
     userType: string | null;
@@ -21,7 +21,7 @@ export interface UserState {
 const initialState: UserState = {
     user: null,
     teacher: null,
-    student: null,
+    parent: null,
     isAuthenticated: false,
     hasFinishedOnboarding: false,
     userType: null,
@@ -31,8 +31,8 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        loginStudentSuccess: (state, action: PayloadAction<User>) => {
-            state.student = action.payload;
+        loginParentSuccess: (state, action: PayloadAction<User>) => {
+            state.parent = action.payload;
             state.isAuthenticated = true;
         },
         loginTeacherSuccess: (state, action: PayloadAction<User>) => {
@@ -41,7 +41,7 @@ export const userSlice = createSlice({
         },
         logout: state => {
             state.teacher = null;
-            state.student = null;
+            state.parent = null;
             state.user = null;
             state.isAuthenticated = false;
         },
@@ -54,5 +54,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const { loginStudentSuccess, loginTeacherSuccess, logout, setOnboardingFinished, setUserType } = userSlice.actions;
+export const { loginParentSuccess, loginTeacherSuccess, logout, setOnboardingFinished, setUserType } = userSlice.actions;
 export default userSlice.reducer;

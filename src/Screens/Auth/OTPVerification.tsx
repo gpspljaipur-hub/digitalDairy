@@ -12,7 +12,6 @@ import { Alert, ActivityIndicator } from 'react-native'
 import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
 import { useDispatch } from 'react-redux'
-import { loginStudentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
 
 const OTPVerification = ({ navigation, route }: any) => {
     const { mobile, role, otp: receivedOtp } = route?.params || {};
@@ -67,11 +66,11 @@ const OTPVerification = ({ navigation, route }: any) => {
             console.log('Verify OTP Response:', res);
 
             if (res && !res.error) {
-                await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
-                const userData = res.user;
-                dispatch(loginStudentSuccess(userData));
-                dispatch(setUserType(role));
-                navigation.navigate('StudentRegister');
+                // await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
+                // const userData = res;
+                // dispatch(loginStudentSuccess(userData));
+                // dispatch(setUserType(role));
+                navigation.navigate('StudentRegister', { phone: mobile });
             }
 
         } catch (error) {

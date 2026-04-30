@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBar, Alert } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBar, Alert, ActivityIndicator } from 'react-native'
 import React, { useState, useMemo } from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
@@ -8,9 +8,8 @@ import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 import DatePicker from '../../comman/DatePicker'
 import { useSelector } from 'react-redux'
-import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
-import { ActivityIndicator } from 'react-native'
 import Helper from '../../Lib/HelperFiles/Helper'
 
 interface Student {
@@ -18,7 +17,7 @@ interface Student {
     _id?: string;
     name: string;
     className: string;
-    status: 'Present' | 'Absent' | null;
+    status: 'present' | 'absent' | null;
 }
 
 const MarkAttendance = () => {
@@ -28,51 +27,79 @@ const MarkAttendance = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [showDatePicker, setShowDatePicker] = useState(false)
+    const [classList, setClassList] = useState<any[]>([])
+    const [selectedClass, setSelectedClass] = useState<any>(null)
+    const [isClassPickerVisible, setIsClassPickerVisible] = useState(false)
+    const [loadingClasses, setLoadingClasses] = useState(false)
+    const [loadingStudents, setLoadingStudents] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [students, setStudents] = useState<Student[]>([])
+    const [studentList, setStudentList] = useState<any[]>([])
+
 
     React.useEffect(() => {
-        fetchStudents();
+        fetchClasses();
     }, []);
 
-    const fetchStudents = async () => {
-        setLoading(true);
+    const fetchClasses = async () => {
+        setLoadingClasses(true)
         try {
-            const res = await Auth_ApiRequest(ApiUrl.StudentsList, {
-                teacherId: teacher?._id,
-            });
-
-            console.log('Students List Response:', res);
+            const res = await Get_Send_Api(ApiUrl.ClassesAll, {})
+            console.log("Classes All Response:", res)
             if (res && !res.error) {
-                setStudents(res || []);
+                const list = (res.data || res || []).map((item: any) => ({
+                    id: item._id,
+                    name: item.name,
+                    ...item
+                }))
+                setClassList(list)
+            }
+        } catch (error) {
+            console.error('Fetch Classes Error:', error)
+        } finally {
+            setLoadingClasses(false)
+        }
+    }
+
+    const fetchStudents = async (classId: string) => {
+        setLoadingStudents(true)
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.StudentsListByClass, { classId })
+            if (res && !res.error) {
+                const list = (res.data || res || []).map((item: any) => ({
+                    id: item._id,
+                    name: item.name,
+                    status: null,
+                    ...item
+                }))
+                setStudentList(list)
             } else {
                 Helper.showToast(res?.message || 'Failed to fetch students');
             }
         } catch (error) {
-            console.error('Fetch Students Error:', error);
+            console.error('Fetch Students Error:', error)
             Helper.showToast('Something went wrong');
         } finally {
-            setLoading(false);
+            setLoadingStudents(false)
         }
-    };
-
-    const setStatus = (id: string, status: 'Present' | 'Absent') => {
-        setStudents(prev => prev.map(s => (s._id === id || s.id === id) ? { ...s, status: s.status === status ? null : status } : s))
     }
 
-    const filteredStudents = useMemo(() => students.filter(s =>
+    const setStatus = (id: string, status: 'present' | 'absent') => {
+        setStudentList(prev => prev.map(s => (s._id === id || s.id === id) ? { ...s, status: s.status === status ? null : status } : s))
+    }
+
+    const filteredStudents = useMemo(() => studentList.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.className.includes(searchQuery)
-    ), [students, searchQuery])
+    ), [studentList, searchQuery])
 
     const handleSubmit = async () => {
-        const unMarked = students.filter(s => s.status === null);
+        const unMarked = studentList.filter(s => s.status === null);
         if (unMarked.length > 0) {
             Helper.showToast(`Please mark attendance for all students (${unMarked.length} remaining)`);
             return;
         }
 
-        const attendanceData = students.map((s, index) => ({
+        const attendanceData = studentList.map((s, index) => ({
             studentId: s._id || s.id || index.toString(),
             status: s.status
         }));
@@ -117,16 +144,16 @@ const MarkAttendance = () => {
 
                 <View style={styles.actionGroup}>
                     <TouchableOpacity
-                        onPress={() => setStatus(item._id || item.id, 'Present')}
-                        style={[styles.statusBtn, item.status === 'Present' && styles.presentActive]}
+                        onPress={() => setStatus(item._id || item.id, 'present')}
+                        style={[styles.statusBtn, item.status === 'present' && styles.presentActive]}
                     >
-                        <Text style={[styles.statusBtnText, item.status === 'Present' && styles.textWhite]}>P</Text>
+                        <Text style={[styles.statusBtnText, item.status === 'present' && styles.textWhite]}>P</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => setStatus(item._id || item.id, 'Absent')}
-                        style={[styles.statusBtn, item.status === 'Absent' && styles.absentActive]}
+                        onPress={() => setStatus(item._id || item.id, 'absent')}
+                        style={[styles.statusBtn, item.status === 'absent' && styles.absentActive]}
                     >
-                        <Text style={[styles.statusBtnText, item.status === 'Absent' && styles.textWhite]}>A</Text>
+                        <Text style={[styles.statusBtnText, item.status === 'absent' && styles.textWhite]}>A</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -165,6 +192,46 @@ const MarkAttendance = () => {
                             <Text style={styles.calendarEmoji}>📅</Text>
                         </View>
                     </TouchableOpacity>
+                </View>
+
+                {/* Class Selection Dropdown */}
+                <View style={styles.dropdownContainer}>
+                    <Text style={styles.label}>Select Class</Text>
+                    <TouchableOpacity
+                        style={[styles.dropdown, isClassPickerVisible && { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }]}
+                        onPress={() => setIsClassPickerVisible(!isClassPickerVisible)}
+                    >
+                        <Text style={[styles.dropdownText, !selectedClass && { color: Colors.lightGreyText }]}>
+                            {selectedClass ? selectedClass.name : 'Choose Class'}
+                        </Text>
+                        {loadingClasses ? (
+                            <ActivityIndicator size="small" color={Colors.primary} />
+                        ) : (
+                            <Text style={styles.dropdownIcon}>{isClassPickerVisible ? '⌃' : '⌄'}</Text>
+                        )}
+                    </TouchableOpacity>
+
+                    {isClassPickerVisible && (
+                        <View style={styles.dropdownList}>
+                            <FlatList
+                                data={classList}
+                                keyExtractor={(item) => item._id}
+                                style={{ maxHeight: 200 }}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        style={styles.option}
+                                        onPress={() => {
+                                            setSelectedClass(item);
+                                            setIsClassPickerVisible(false);
+                                            fetchStudents(item._id);
+                                        }}
+                                    >
+                                        <Text style={styles.optionText}>{item.name}</Text>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
+                    )}
                 </View>
 
                 <View style={styles.searchSection}>
@@ -244,6 +311,59 @@ const styles = StyleSheet.create({
     searchSection: {
         marginBottom: 15,
         marginTop: 5
+    },
+    dropdownContainer: {
+        marginBottom: 15,
+    },
+    label: {
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Medium,
+        color: '#64748B',
+        marginBottom: 8,
+    },
+    dropdown: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 52,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderRadius: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#F8FAFC',
+    },
+    dropdownText: {
+        fontSize: 15,
+        fontFamily: Fonts.Lexend_Medium,
+        color: '#1E293B',
+    },
+    dropdownIcon: {
+        fontSize: 20,
+        color: '#64748B',
+    },
+    dropdownList: {
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        borderTopWidth: 0,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+    },
+    option: {
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F1F5F9',
+    },
+    optionText: {
+        fontSize: 15,
+        fontFamily: Fonts.Lexend_Regular,
+        color: '#1E293B',
     },
     dateSection: {
         marginTop: 20,

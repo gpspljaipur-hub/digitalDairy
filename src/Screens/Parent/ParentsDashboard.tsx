@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import React, { useState, useEffect } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
 
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
@@ -8,9 +10,47 @@ import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import ParentBottom from '../../Component/ParentBottom'
+import { useSelector } from 'react-redux'
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
+import Config from '../../Lib/ApiService/Config'
+import { loginParentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
+import { useDispatch } from 'react-redux'
 
-const ParentDashboard = () => {
+const ParentDashboard = ({ route }: any) => {
+    const dispatch = useDispatch()
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+    const mobile = route?.params?.phone;
+    console.log("🚀 ~ ParentDashboard ~ parent:", parent)
+    console.log("🚀 ~ ParentDashboard ~ mobile:", mobile)
+
+    const [parentData, setParentData] = useState<any>(null)
+    const [loading, setLoading] = useState(false)
+
+
+    useEffect(() => {
+        fetchParentData()
+    }, [])
+
+    const fetchParentData = async () => {
+        setLoading(true)
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.ParentRegisterGet, { mobile: mobile })
+            console.log('Parent Data Response:', res)
+            if (res && !res.error) {
+                await AsyncStorageHelper.setData(Config.USER_DATA, res);
+                await AsyncStorageHelper.setData(Config.TOKEN, res);
+                await AsyncStorageHelper.setData(Config.ROLE, 'parent');
+                dispatch(loginParentSuccess(res));
+                dispatch(setUserType('parent'));
+                setParentData(res.data || res)
+            }
+        } catch (error) {
+            console.error('Fetch Parent Data Error:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const gridItems = [
         { title: 'Attendance', icon: '📅', color: '#E3F2FD', iconColor: '#2196F3' },
@@ -31,9 +71,9 @@ const ParentDashboard = () => {
             >
                 {/* Welcome Section */}
                 <View style={styles.welcomeSection}>
-                    <Text style={styles.welcomeTitle}>Hello, Mrs. Sharma</Text>
+                    <Text style={styles.welcomeTitle}>Hello, {parentData?.parentName || 'Parent'}</Text>
                     <Text style={styles.welcomeSubtitle}>
-                        Your son, <Text style={styles.boldText}>Aarav (Grade 8-B)</Text> is currently in school.
+                        Your child, <Text style={styles.boldText}>{parentData?.studentFullName || 'Student'} ({parentData?.className || 'N/A'})</Text> is currently in school.
                     </Text>
                 </View>
 
@@ -93,7 +133,7 @@ const ParentDashboard = () => {
                 </View>
 
                 {/* Academic Calendar */}
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.calendarButton}
                     onPress={() => navigation.navigate('Academic_Calander')}
                 >

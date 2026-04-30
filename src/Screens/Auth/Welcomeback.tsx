@@ -76,11 +76,20 @@ const Welcomeback = ({ navigation }: any) => {
                 console.log('Send OTP Response:', res);
 
                 if (res && !res.error) {
-                    navigation.navigate('OTPVerification', {
-                        mobile: mobile,
-                        role: role,
-                        otp: res.otp
-                    });
+                    const isRegistered = res?.data?.isRegistered || false;
+                    const isVerified = res?.data?.isVerified || false;
+
+                    if (isVerified && isRegistered) {
+                        navigation.navigate('ParentDashboard', { phone: mobile });
+                    } else if (isVerified && !isRegistered) {
+                        navigation.navigate('StudentRegister', { phone: mobile });
+                    } else {
+                        navigation.navigate('OTPVerification', {
+                            phone: mobile,
+                            role: role,
+                            otp: res?.data.otp
+                        });
+                    }
                 } else {
                     Helper.showToast(res?.message);
                 }
