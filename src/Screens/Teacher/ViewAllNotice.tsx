@@ -12,12 +12,8 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import { Colors } from '../../comman/Colors'
-import StringsRaw from '../../comman/String'
 import Fonts from '../../comman/fonts'
-import HWSize from '../../comman/HWSize'
-
-const Strings = StringsRaw.en
-
+import useStrings from '../../comman/useStrings'
 const NOTICES = [
     {
         id: '1',
@@ -50,16 +46,16 @@ const NOTICES = [
         time: '11:15 AM'
     }
 ]
-
 const CLASSES = [
-    Strings.allClasses,
-    Strings.grade10A,
-    Strings.grade10B,
-    'Grade 11-A',
-    'Grade 12-B'
+    'All Classes',
+    'Class X A',
+    'Class X B',
+    'Class XI A',
+    'Class XII B'
 ]
 
 const ViewAllNotice = () => {
+    const Strings = useStrings()
     const navigation = useNavigation<any>()
     const [selectedClass, setSelectedClass] = useState(Strings.allClasses)
     const [searchQuery, setSearchQuery] = useState('')

@@ -7,9 +7,11 @@ import Fonts from '../../comman/fonts';
 import HWSize from '../../comman/HWSize';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 import moment from 'moment';
 
 const AnnuvalSPortsDay = ({ route }: any) => {
+    const strings = useStrings();
     const notice = route.params?.notice;
     console.log(notice);
 
@@ -18,7 +20,7 @@ const AnnuvalSPortsDay = ({ route }: any) => {
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Event Details"
+                title={strings.eventDetails}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -38,12 +40,12 @@ const AnnuvalSPortsDay = ({ route }: any) => {
                 {/* Event Card */}
                 <View style={styles.eventCard}>
                     <View style={styles.badge}>
-                        <Text style={styles.badgeText}>Event</Text>
-                    </View>
+    <Text style={styles.badgeText}>{strings.upcomingEvent}</Text>
+                    </View >
 
-                    <Text style={styles.eventTitle}>{'Notice'}</Text>
+    <Text style={styles.eventTitle}>{'Notice'}</Text>
 
-                    {/* Info Rows */}
+{/* Info Rows */ }
                     <View style={styles.infoRow}>
                         <View style={styles.iconBox}>
                             <Text style={styles.icon}>📅</Text>
@@ -73,16 +75,16 @@ const AnnuvalSPortsDay = ({ route }: any) => {
 
                     <TouchableOpacity
                         style={styles.backCalendarBtn}
-                    // onPress={() => navigation.navigate("AcademicCalendar")}
+                        onPress={() => navigation.goBack()}
                     >
-                        <Text style={styles.backBtnText}>← Back to Calendar</Text>
+                        <Text style={styles.backBtnText}>← {strings.backToCalendar}</Text>
                     </TouchableOpacity>
-                </View>
+                </View >
 
-                {/* Event Documents */}
-                <View style={styles.docsSection}>
+    {/* Event Documents */ }
+    < View style = { styles.docsSection } >
                     <View style={styles.docsHeader}>
-                        <Text style={styles.docsHeaderText}>Event Documents</Text>
+                        <Text style={styles.docsHeaderText}>{strings.eventDocuments}</Text>
                     </View>
 
                     <View style={styles.docItem}>
@@ -104,14 +106,14 @@ const AnnuvalSPortsDay = ({ route }: any) => {
                             <Text style={styles.downloadIcon}>⬇️</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View >
 
-                {/* Extra space for bottom nav if needed */}
-                <View style={{ height: 100 }} />
-            </ScrollView>
+    {/* Extra space for bottom nav if needed */ }
+    < View style = {{ height: 100 }} />
+            </ScrollView >
 
-            <ParentBottom activeTab="NOTICE" />
-        </ScreenWrapper>
+    <ParentBottom activeTab="NOTICE" />
+        </ScreenWrapper >
     );
 };
 

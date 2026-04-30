@@ -6,6 +6,7 @@ export interface User {
     mobile: any;
     number_verified: any
     amount: any
+    language: 'en' | 'hi' | 'pa';
 
 }
 
@@ -16,6 +17,7 @@ export interface UserState {
     isAuthenticated: boolean;
     hasFinishedOnboarding: boolean;
     userType: string | null;
+    language: 'en' | 'hi' | 'pa';
 }
 
 const initialState: UserState = {
@@ -25,6 +27,7 @@ const initialState: UserState = {
     isAuthenticated: false,
     hasFinishedOnboarding: false,
     userType: null,
+    language: 'en',
 };
 
 export const userSlice = createSlice({
@@ -51,8 +54,11 @@ export const userSlice = createSlice({
         setUserType: (state, action: PayloadAction<string>) => {
             state.userType = action.payload;
         },
+        setLanguage: (state, action: PayloadAction<'en' | 'hi' | 'pa'>) => {
+            state.language = action.payload;
+        },
     },
 });
 
-export const { loginParentSuccess, loginTeacherSuccess, logout, setOnboardingFinished, setUserType } = userSlice.actions;
+export const { loginParentSuccess, loginTeacherSuccess, logout, setOnboardingFinished, setUserType,setLanguage } = userSlice.actions;
 export default userSlice.reducer;

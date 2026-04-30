@@ -7,7 +7,7 @@ import userReducer from '../Reducers/Userslice';
 const userPersistConfig = {
   key: 'user',
   storage: AsyncStorage,
-  whitelist: ['isAuthenticated', 'user', 'token', 'hasFinishedOnboarding', 'userType'],
+  whitelist: ['isAuthenticated', 'user', 'token', 'hasFinishedOnboarding', 'userType', 'language'],
 };
 
 const rootPersistConfig = {

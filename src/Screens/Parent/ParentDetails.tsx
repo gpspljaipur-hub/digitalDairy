@@ -6,14 +6,16 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const ParentDetails = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Personal Details"
+                title={strings.personalDetails}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -34,19 +36,19 @@ const ParentDetails = () => {
                     <Text style={styles.userName}>Aravind Kumar</Text>
                     <View style={styles.roleBadge}>
                         <Text style={styles.roleIcon}>⚖️</Text>
-                        <Text style={styles.roleText}>Role: Parent</Text>
+                        <Text style={styles.roleText}>{strings.role}: {strings.parent}</Text>
                     </View>
                 </View>
 
                 {/* Contact Information */}
-                <Text style={styles.sectionTitle}>CONTACT INFORMATION</Text>
+                <Text style={styles.sectionTitle}>{strings.contactInformation}</Text>
                 <View style={styles.infoCard}>
                     <View style={styles.infoItem}>
                         <View style={styles.iconBox}>
                             <Text style={styles.icon}>📱</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Mobile Number</Text>
+                            <Text style={styles.infoLabel}>{strings.mobileNumber}</Text>
                             <Text style={styles.infoValue}>+91 98765 43210</Text>
                         </View>
                     </View>
@@ -56,7 +58,7 @@ const ParentDetails = () => {
                             <Text style={styles.icon}>✉️</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Email</Text>
+                            <Text style={styles.infoLabel}>{strings.email}</Text>
                             <Text style={styles.infoValue}>aravind.kumar@example.edu</Text>
                         </View>
                     </View>
@@ -66,14 +68,14 @@ const ParentDetails = () => {
                             <Text style={styles.icon}>📍</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Address</Text>
+                            <Text style={styles.infoLabel}>{strings.address}</Text>
                             <Text style={styles.infoValue}>#42, Garden View Residency, Bangalore North, 560024</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Linked Students */}
-                <Text style={styles.sectionTitle}>LINKED STUDENTS</Text>
+                <Text style={styles.sectionTitle}>{strings.linkedStudents}</Text>
                 <TouchableOpacity style={styles.studentCard}>
                     <View style={styles.studentInfo}>
                         <View style={styles.studentImagePlaceholder}>
@@ -81,7 +83,7 @@ const ParentDetails = () => {
                         </View>
                         <View>
                             <Text style={styles.studentName}>Arjun Kumar</Text>
-                            <Text style={styles.studentGrade}>Grade: 10-B</Text>
+                            <Text style={styles.studentGrade}>{strings.grade}: 10-B</Text>
                         </View>
                     </View>
                     <Text style={styles.chevron}>›</Text>
@@ -92,12 +94,12 @@ const ParentDetails = () => {
                     onPress={() => navigation.navigate('EditProfile')}
                 >
                     <Text style={styles.editBtnIcon}>✏️</Text>
-                    <Text style={styles.editBtnText}>Edit Details</Text>
+                    <Text style={styles.editBtnText}>{strings.editDetails}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.signOutBtn} onPress={() => navigation.navigate('Splash')}>
                     <Text style={styles.signOutIcon}>🚪</Text>
-                    <Text style={styles.signOutText}>Sign Out</Text>
+                    <Text style={styles.signOutText}>{strings.signOut}</Text>
                 </TouchableOpacity>
 
                 {/* Space for bottom nav */}

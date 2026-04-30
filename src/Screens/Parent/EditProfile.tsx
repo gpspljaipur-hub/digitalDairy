@@ -15,8 +15,10 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const EditProfile = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
 
     const [fullName, setFullName] = useState('');
@@ -31,7 +33,7 @@ const EditProfile = () => {
                     <Text style={styles.backIcon}>←</Text>
                 </TouchableOpacity>
                 <View style={styles.headerTitleContainer}>
-                    <Text style={styles.headerTitle}>Edit Profile</Text>
+                    <Text style={styles.headerTitle}>{strings.editProfile}</Text>
                 </View>
             </View>
 
@@ -54,14 +56,14 @@ const EditProfile = () => {
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity>
-                        <Text style={styles.changePhotoText}>Change Profile Photo</Text>
+                        <Text style={styles.changePhotoText}>{strings.changeProfilePhoto}</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Form Fields */}
                 <View style={styles.form}>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Full Name</Text>
+                        <Text style={styles.label}>{strings.fullName}</Text>
                         <TextInput
                             style={styles.input}
                             value={fullName}
@@ -70,7 +72,7 @@ const EditProfile = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Mobile Number</Text>
+                        <Text style={styles.label}>{strings.mobileNumber}</Text>
                         <TextInput
                             style={styles.input}
                             value={mobileNumber}
@@ -80,7 +82,7 @@ const EditProfile = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Email Address</Text>
+                        <Text style={styles.label}>{strings.email}</Text>
                         <TextInput
                             style={styles.input}
                             value={email}
@@ -91,7 +93,7 @@ const EditProfile = () => {
                     </View>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Home Address</Text>
+                        <Text style={styles.label}>{strings.address}</Text>
                         <TextInput
                             style={[styles.input, styles.textArea]}
                             value={address}
@@ -109,12 +111,12 @@ const EditProfile = () => {
                             <View style={styles.checkCircle}>
                                 <Text style={styles.checkIcon}>✓</Text>
                             </View>
-                            <Text style={styles.saveBtnText}>Save Changes</Text>
+                            <Text style={styles.saveBtnText}>{strings.saveChanges}</Text>
                         </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.cancelBtn} onPress={() => navigation.goBack()}>
-                        <Text style={styles.cancelBtnText}>Cancel</Text>
+                        <Text style={styles.cancelBtnText}>{strings.cancel}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -124,7 +126,7 @@ const EditProfile = () => {
                         <Text style={styles.infoIcon}>i</Text>
                     </View>
                     <Text style={styles.infoText}>
-                        Changes to primary details may take up to 24 hours to reflect in the school records.
+                        {strings.editProfileInfoMsg}
                     </Text>
                 </View>
 

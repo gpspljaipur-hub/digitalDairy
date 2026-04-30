@@ -4,12 +4,14 @@ import ScreenWrapper from '../../comman/ScreenWrapper';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
+import useStrings from '../../comman/useStrings';
 
 const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
 };
 
 const Academic_Calander = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
     const [currentDate, setCurrentDate] = useState(new Date());
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -67,7 +69,7 @@ const Academic_Calander = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.menuBtn}>
                     <Text style={styles.menuIcon}>☰</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Academic Calendar</Text>
+                <Text style={styles.headerTitle}>{strings.academicCalendar}</Text>
                 <View style={styles.profileContainer}>
                     <View style={styles.profileBox}>
                         <Text style={styles.profileEmoji}>👨‍💼</Text>
@@ -129,26 +131,26 @@ const Academic_Calander = () => {
 
                 {/* Calendar Legend */}
                 <View style={styles.legendCard}>
-                    <Text style={styles.legendTitle}>Calendar Legend</Text>
+                    <Text style={styles.legendTitle}>{strings.calendarLegend}</Text>
 
                     <View style={styles.legendItem}>
                         <View style={[styles.legendIndicator, { backgroundColor: '#69F0AE' }]} />
-                        <Text style={styles.legendText}>Public Holiday</Text>
+                        <Text style={styles.legendText}>{strings.publicHoliday}</Text>
                     </View>
 
                     <View style={styles.legendItem}>
                         <View style={[styles.legendIndicator, { backgroundColor: '#0D47A1' }]} />
-                        <Text style={styles.legendText}>School Event</Text>
+                        <Text style={styles.legendText}>{strings.schoolEvent}</Text>
                     </View>
 
                     <View style={styles.legendItem}>
                         <View style={[styles.legendIndicator, { backgroundColor: '#FFD7D7' }]} />
-                        <Text style={styles.legendText}>Examinations</Text>
+                        <Text style={styles.legendText}>{strings.examinations}</Text>
                     </View>
                 </View>
 
                 {/* Upcoming Events Section */}
-                <Text style={styles.upcomingTitle}>Upcoming Events</Text>
+                <Text style={styles.upcomingTitle}>{strings.upcomingEvents}</Text>
 
                 {upcomingEvents.map((event, index) => (
                     <TouchableOpacity key={index} style={styles.eventCard} activeOpacity={0.7}>

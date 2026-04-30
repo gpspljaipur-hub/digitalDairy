@@ -8,6 +8,7 @@ import DatePicker from '../../comman/DatePicker'
 import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
+import useStrings from '../../comman/useStrings'
 
 const AddHomework = () => {
     const navigation = useNavigation<any>();
@@ -24,7 +25,7 @@ const AddHomework = () => {
     const [showDatePicker, setShowDatePicker] = useState(false)
     const [notifyParents, setNotifyParents] = useState(false)
     const [loading, setLoading] = useState(false)
-
+    const Strings = useStrings();
     useEffect(() => {
         fetchClasses();
     }, []);
@@ -112,8 +113,8 @@ const AddHomework = () => {
                     <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                         <Text style={styles.backIcon}>←</Text>
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Add Homework</Text>
-                    <Text style={styles.draftText}>Draft saved</Text>
+                    <Text style={styles.headerTitle}>{Strings.homework}</Text>
+                    <Text style={styles.draftText}>{Strings.draftSaved}</Text>
                 </View>
 
                 <ScrollView
@@ -126,12 +127,12 @@ const AddHomework = () => {
                     <View style={styles.infoBox}>
                         <Text style={styles.infoIcon}>ⓘ</Text>
                         <Text style={styles.infoText}>
-                            Fill in the details below to assign new homework to your students.
+                            {Strings.addHomeworkInfo}
                         </Text>
                     </View>
 
                     {/* Select Class */}
-                    <Text style={styles.label}>Select Class</Text>
+                    <Text style={styles.label}>{Strings.selectClass}</Text>
                     <TouchableOpacity
                         style={styles.dropdown}
                         activeOpacity={0.7}
@@ -141,7 +142,7 @@ const AddHomework = () => {
                         }}
                     >
                         <Text style={[styles.dropdownText, selectedClass && { color: '#1A1A1A' }]}>
-                            {selectedClass ? selectedClass.name : 'Select a class'}
+                            {selectedClass ? selectedClass.name : Strings.selectClassPlaceholder}
                         </Text>
                         {loadingClasses ? (
                             <ActivityIndicator size="small" color={Colors.primary} />
@@ -171,7 +172,7 @@ const AddHomework = () => {
                     )}
 
                     {/* Select Subject */}
-                    <Text style={styles.label}>Select Subject</Text>
+                    <Text style={styles.label}>{Strings.selectSubject}</Text>
                     <TouchableOpacity
                         style={styles.dropdown}
                         activeOpacity={0.7}
@@ -182,7 +183,7 @@ const AddHomework = () => {
                         }}
                     >
                         <Text style={[styles.dropdownText, selectedSubject && { color: '#1A1A1A' }]}>
-                            {selectedSubject ? selectedSubject.name : 'Select subject'}
+                            {selectedSubject ? selectedSubject.name : Strings.selectSubjectPlaceholder}
                         </Text>
                         {loadingSubjects ? (
                             <ActivityIndicator size="small" color={Colors.primary} />
@@ -210,11 +211,11 @@ const AddHomework = () => {
                     )}
 
                     {/* Homework Details */}
-                    <Text style={styles.label}>Homework Details</Text>
+                    <Text style={styles.label}>{Strings.homeworkDetails}</Text>
                     <View style={styles.textAreaContainer}>
                         <TextInput
                             style={styles.textArea}
-                            placeholder="Write instructions, page numbers, or questions here..."
+                            placeholder={Strings.homeworkDetailsPlaceholder}
                             multiline
                             numberOfLines={2}
                             value={homeworkDetails}
@@ -242,7 +243,7 @@ const AddHomework = () => {
                         >
                             <View style={styles.settingLeft}>
                                 <Text style={styles.settingIcon}>📅</Text>
-                                <Text style={styles.settingLabel}>Due Date</Text>
+                                <Text style={styles.settingLabel}>{Strings.dueDate}</Text>
                             </View>
                             <Text style={styles.settingAction}>{formatDate(dueDate)}</Text>
                         </TouchableOpacity>
@@ -252,7 +253,7 @@ const AddHomework = () => {
                         <View style={styles.settingRow}>
                             <View style={styles.settingLeft}>
                                 <Text style={styles.settingIcon}>🔔</Text>
-                                <Text style={styles.settingLabel}>Notify Parents</Text>
+                                <Text style={styles.settingLabel}>{Strings.notifyParents}</Text>
                             </View>
                             <Switch
                                 value={notifyParents}
@@ -275,7 +276,7 @@ const AddHomework = () => {
                         {loading ? (
                             <ActivityIndicator color={Colors.white} />
                         ) : (
-                            <Text style={styles.postBtnText}>➤ Post Homework</Text>
+                            <Text style={styles.postBtnText}>➤ {Strings.postHomework}</Text>
                         )}
                     </TouchableOpacity>
                 </View>

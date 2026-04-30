@@ -1,16 +1,13 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, Animated, Dimensions } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { Colors } from '../comman/Colors'
-import StringsRaw from '../comman/String'
 import Fonts from '../comman/fonts'
-import FontsSize from '../comman/FontsSize'
 
-const Strings = StringsRaw.en
+const { width } = Dimensions.get('window')
 
 const ParentBottom = ({ activeTab = 'HOME' }: { activeTab?: string }) => {
     const navigation = useNavigation<any>()
-
     const tabs = [
         { id: 'HOME', label: 'Home', icon: '🏠', screen: 'ParentDashboard' },
         { id: 'MESSAGES', label: 'Messages', icon: '💬', screen: 'Chat_Screen' },
@@ -36,18 +33,20 @@ const ParentBottom = ({ activeTab = 'HOME' }: { activeTab?: string }) => {
                             activeOpacity={0.8}
                             onPress={() => handlePress(tab)}
                         >
-                            <View style={[
+                            <Animated.View style={[
                                 styles.iconContainer,
-                                isActive && styles.activeIconContainer
+                                isActive && styles.activeIconContainer,
+                                {
+                                    transform: [{ scale: isActive ? 1.15 : 1 }]
+                                }
                             ]}>
                                 <Text style={[styles.icon, isActive && styles.activeIcon]}>
                                     {tab.icon}
                                 </Text>
-                            </View>
+                            </Animated.View>
                             <Text style={[styles.label, isActive && styles.activeLabel]}>
                                 {tab.label}
                             </Text>
-                            {isActive && <View style={styles.activeDot} />}
                         </TouchableOpacity>
                     )
                 })}
@@ -101,7 +100,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 22,
-        opacity: 0.85, 
+        opacity: 0.85,
     },
     activeIcon: {
         opacity: 1,
@@ -115,15 +114,6 @@ const styles = StyleSheet.create({
     activeLabel: {
         color: Colors.primary,
         fontFamily: Fonts.LexendBold,
-    },
-    activeDot: {
-        width: 5,
-        height: 5,
-        borderRadius: 2.5,
-        backgroundColor: Colors.primary,
-        marginTop: 4,
-        position: 'absolute',
-        bottom: -8,
     },
 })
 

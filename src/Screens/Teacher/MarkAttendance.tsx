@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBa
 import React, { useState, useMemo } from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import Strings from '../../comman/String'
+import useStrings from '../../comman/useStrings'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
@@ -23,7 +23,7 @@ interface Student {
 const MarkAttendance = () => {
     const navigation = useNavigation<any>();
     const { teacher } = useSelector((state: any) => state.user);
-    const str = Strings.en;
+    const str = useStrings();
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [showDatePicker, setShowDatePicker] = useState(false)
@@ -279,7 +279,7 @@ const MarkAttendance = () => {
                     {loading ? (
                         <ActivityIndicator color={Colors.white} />
                     ) : (
-                        <Text style={styles.submitBtnText}>Submit Attendance</Text>
+                        <Text style={styles.submitBtnText}>{str.submitAttendance}</Text>
                     )}
                 </TouchableOpacity>
             </View>

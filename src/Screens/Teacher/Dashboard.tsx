@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar, Dimensions } from 'react-native'
 import React from 'react'
 import { Colors } from '../../comman/Colors'
-import StringsRaw from '../../comman/String'
+import useStrings from '../../comman/useStrings'
 import Fonts from '../../comman/fonts'
 import FontsSize from '../../comman/FontsSize'
 import HWSize from '../../comman/HWSize'
@@ -10,10 +10,9 @@ import BottomTab from '../../Component/Bottom'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
 
-const Strings = StringsRaw.en
 const Dashboard = () => {
     const navigation = useNavigation<any>();
-
+    const Strings = useStrings()
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
@@ -104,19 +103,22 @@ const ScheduleCard = ({ time, period, subject, details }: any) => (
     </TouchableOpacity>
 )
 
-const TaskItem = ({ label, isUrgent, isLast }: any) => (
-    <TouchableOpacity style={[styles.taskItem, isLast && { borderBottomWidth: 0 }]} activeOpacity={0.7}>
-        <View style={styles.checkbox} />
-        <View style={styles.taskContent}>
-            <Text style={styles.taskLabel}>{label}</Text>
-            {isUrgent && (
-                <View style={styles.urgentBadge}>
-                    <Text style={styles.urgentText}>{Strings.urgent}</Text>
-                </View>
-            )}
-        </View>
-    </TouchableOpacity>
-)
+const TaskItem = ({ label, isUrgent, isLast }: any) => {
+    const Strings = useStrings();
+    return (
+        <TouchableOpacity style={[styles.taskItem, isLast && { borderBottomWidth: 0 }]} activeOpacity={0.7}>
+            <View style={styles.checkbox} />
+            <View style={styles.taskContent}>
+                <Text style={styles.taskLabel}>{label}</Text>
+                {isUrgent && (
+                    <View style={styles.urgentBadge}>
+                        <Text style={styles.urgentText}>{Strings.urgent}</Text>
+                    </View>
+                )}
+            </View>
+        </TouchableOpacity>
+    )
+}
 
 export default Dashboard
 

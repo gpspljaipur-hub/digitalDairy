@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import HWSize from '../../comman/HWSize'
 import { useNavigation } from '@react-navigation/native'
+import useStrings from '../../comman/useStrings'
 import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux'
 const CreateNotice = () => {
     const navigation = useNavigation<any>();
     const { teacher } = useSelector((state: any) => state.user);
+    const strings = useStrings();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isImportant, setIsImportant] = useState(false);
@@ -96,7 +97,7 @@ const CreateNotice = () => {
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Text style={styles.backIcon}>←</Text>
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Create Notice</Text>
+                <Text style={styles.headerTitle}>{strings.createNoticeTitle}</Text>
                 <TouchableOpacity style={styles.profileBtn}>
                     <View style={styles.profileIconOutline}>
                         <Text style={styles.profileEmoji}>👤</Text>
@@ -111,19 +112,19 @@ const CreateNotice = () => {
                         <Text style={styles.megaphoneIcon}>📢</Text>
                     </View>
                     <View style={styles.bannerTextContent}>
-                        <Text style={styles.bannerTitle}>Broadcasting to Community</Text>
+                        <Text style={styles.bannerTitle}>{strings.broadcastingTitle}</Text>
                         <Text style={styles.bannerSubtitle}>
-                            Your notice will be sent immediately to the selected classes.
+                            {strings.broadcastingSubtitle}
                         </Text>
                     </View>
                 </View>
 
                 {/* Notice Title Section */}
-                <Text style={styles.sectionLabel}>Notice Title</Text>
+                <Text style={styles.sectionLabel}>{strings.noticeTitleLabel}</Text>
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="e.g. Annual Sports Day Postponed"
+                        placeholder={strings.noticeTitlePlaceholder}
                         placeholderTextColor={Colors.lightGreyText}
                         value={title}
                         onChangeText={(text) => {
@@ -159,8 +160,8 @@ const CreateNotice = () => {
                     })}
                 </View>
 
-                {/* Notice Content Section */}
-                <Text style={styles.sectionLabel}>Notice Content</Text>
+    {/* Notice Content Section */ }
+                <Text style={styles.sectionLabel}>{strings.noticeContentLabel}</Text>
                 <View style={styles.editorContainer}>
                     <View style={styles.toolbar}>
                         <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>B</Text></TouchableOpacity>
@@ -171,7 +172,7 @@ const CreateNotice = () => {
                     </View>
                     <TextInput
                         style={styles.textArea}
-                        placeholder="Write the important message for students and parents here..."
+                        placeholder={strings.noticeContentPlaceholder}
                         placeholderTextColor={Colors.lightGreyText}
                         multiline
                         textAlignVertical="top"
@@ -186,52 +187,56 @@ const CreateNotice = () => {
                     </View>
                 </View>
 
-                {/* Mark as Important Section */}
-                <View style={styles.importantCard}>
-                    <View style={styles.importantIconBg}>
-                        <Text style={styles.warningIcon}>!</Text>
-                    </View>
-                    <View style={styles.importantTextContent}>
-                        <Text style={styles.importantTitle}>Mark as Important</Text>
-                        <Text style={styles.importantSubtitle}>Sends an SMS alert to parents.</Text>
-                    </View>
-                    <Switch
-                        value={isImportant}
-                        onValueChange={setIsImportant}
-                        trackColor={{ false: '#D1D5DB', true: '#BFC5FF' }}
-                        thumbColor={isImportant ? Colors.primary : '#F4F3F4'}
-                    />
-                </View>
+    {/* Mark as Important Section */ }
+    <View style={styles.importantCard}>
+        <View style={styles.importantIconBg}>
+            <Text style={styles.warningIcon}>!</Text>
+        </View>
+        <View style={styles.importantTextContent}>
+            <Text style={styles.importantTitle}>{strings.markAsImportantLabel}</Text>
+            <Text style={styles.importantSubtitle}>{strings.markAsImportantSubtitle}</Text>
+        </View>
+        <Switch
+            value={isImportant}
+            onValueChange={setIsImportant}
+            trackColor={{ false: '#D1D5DB', true: '#BFC5FF' }}
+            thumbColor={isImportant ? Colors.primary : '#F4F3F4'}
+        />
+    </View>
 
-                {/* Error Message */}
-                {error ? (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{error}</Text>
-                    </View>
-                ) : null}
-
-                {/* Send Button */}
-                <TouchableOpacity
-                    style={[styles.sendButton, (loading || classes.length === 0) && { opacity: 0.7 }]}
-                    activeOpacity={0.8}
-                    disabled={loading || classes.length === 0}
-                    onPress={handleSendNotice}
-                >
-                    {loading ? (
-                        <ActivityIndicator color={Colors.white} />
-                    ) : (
-                        <>
-                            <Text style={styles.sendButtonIcon}>➤</Text>
-                            <Text style={styles.sendButtonText}>Send Notice</Text>
-                        </>
-                    )}
-                </TouchableOpacity>
-
-                <Text style={styles.footerNote}>
-                    This action will be logged and archived for 12 months.
-                </Text>
+    {/* Error Message */ }
+    {
+        error ? (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
             </View>
-        </ScreenWrapper>
+        ) : null
+    }
+
+    {/* Send Button */ }
+    <TouchableOpacity
+        style={[styles.sendButton, (loading || classes.length === 0) && { opacity: 0.7 }]}
+        activeOpacity={0.8}
+        disabled={loading || classes.length === 0}
+        onPress={handleSendNotice}
+    >
+{
+    loading ? (
+        <ActivityIndicator color={Colors.white} />
+    ) : (
+        <>
+            <Text style={styles.sendButtonIcon}>➤</Text>
+            <Text style={styles.sendButtonText}>{strings.sendNoticeButton}</Text>
+        </>
+    )
+}
+                </TouchableOpacity >
+
+    <Text style={styles.footerNote}>
+        {strings.footerArchivedNote}
+    </Text>
+            </View >
+        </ScreenWrapper >
     )
 }
 

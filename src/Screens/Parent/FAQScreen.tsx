@@ -14,6 +14,7 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
     const [expanded, setExpanded] = useState(false);
@@ -45,6 +46,7 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
 };
 
 const FAQScreen = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
     const [feedback, setFeedback] = useState('');
 
@@ -66,7 +68,7 @@ const FAQScreen = () => {
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Help & Support"
+                title={strings.helpSupport}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -76,8 +78,8 @@ const FAQScreen = () => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {/* Hero Banner */}
                 <View style={styles.heroBanner}>
-                    <Text style={styles.heroTitle}>How can we help you?</Text>
-                    <Text style={styles.heroSubtitle}>Find answers or contact the school office directly.</Text>
+                    <Text style={styles.heroTitle}>{strings.helpSupportHeroTitle}</Text>
+                    <Text style={styles.heroSubtitle}>{strings.helpSupportHeroSubtitle}</Text>
                 </View>
 
                 {/* FAQ Section */}
@@ -85,7 +87,7 @@ const FAQScreen = () => {
                     <View style={styles.sectionIconBox}>
                         <Text style={styles.sectionIcon}>❓</Text>
                     </View>
-                    <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
+                    <Text style={styles.sectionTitle}>{strings.frequentlyAskedQuestions}</Text>
                 </View>
 
                 <View style={styles.faqList}>
@@ -95,20 +97,20 @@ const FAQScreen = () => {
                 </View>
 
                 {/* Contact Admin */}
-                <Text style={styles.subHeader}>Contact Admin</Text>
+                <Text style={styles.subHeader}>{strings.contactAdmin}</Text>
                 <View style={styles.contactRow}>
                     <TouchableOpacity style={styles.callButton}>
-                        <Text style={styles.buttonText}>📞 Call School Office</Text>
+                        <Text style={styles.buttonText}>📞 {strings.callSchoolOffice}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.emailButton}>
-                        <Text style={[styles.buttonText, { color: '#475569' }]}>✉️ Email Support</Text>
+                        <Text style={[styles.buttonText, { color: '#475569' }]}>✉️ {strings.emailSupport}</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Ticket Status */}
                 <View style={styles.ticketCard}>
                     <View style={styles.ticketHeader}>
-                        <Text style={styles.ticketHeaderText}>SUPPORT TICKET STATUS</Text>
+                        <Text style={styles.ticketHeaderText}>{strings.supportTicketStatus}</Text>
                     </View>
                     <View style={styles.ticketBody}>
                         <View style={styles.ticketIconContainer}>
@@ -126,18 +128,18 @@ const FAQScreen = () => {
 
                 {/* Feedback Form */}
                 <View style={styles.feedbackCard}>
-                    <Text style={styles.feedbackTitle}>Send Feedback</Text>
-                    <Text style={styles.feedbackSubtitle}>Your voice helps us improve the school digital experience for everyone.</Text>
+                    <Text style={styles.feedbackTitle}>{strings.sendFeedback}</Text>
+                    <Text style={styles.feedbackSubtitle}>{strings.feedbackImproveSubtitle}</Text>
 
                     <View style={styles.infoBanner}>
                         <Text style={styles.infoIcon}>📢</Text>
                         <Text style={styles.infoText}>Civic Education Framework Compliant</Text>
                     </View>
 
-                    <Text style={styles.inputLabel}>Message to Administration</Text>
+                    <Text style={styles.inputLabel}>{strings.messageToAdmin}</Text>
                     <TextInput
                         style={styles.textInput}
-                        placeholder="Tell us how we can improve..."
+                        placeholder={strings.feedbackPlaceholder}
                         multiline
                         numberOfLines={4}
                         value={feedback}
@@ -145,7 +147,7 @@ const FAQScreen = () => {
                     />
 
                     <TouchableOpacity style={styles.submitButton}>
-                        <Text style={styles.submitButtonText}>Submit Feedback</Text>
+                        <Text style={styles.submitButtonText}>{strings.submitFeedback}</Text>
                         <Text style={styles.sendIcon}>➤</Text>
                     </TouchableOpacity>
                 </View>

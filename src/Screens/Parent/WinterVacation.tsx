@@ -6,14 +6,16 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const WinterVacation = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Event Details"
+                title={strings.eventDetails}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -41,7 +43,7 @@ const WinterVacation = () => {
 
                     {/* Announcement Card */}
                     <View style={styles.announcementCard}>
-                        <Text style={styles.cardTitle}>Announcement</Text>
+                        <Text style={styles.cardTitle}>{strings.announcement}</Text>
                         <Text style={styles.cardText}>
                             The school will remain closed for winter break. We wish all our students and their families a joyful and safe holiday season. Classes will resume on January 08, 2024.
                         </Text>
@@ -53,7 +55,7 @@ const WinterVacation = () => {
                             <View style={styles.infoIconBox}>
                                 <Text style={styles.infoIcon}>ℹ️</Text>
                             </View>
-                            <Text style={styles.noticeTitle}>Office Notice</Text>
+                            <Text style={styles.noticeTitle}>{strings.officeNotice}</Text>
                         </View>
                         <Text style={styles.noticeText}>
                             Office will be open for administrative queries from 10:00 AM to 01:00 PM on weekdays.
@@ -63,9 +65,9 @@ const WinterVacation = () => {
                     {/* Back Button */}
                     <TouchableOpacity
                         style={styles.backBtn}
-                    // onPress={() => navigation.goBack()}
+                        onPress={() => navigation.goBack()}
                     >
-                        <Text style={styles.backBtnText}>← Back to Calendar</Text>
+                        <Text style={styles.backBtnText}>← {strings.backToCalendar}</Text>
                     </TouchableOpacity>
 
                     <View style={styles.divider} />

@@ -12,17 +12,28 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '../../Redux/Reducers/Userslice';
+import { RootState } from '../../Redux/Store/Store';
+import useStrings from '../../comman/useStrings';
 
 const { width } = Dimensions.get('window');
 
 const LanguageSelection = () => {
     const navigation = useNavigation<any>();
+    const dispatch = useDispatch();
+    const Strings = useStrings();
+    const selectedLanguage = useSelector((state: RootState) => state.user.language);
 
     const languages = [
-        { id: 'en', label: 'English', icon: '🌐' },
-        { id: 'hi', label: 'Hindi (हिन्दी)', icon: '文' },
-        { id: 'pn', label: 'Punjabi (ਪੰਜਾਬੀ)', icon: '🌐' },
+        { id: 'en', label: 'English', icon: 'A' },
+        { id: 'hi', label: 'Hindi (हिन्दी)', icon: 'अ' },
+        { id: 'pa', label: 'Punjabi (ਪੰਜਾਬੀ)', icon: 'ਅ' },
     ];
+
+    const handleLanguageSelect = (langId: any) => {
+        dispatch(setLanguage(langId));
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -33,7 +44,7 @@ const LanguageSelection = () => {
                     <View style={styles.headerIconContainer}>
                         <Text style={styles.headerIcon}>🌐</Text>
                     </View>
-                    <Text style={styles.headerTitle}>Select Language</Text>
+                    <Text style={styles.headerTitle}>{Strings.selectLanguage}</Text>
                 </View>
                 <TouchableOpacity style={styles.helpButton}>
                     <Text style={styles.helpIcon}>❓</Text>
@@ -45,9 +56,9 @@ const LanguageSelection = () => {
                     <View style={styles.logoWrapper}>
                         <Text style={styles.logoIcon}>🎓</Text>
                     </View>
-                    <Text style={styles.welcomeText}>Welcome</Text>
+                    <Text style={styles.welcomeText}>{Strings.welcome}</Text>
                     <Text style={styles.welcomeSubtitle}>
-                        Please choose your preferred language to continue with the Digital School Diary.
+                        {Strings.languageWelcomeSubtitle}
                     </Text>
                 </View>
 
@@ -55,26 +66,48 @@ const LanguageSelection = () => {
                     {languages.map((lang) => (
                         <TouchableOpacity
                             key={lang.id}
-                            style={styles.languageCard}
+                            style={[
+                                styles.languageCard,
+                                selectedLanguage === lang.id && styles.selectedCard
+                            ]}
                             activeOpacity={0.7}
-                            onPress={() => navigation.navigate('WelcomeScreen')}
+                            onPress={() => handleLanguageSelect(lang.id)}
                         >
-                            <View style={styles.langIconWrapper}>
+                            <View style={[
+                                styles.langIconWrapper,
+                                selectedLanguage === lang.id && styles.selectedIconWrapper
+                            ]}>
                                 <Text style={styles.langIcon}>{lang.icon}</Text>
                             </View>
-                            <Text style={styles.langLabel}>{lang.label}</Text>
-                            <Text style={styles.chevron}>›</Text>
+                            <Text style={[
+                                styles.langLabel,
+                                selectedLanguage === lang.id && styles.selectedLangLabel
+                            ]}>{lang.label}</Text>
+                            {selectedLanguage === lang.id ? (
+                                <View style={styles.checkCircle}>
+                                    <Text style={styles.checkMark}>✓</Text>
+                                </View>
+                            ) : (
+                                <Text style={styles.chevron}>›</Text>
+                            )}
                         </TouchableOpacity>
                     ))}
                 </View>
 
 
                 <View style={styles.accessibilityBox}>
-                    <Text style={styles.accessTitle}>Accessibility</Text>
+                    <Text style={styles.accessTitle}>{Strings.accessibility}</Text>
                     <Text style={styles.accessText}>
-                        This application is designed to be accessible for everyone. If you need assistance, tap the help icon above.
+                        {Strings.accessibilityDesc}
                     </Text>
                 </View>
+
+                <TouchableOpacity
+                    style={styles.continueButton}
+                    onPress={() => navigation.navigate('WelcomeScreen')}
+                >
+                    <Text style={styles.continueButtonText}>{Strings.continue}</Text>
+                </TouchableOpacity>
 
 
                 <TouchableOpacity style={styles.portalCard} activeOpacity={0.9}>
@@ -82,7 +115,7 @@ const LanguageSelection = () => {
                         <View style={styles.portalIconWrapper}>
                             <Text style={styles.portalIcon}>👤</Text>
                         </View>
-                        <Text style={styles.portalText}>Student Identity Portal</Text>
+                        <Text style={styles.portalText}>{Strings.studentPortal}</Text>
                     </View>
                     <View style={styles.portalDecor1} />
                     <View style={styles.portalDecor2} />
@@ -198,6 +231,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.04,
         shadowRadius: 6,
     },
+    selectedCard: {
+        borderColor: '#2563EB',
+        backgroundColor: '#F0F7FF',
+        borderWidth: 2,
+    },
     langIconWrapper: {
         width: 48,
         height: 48,
@@ -207,6 +245,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginRight: 16,
     },
+    selectedIconWrapper: {
+        backgroundColor: '#2563EB',
+    },
     langIcon: {
         fontSize: 22,
     },
@@ -215,6 +256,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: Fonts.Lexend_Medium,
         color: '#334155',
+    },
+    selectedLangLabel: {
+        color: '#2563EB',
+        fontFamily: Fonts.Lexend_SemiBold,
+    },
+    checkCircle: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#2563EB',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    checkMark: {
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     chevron: {
         fontSize: 24,
@@ -243,6 +301,24 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.Lexend_Regular,
         color: 'rgba(255,255,255,0.9)',
         lineHeight: 24,
+    },
+    continueButton: {
+        backgroundColor: '#2563EB',
+        paddingVertical: 16,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 30,
+        elevation: 4,
+        shadowColor: '#2563EB',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+    },
+    continueButtonText: {
+        color: Colors.white,
+        fontSize: 18,
+        fontFamily: Fonts.LexendBold,
     },
     portalCard: {
         marginTop: 30,

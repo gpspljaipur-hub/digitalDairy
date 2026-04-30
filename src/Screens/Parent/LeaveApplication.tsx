@@ -12,8 +12,10 @@ import Fonts from '../../comman/fonts';
 import HWSize from '../../comman/HWSize';
 import DatePicker from '../../comman/DatePicker';
 import ScreenWrapper from '../../comman/ScreenWrapper';
+import useStrings from '../../comman/useStrings';
 
 const LeaveApplication = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
 
@@ -90,7 +92,7 @@ const LeaveApplication = () => {
         <ScreenWrapper scroll={false}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
             <Header
-                title="Leave Application"
+                title={strings.leaveApplication}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -99,13 +101,13 @@ const LeaveApplication = () => {
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Request Absence</Text>
+                    <Text style={styles.sectionTitle}>{strings.requestAbsence}</Text>
                     <Text style={styles.sectionSubtitle}>
-                        Please provide the details for your leave request. This will be reviewed by the school administration.
+                        {strings.leaveRequestSubtitle}
                     </Text>
 
                     <View style={styles.formGroup}>
-                        <Text style={styles.label}>Start Date</Text>
+                        <Text style={styles.label}>{strings.startDateLabel}</Text>
                         <TouchableOpacity
                             style={styles.dateInput}
                             onPress={() => setShowStartPicker(true)}
@@ -116,7 +118,7 @@ const LeaveApplication = () => {
                     </View>
 
                     <View style={styles.formGroup}>
-                        <Text style={styles.label}>End Date</Text>
+                        <Text style={styles.label}>{strings.endDateLabel}</Text>
                         <TouchableOpacity
                             style={styles.dateInput}
                             onPress={() => setShowEndPicker(true)}
@@ -127,10 +129,10 @@ const LeaveApplication = () => {
                     </View>
 
                     <View style={styles.formGroup}>
-                        <Text style={styles.label}>Reason for Leave</Text>
+                        <Text style={styles.label}>{strings.reasonForLeave}</Text>
                         <TextInput
                             style={styles.textArea}
-                            placeholder="Type your reason here..."
+                            placeholder={strings.typeReasonPlaceholder}
                             placeholderTextColor={Colors.lightGreyText}
                             multiline
                             numberOfLines={4}
@@ -145,8 +147,8 @@ const LeaveApplication = () => {
                             <Text style={styles.attachIcon}>📄</Text>
                         </View>
                         <View style={styles.attachTextContainer}>
-                            <Text style={styles.attachTitle}>Attach Supporting Document</Text>
-                            <Text style={styles.attachSubtitle}>Medical certificates, invitation letters, etc.</Text>
+                            <Text style={styles.attachTitle}>{strings.attachSupportingDoc}</Text>
+                            <Text style={styles.attachSubtitle}>{strings.attachDocSubtitle}</Text>
                         </View>
                     </TouchableOpacity>
 
@@ -159,7 +161,7 @@ const LeaveApplication = () => {
                             <ActivityIndicator color={Colors.white} />
                         ) : (
                             <>
-                                <Text style={styles.submitButtonText}>Submit Application</Text>
+                                <Text style={styles.submitButtonText}>{strings.submitApplication}</Text>
                                 <Text style={styles.submitIcon}>➤</Text>
                             </>
                         )}

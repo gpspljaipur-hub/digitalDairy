@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
-import StringsRaw from '../../comman/String'
 import HWSize from '../../comman/HWSize'
 import Header from '../../comman/Header'
 import { useNavigation } from '@react-navigation/native'
@@ -12,10 +11,12 @@ import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
 import { ActivityIndicator } from 'react-native'
 import { useSelector } from 'react-redux'
+import useStrings from '../../comman/useStrings'
 
-const Strings = StringsRaw.en
+
 
 const UPloadMarks = () => {
+    const Strings = useStrings()
     const navigation = useNavigation<any>();
     const { teacher } = useSelector((state: any) => state.user);
     console.log(teacher, 'teacher');
@@ -183,7 +184,7 @@ const UPloadMarks = () => {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
             <Header
-                title="Teacher Portal"
+                title={Strings.TeacherPortal}
                 showBack={true}
                 onBack={() => navigation.goBack()}
             />

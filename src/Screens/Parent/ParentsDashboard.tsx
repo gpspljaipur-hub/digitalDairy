@@ -15,8 +15,10 @@ import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper'
 import Config from '../../Lib/ApiService/Config'
 import { loginParentSuccess, setUserType } from '../../Redux/Reducers/Userslice'
 import { useDispatch } from 'react-redux'
+import useStrings from '../../comman/useStrings'
 
 const ParentDashboard = ({ route }: any) => {
+    const strings = useStrings()
     const dispatch = useDispatch()
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
@@ -53,17 +55,17 @@ const ParentDashboard = ({ route }: any) => {
     }
 
     const gridItems = [
-        { title: 'Attendance', icon: '📅', color: '#E3F2FD', iconColor: '#2196F3' },
-        { title: 'Homework', icon: '📖', color: '#FFF3E0', iconColor: '#FF9800' },
-        { title: 'Notices', icon: '📢', color: '#F3E5F5', iconColor: '#9C27B0' },
-        { title: 'Leave', icon: '📅', color: '#FFEBEE', iconColor: '#F44336' },
-        { title: 'Result', icon: '⭐', color: '#E8F5E9', iconColor: '#4CAF50' },
-        { title: 'Complaint', icon: '⚠️', color: '#FFFDE7', iconColor: '#FBC02D' },
+        { title: strings.attendanceLabel, icon: '📅', color: '#E3F2FD', iconColor: '#2196F3', type: 'Attendance' },
+        { title: strings.homeworkLabel, icon: '📖', color: '#FFF3E0', iconColor: '#FF9800', type: 'Homework' },
+        { title: strings.noticesLabel, icon: '📢', color: '#F3E5F5', iconColor: '#9C27B0', type: 'Notices' },
+        { title: strings.leaveLabel, icon: '📅', color: '#FFEBEE', iconColor: '#F44336', type: 'Leave' },
+        { title: strings.resultLabel, icon: '⭐', color: '#E8F5E9', iconColor: '#4CAF50', type: 'Result' },
+        { title: strings.complaintLabel, icon: '⚠️', color: '#FFFDE7', iconColor: '#FBC02D', type: 'Complaint' },
     ]
 
     return (
         <ScreenWrapper scroll={false}>
-            <Header title="School Link" showProfile={true} />
+            <Header title={strings.parentDashboardTitle} showProfile={true} />
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.scrollContent}
@@ -71,55 +73,55 @@ const ParentDashboard = ({ route }: any) => {
             >
                 {/* Welcome Section */}
                 <View style={styles.welcomeSection}>
-                    <Text style={styles.welcomeTitle}>Hello, {parentData?.parentName || 'Parent'}</Text>
+                    <Text style={styles.welcomeTitle}>{strings.hello}, {parentData?.parentName || 'Parent'}</Text>
                     <Text style={styles.welcomeSubtitle}>
-                        Your child, <Text style={styles.boldText}>{parentData?.studentFullName || 'Student'} ({parentData?.className || 'N/A'})</Text> is currently in school.
+                        {strings.yourChild}, <Text style={styles.boldText}>{parentData?.studentFullName || 'Student'} ({parentData?.className || 'N/A'})</Text> {strings.isCurrentlyInSchool}.
                     </Text>
                 </View>
 
                 {/* Progress Report Card */}
                 <View style={styles.progressCard}>
                     <View style={styles.progressHeader}>
-                        <Text style={styles.progressTitle}>Progress Report</Text>
+                        <Text style={styles.progressTitle}>{strings.progressReport}</Text>
                         <View style={styles.termBadge}>
-                            <Text style={styles.termText}>Term 1</Text>
+                            <Text style={styles.termText}>{strings.term} 1</Text>
                         </View>
                     </View>
 
                     <View style={styles.progressMain}>
                         <Text style={styles.percentageText}>88%</Text>
-                        <Text style={styles.averageLabel}>Overall Average</Text>
+                        <Text style={styles.averageLabel}>{strings.overallAverage}</Text>
                     </View>
 
                     <View style={styles.progressBarBg}>
                         <View style={[styles.progressBarFill, { width: '88%' }]} />
                     </View>
 
-                    <Text style={styles.statText}>📈 Up 4% since last month</Text>
+                    <Text style={styles.statText}>📈 {strings.upSinceLastMonth.replace('{percent}', '4')}</Text>
                 </View>
 
                 {/* Dashboard Grid */}
-                <Text style={styles.sectionTitle}>Dashboard</Text>
+                <Text style={styles.sectionTitle}>{strings.dashboard}</Text>
                 <View style={styles.gridContainer}>
                     {gridItems.map((item, index) => (
                         <TouchableOpacity
                             key={index}
                             style={styles.gridItem}
                             onPress={() => {
-                                if (item.title === 'Attendance') {
+                                if (item.type === 'Attendance') {
                                     navigation.navigate('StudentAttandance')
-                                } else if (item.title === 'Homework') {
+                                } else if (item.type === 'Homework') {
                                     navigation.navigate('Homework_Screen')
-                                } else if (item.title === 'Notices') {
+                                } else if (item.type === 'Notices') {
                                     navigation.navigate('NoticeScreen')
                                 }
-                                else if (item.title === 'Result') {
+                                else if (item.type === 'Result') {
                                     navigation.navigate('Result')
                                 }
-                                else if (item.title === 'Leave') {
+                                else if (item.type === 'Leave') {
                                     navigation.navigate('LeaveApplication')
                                 }
-                                else if (item.title === 'Complaint') {
+                                else if (item.type === 'Complaint') {
                                     navigation.navigate('Complaint')
                                 }
                             }}
@@ -140,14 +142,14 @@ const ParentDashboard = ({ route }: any) => {
                     <View style={styles.calendarIconBox}>
                         <Text style={styles.calendarIcon}>📅</Text>
                     </View>
-                    <Text style={styles.calendarText}>Academic Calendar</Text>
+                    <Text style={styles.calendarText}>{strings.academicCalendar}</Text>
                 </TouchableOpacity>
 
                 {/* Announcements */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Announcements</Text>
+                    <Text style={styles.sectionTitle}>{strings.announcements}</Text>
                     <TouchableOpacity>
-                        <Text style={styles.viewAllText}>View All</Text>
+                        <Text style={styles.viewAllText}>{strings.viewAll}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -175,9 +177,9 @@ const ParentDashboard = ({ route }: any) => {
 
                 {/* Recent Chats */}
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Recent Chats</Text>
+                    <Text style={styles.sectionTitle}>{strings.recentChats}</Text>
                     <TouchableOpacity>
-                        <Text style={styles.viewAllText}>Open Inbox</Text>
+                        <Text style={styles.viewAllText}>{strings.openInbox}</Text>
                     </TouchableOpacity>
                 </View>
 

@@ -10,8 +10,11 @@ import { useSelector } from 'react-redux'
 import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import moment from 'moment'
+import useStrings from '../../comman/useStrings'
+
 
 const StudentAttandance = () => {
+    const strings = useStrings()
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     const [currentDate, setCurrentDate] = useState(new Date())
@@ -109,7 +112,7 @@ const StudentAttandance = () => {
     return (
         <ScreenWrapper scroll={false}>
             <Header
-                title="Student Attendance"
+                title={strings.attendanceLabel}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -119,7 +122,7 @@ const StudentAttandance = () => {
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
                 {/* Attendance Period */}
                 <View style={styles.periodCard}>
-                    <Text style={styles.periodLabel}>Attendance Period</Text>
+                    <Text style={styles.periodLabel}>{strings.attendancePeriod}</Text>
                     <Text style={styles.periodValue}>{moment(currentDate).format('MMMM YYYY')}</Text>
                 </View>
 
@@ -130,28 +133,28 @@ const StudentAttandance = () => {
                             <Text style={styles.checkmarkIcon}>✓</Text>
                         </View>
                         <Text style={styles.summaryNumber}>{attendanceData?.totalPresent || 0}</Text>
-                        <Text style={styles.summaryLabel}>Present</Text>
+                        <Text style={styles.summaryLabel}>{strings.present}</Text>
                     </View>
                     <View style={styles.summaryCard}>
                         <View style={styles.absentIconCircle}>
                             <Text style={styles.crossIcon}>✕</Text>
                         </View>
                         <Text style={styles.summaryNumber}>{attendanceData?.totalAbsent || 0}</Text>
-                        <Text style={styles.summaryLabel}>Absent</Text>
+                        <Text style={styles.summaryLabel}>{strings.absent}</Text>
                     </View>
                 </View>
 
                 {/* Total Days Card */}
                 <View style={styles.totalDaysCard}>
                     <View>
-                        <Text style={styles.totalDaysLabel}>Total School Days</Text>
+                        <Text style={styles.totalDaysLabel}>{strings.totalDays}</Text>
                         <Text style={styles.totalDaysValue}>{attendanceData?.totalDays || 0} Days</Text>
                     </View>
                     <View style={styles.rateBadge}>
                         <Text style={styles.rateText}>
                             {attendanceData?.totalDays > 0
                                 ? Math.round((attendanceData.totalPresent / attendanceData.totalDays) * 100)
-                                : 0}% Rate
+                                : 0}% {strings.rate}
                         </Text>
                     </View>
                 </View>
@@ -189,15 +192,15 @@ const StudentAttandance = () => {
                     <View style={styles.legendRow}>
                         <View style={styles.legendItem}>
                             <View style={[styles.legendBox, { backgroundColor: '#007D34' }]} />
-                            <Text style={styles.legendText}>Present</Text>
+                            <Text style={styles.legendText}>{strings.present}</Text>
                         </View>
                         <View style={styles.legendItem}>
                             <View style={[styles.legendBox, { backgroundColor: '#D32F2F' }]} />
-                            <Text style={styles.legendText}>Absent</Text>
+                            <Text style={styles.legendText}>{strings.absent}</Text>
                         </View>
                         <View style={styles.legendItem}>
                             <View style={[styles.legendBox, { backgroundColor: '#E3F2FD' }]} />
-                            <Text style={styles.legendText}>Holiday</Text>
+                            <Text style={styles.legendText}>{strings.holidaysLabel}</Text>
                         </View>
                     </View>
                 </View>
@@ -205,7 +208,7 @@ const StudentAttandance = () => {
                 {/* Absentee Remarks */}
                 {attendanceData?.records?.filter((r: any) => r.status.toLowerCase() === 'absent').length > 0 && (
                     <>
-                        <Text style={styles.sectionTitle}>Absentee Remarks</Text>
+                        <Text style={styles.sectionTitle}>{strings.absenteeRemarks}</Text>
                         {attendanceData.records
                             .filter((r: any) => r.status.toLowerCase() === 'absent')
                             .map((remark: any, index: number) => (
@@ -215,7 +218,7 @@ const StudentAttandance = () => {
                                     </View>
                                     <View style={styles.remarkContent}>
                                         <Text style={styles.remarkDateText}>{moment(remark.date).format('MMM D, YYYY')}</Text>
-                                        <Text style={styles.remarkReasonText}>Status: Absent</Text>
+                                        <Text style={styles.remarkReasonText}>{strings.absent}</Text>
                                     </View>
                                 </View>
                             ))}

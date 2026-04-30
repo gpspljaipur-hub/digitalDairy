@@ -14,6 +14,7 @@ import UPloadMarks from '../Screens/Teacher/UPloadMarks';
 import SaveMarks from '../Screens/Teacher/SaveMarks';
 import ViewMarkSheet from '../Screens/Teacher/ViewMarkSheet';
 import Notification from '../Screens/Teacher/Notification';
+import Teacher_Profile from '../Screens/Teacher/Teacher_Profile';
 import Splash from '../Screens/Auth/Splash';
 import LanguageSelection from '../Screens/Auth/LanguageSelection';
 import WelcomeScreen from '../Screens/Auth/WelcomeScreen';
@@ -43,6 +44,10 @@ import Profile from '../Screens/Parent/Profile';
 import ParentDetails from '../Screens/Parent/ParentDetails';
 import EditProfile from '../Screens/Parent/EditProfile';
 import FAQScreen from '../Screens/Parent/FAQScreen';
+import Schedule from '../Screens/Parent/Schedule';
+
+
+
 
 
 
@@ -90,7 +95,10 @@ export type RootStackParamList = {
   ParentDetails: undefined;
   EditProfile: undefined;
   FAQScreen: undefined;
+  Teacher_Profile: undefined;
+  Schedule: undefined;
 };
+
 
 
 
@@ -160,7 +168,10 @@ const RootNavigator = () => {
       <Stack.Screen name="ParentDetails" component={ParentDetails} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
+      <Stack.Screen name="Teacher_Profile" component={Teacher_Profile} />
+      <Stack.Screen name="Schedule" component={Schedule} />
     </Stack.Navigator>
+
 
 
 

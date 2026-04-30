@@ -10,16 +10,17 @@ import {
 } from 'react-native';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
-import Strings from '../../comman/String';
 import ScreenWrapper from '../../comman/ScreenWrapper';
 import HWSize from '../../comman/HWSize';
 import { useNavigation } from '@react-navigation/native';
+
+import useStrings from '../../comman/useStrings';
 
 const { width } = Dimensions.get('window');
 
 const WelcomeScreen = () => {
     const navigation = useNavigation<any>();
-    const s = Strings.en;
+    const s = useStrings();
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>

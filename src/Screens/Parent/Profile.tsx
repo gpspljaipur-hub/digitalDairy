@@ -11,36 +11,38 @@ import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
 import Config from '../../Lib/ApiService/Config';
 import { logout } from '../../Redux/Reducers/Userslice';
 import { useDispatch } from 'react-redux';
+import useStrings from '../../comman/useStrings';
 
 const Profile = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
     const dispatch = useDispatch<any>();
 
     const menuItems = [
         {
-            title: 'Personal Details',
-            subtitle: 'Contact info, address, students',
+            title: strings.personalDetails,
+            subtitle: strings.personalDetailsSubtitle,
             icon: '👤',
             onPress: () => navigation.navigate('ParentDetails'),
             showChevron: true,
         },
         {
-            title: 'Switch Role to Teacher',
+            title: strings.switchRoleToTeacher,
             subtitle: '',
             icon: '🔄',
             onPress: () => navigation.navigate('Welcomeback'),
             showChevron: false,
         },
         {
-            title: 'Language',
-            subtitle: 'English',
+            title: strings.language,
+            subtitle: strings.language || 'English',
             icon: '🌐',
             onPress: () => navigation.navigate('LanguageSelection'),
             showChevron: false,
         },
         {
-            title: 'Help & Support',
-            subtitle: 'FAQs, contact school admin',
+            title: strings.helpSupport,
+            subtitle: strings.helpSupportSubtitle,
             icon: '❓',
             onPress: () => navigation.navigate('FAQScreen'),
             showExternal: true,
@@ -52,14 +54,14 @@ const Profile = () => {
         await AsyncStorageHelper.removeItemValue(Config.TOKEN);
         await AsyncStorageHelper.removeItemValue(Config.ROLE);
         dispatch(logout());
-        Helper.showToast('Logout');
+        Helper.showToast(strings.logout);
         navigation.navigate('Welcomeback');
     }
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
             <Header
-                title="Profile"
+                title={strings.account}
                 showBack={true}
                 onBack={() => navigation.goBack()}
                 showProfile={false}
@@ -82,7 +84,7 @@ const Profile = () => {
                     <Text style={styles.userName}>Aravind Kumar</Text>
                     <View style={styles.roleRow}>
                         <Text style={styles.roleIcon}>👥</Text>
-                        <Text style={styles.roleText}>Parent (Grade 10-B)</Text>
+                        <Text style={styles.roleText}>{strings.parent} (Grade 10-B)</Text>
                     </View>
                 </View>
 
@@ -106,7 +108,7 @@ const Profile = () => {
                 {/* Logout Button */}
                 <TouchableOpacity style={styles.logoutBtn} onPress={() => { LogoutFun() }}>
                     <Text style={styles.logoutIcon}>🚪</Text>
-                    <Text style={styles.logoutText}>Logout</Text>
+                    <Text style={styles.logoutText}>{strings.logout}</Text>
                 </TouchableOpacity>
 
                 <Text style={styles.versionText}>App Version 2.4.0 (Build 892)</Text>

@@ -21,8 +21,10 @@ import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
 import HWSize from '../../comman/HWSize';
 import ParentBottom from '../../Component/ParentBottom';
+import useStrings from '../../comman/useStrings';
 
 const NoticeScreen = () => {
+    const strings = useStrings()
     const navigation = useNavigation<any>();
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -83,7 +85,7 @@ const NoticeScreen = () => {
                 >
                     <View style={styles.urgentHeader}>
                         <Text style={styles.urgentIcon}>📢</Text>
-                        <Text style={styles.urgentLabel}>URGENT NOTICE</Text>
+                        <Text style={styles.urgentLabel}>{strings.urgent}</Text>
                     </View>
                     <Text style={styles.urgentTitle}>{item.title}</Text>
                     <Text style={styles.urgentDescription}>{item.message}</Text>
@@ -93,7 +95,7 @@ const NoticeScreen = () => {
                             style={styles.readMoreBtn}
                             onPress={() => item.screen && navigation.navigate(item.screen)}
                         >
-                            <Text style={styles.readMoreText}>Read More</Text>
+                            <Text style={styles.readMoreText}>{strings.readMore}</Text>
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>
@@ -143,17 +145,13 @@ const NoticeScreen = () => {
     return (
         <ScreenWrapper scroll={false} style={styles.mainContainer}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.menuBtn}>
-                    <Text style={styles.menuIcon}>≡</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>School Notices</Text>
-                <TouchableOpacity style={styles.profileBtn}>
-                    <View style={styles.profileImageContainer}>
-                        <Text style={styles.profileEmoji}>👤</Text>
-                    </View>
-                </TouchableOpacity>
-            </View>
+            <Header
+                title={strings.noticesTitle}
+                showBack={true}
+                onBack={() => navigation.goBack()}
+                showProfile={false}
+                showNotification={false}
+            />
 
             <View style={styles.container}>
                 <View style={styles.searchSection}>
@@ -161,7 +159,7 @@ const NoticeScreen = () => {
                         <Text style={styles.searchIcon}>🔍</Text>
                         <TextInput
                             style={styles.searchInput}
-                            placeholder="Search notices..."
+                            placeholder={strings.searchNotices}
                             placeholderTextColor="#94A3B8"
                             value={searchQuery}
                             onChangeText={setSearchQuery}
