@@ -11,6 +11,12 @@ const ApiUrl = {
   MarksAdd: 'marks/add',
   NoticeAdd: 'notice/add',
   NoticeList: 'notice/list',
+  SchoolList: 'school/list',
+  RelationList: 'relation/list',
+  StudentsListByClass: 'students/list-by-class',
+  ParentRegister: 'register/add',
+  ParentRegisterGet: 'register/get',
+  AttendanceStudentMonthly: 'attendance/student-monthly'
 
 };
 
