@@ -1,28 +1,92 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Switch } from 'react-native'
-import React, { useState } from 'react'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Switch, ActivityIndicator } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
 import HWSize from '../../comman/HWSize'
 import { useNavigation } from '@react-navigation/native'
+import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import Helper from '../../Lib/HelperFiles/Helper'
+import { useSelector } from 'react-redux'
 
 const CreateNotice = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
+    const { teacher } = useSelector((state: any) => state.user);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isImportant, setIsImportant] = useState(false);
-    const [selectedClasses, setSelectedClasses] = useState(['']);
+    const [selectedClass, setSelectedClass] = useState<string>('');
+    const [classes, setClasses] = useState<any[]>([]);
+    const [loadingClasses, setLoadingClasses] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const classes = [
-        'Grade 10-A', 'Grade 10-B',
-        'Grade 11-A', 'All Classes'
-    ];
+    useEffect(() => {
+        fetchClasses();
+    }, []);
 
-    const toggleClass = (className: string) => {
-        if (selectedClasses.includes(className)) {
-            setSelectedClasses(selectedClasses.filter(c => c !== className));
+    const fetchClasses = async () => {
+        setLoadingClasses(true);
+        try {
+            const res = await Get_Send_Api(ApiUrl.ClassesAll, {});
+            if (res && !res.error) {
+                setClasses(res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Classes Error:', error);
+        } finally {
+            setLoadingClasses(false);
+        }
+    };
+
+    const toggleClass = (classId: string) => {
+        setError('');
+        if (selectedClass === classId) {
+            setSelectedClass('');
         } else {
-            setSelectedClasses([...selectedClasses, className]);
+            setSelectedClass(classId);
+        }
+    };
+
+    const handleSendNotice = async () => {
+        setError('');
+        if (!title.trim()) {
+            setError('Please enter notice title');
+            return;
+        }
+        if (!selectedClass) {
+            setError('Please select a class');
+            return;
+        }
+        if (!content.trim()) {
+            setError('Please enter notice content');
+            return;
+        }
+
+        const payload = {
+            title: title,
+            message: content,
+            classId: selectedClass,
+            isImportant: isImportant,
+        };
+
+        console.log(payload, 'payload');
+
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.NoticeAdd, payload);
+            if (res && !res.error) {
+                Helper.showToast('Notice sent successfully');
+                navigation.goBack();
+            } else {
+                setError(res?.message || 'Failed to send notice');
+            }
+        } catch (error) {
+            console.error('Send Notice Error:', error);
+            setError('Something went wrong');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -62,27 +126,33 @@ const CreateNotice = () => {
                         placeholder="e.g. Annual Sports Day Postponed"
                         placeholderTextColor={Colors.lightGreyText}
                         value={title}
-                        onChangeText={setTitle}
+                        onChangeText={(text) => {
+                            setTitle(text);
+                            setError('');
+                        }}
                     />
                 </View>
 
                 {/* Select Class Section */}
-                <Text style={styles.sectionLabel}>Select Class</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                    <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>Select Class</Text>
+                    {loadingClasses && <ActivityIndicator size="small" color={Colors.primary} />}
+                </View>
                 <View style={styles.classesGrid}>
-                    {classes.map((className) => {
-                        const isSelected = selectedClasses.includes(className);
+                    {classes.map((item) => {
+                        const isSelected = selectedClass === item._id;
                         return (
                             <TouchableOpacity
-                                key={className}
+                                key={item._id}
                                 style={[styles.classItem, isSelected && styles.classItemActive]}
-                                onPress={() => toggleClass(className)}
+                                onPress={() => toggleClass(item._id)}
                                 activeOpacity={0.7}
                             >
-                                <View style={[styles.checkbox, isSelected && styles.checkboxActive]}>
+                                <View style={[styles.checkbox, isSelected && styles.checkboxActive, { borderRadius: 10 }]}>
                                     {isSelected && <Text style={styles.checkMark}>✓</Text>}
                                 </View>
-                                <Text style={[styles.classText, isSelected && styles.classTextActive]}>
-                                    {className}
+                                <Text style={[styles.classText, isSelected && styles.classTextActive]} numberOfLines={1}>
+                                    {item.name}
                                 </Text>
                             </TouchableOpacity>
                         );
@@ -106,7 +176,10 @@ const CreateNotice = () => {
                         multiline
                         textAlignVertical="top"
                         value={content}
-                        onChangeText={setContent}
+                        onChangeText={(text) => {
+                            setContent(text);
+                            setError('');
+                        }}
                     />
                     <View style={styles.textAreaFooter}>
                         <Text style={styles.resizeHandle}>◢</Text>
@@ -130,14 +203,28 @@ const CreateNotice = () => {
                     />
                 </View>
 
+                {/* Error Message */}
+                {error ? (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                ) : null}
+
                 {/* Send Button */}
                 <TouchableOpacity
-                    style={styles.sendButton}
+                    style={[styles.sendButton, (loading || classes.length === 0) && { opacity: 0.7 }]}
                     activeOpacity={0.8}
-                    onPress={() => navigation.navigate('SendNotice')}
+                    disabled={loading || classes.length === 0}
+                    onPress={handleSendNotice}
                 >
-                    <Text style={styles.sendButtonIcon}>➤</Text>
-                    <Text style={styles.sendButtonText}>Send Notice</Text>
+                    {loading ? (
+                        <ActivityIndicator color={Colors.white} />
+                    ) : (
+                        <>
+                            <Text style={styles.sendButtonIcon}>➤</Text>
+                            <Text style={styles.sendButtonText}>Send Notice</Text>
+                        </>
+                    )}
                 </TouchableOpacity>
 
                 <Text style={styles.footerNote}>
@@ -413,5 +500,14 @@ const styles = StyleSheet.create({
         color: '#64748B',
         fontFamily: Fonts.Lexend_Regular,
         marginBottom: 20,
+    },
+    errorContainer: {
+        marginBottom: 12,
+        alignItems: 'center',
+    },
+    errorText: {
+        color: '#EF4444',
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Medium,
     },
 })

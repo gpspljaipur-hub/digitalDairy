@@ -8,7 +8,9 @@ const ApiUrl = {
   SubjectsList: 'subjects/list',
   HomeworkAdd: 'homework/add',
   HomeworkList: 'homework/list',
-  MarksAdd: 'marks/add'
+  MarksAdd: 'marks/add',
+  NoticeAdd: 'notice/add',
+  NoticeList: 'notice/list',
 
 };
 

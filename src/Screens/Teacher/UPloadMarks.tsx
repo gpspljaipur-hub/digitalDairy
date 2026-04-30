@@ -22,6 +22,7 @@ const UPloadMarks = () => {
     const [loading, setLoading] = useState(false);
     const [loadingClasses, setLoadingClasses] = useState(false);
     const [loadingData, setLoadingData] = useState(false);
+    const [error, setError] = useState('');
 
     const [classes, setClasses] = useState<any[]>([]);
     const [subjects, setSubjects] = useState<any[]>([]);
@@ -91,6 +92,7 @@ const UPloadMarks = () => {
     };
 
     const handleMarksChange = (id: string, value: string) => {
+        setError('');
         setStudents(prev => prev.map(student =>
             student.id === id
                 ? { ...student, marks: value, completed: value !== '' }
@@ -99,8 +101,9 @@ const UPloadMarks = () => {
     };
 
     const handlePostMarks = async () => {
+        setError('');
         if (!selectedClass || !selectedSubject) {
-            Helper.showToast('Please select class and subject');
+            setError('Please select class and subject');
             return;
         }
 
@@ -111,8 +114,8 @@ const UPloadMarks = () => {
                 marks: s.marks
             }));
 
-        if (marksData.length === 0) {
-            Helper.showToast('Please enter marks for at least one student');
+        if (marksData.length !== students.length) {
+            setError('Please enter marks for all students');
             return;
         }
 
@@ -132,11 +135,11 @@ const UPloadMarks = () => {
                 Helper.showToast('Marks uploaded successfully');
                 navigation.navigate('Dashboard');
             } else {
-                Helper.showToast(res?.message || 'Failed to upload marks');
+                setError(res?.message || 'Failed to upload marks');
             }
         } catch (error) {
             console.error('Upload Marks Error:', error);
-            Helper.showToast('Something went wrong');
+            setError('Something went wrong');
         } finally {
             setLoading(false);
         }
@@ -224,6 +227,7 @@ const UPloadMarks = () => {
                                             setSelectedClass(item);
                                             setShowClassList(false);
                                             setSelectedSubject(null);
+                                            setError('');
 
                                             fetchSubjects(item._id);
 
@@ -263,6 +267,7 @@ const UPloadMarks = () => {
                                         onPress={() => {
                                             setSelectedSubject(item);
                                             setShowSubjectList(false);
+                                            setError('');
                                         }}
                                     >
                                         <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
@@ -307,6 +312,13 @@ const UPloadMarks = () => {
                     </View>
                     <Text style={styles.infoText}>{Strings.verifyMarksNote}</Text>
                 </View>
+
+                {/* Error Message */}
+                {error ? (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                ) : null}
 
                 {/* Save Button */}
                 <TouchableOpacity
@@ -627,5 +639,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: Fonts.Lexend_Medium,
         color: '#94A3B8',
+    },
+    errorContainer: {
+        marginHorizontal: HWSize.W_Width20,
+        marginTop: 12,
+        alignItems: 'center',
+    },
+    errorText: {
+        color: '#EF4444',
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_Medium,
     },
 })
