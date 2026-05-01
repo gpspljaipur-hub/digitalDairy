@@ -6,6 +6,8 @@ import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
 import { ActivityIndicator } from 'react-native'
+import { pick, types } from '@react-native-documents/picker'
+
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import { Colors } from '../../comman/Colors'
@@ -33,19 +35,16 @@ const Complaint = () => {
     }, []);
 
     const pickDocument = async () => {
-        // try {
-        //     const res = await DocumentPicker.pick({
-        //         type: [types.pdf, types.images],
-        //     });
-        //     console.log('Picked Document:', res);
-        //     setAttachment(res[0]);
-        // } catch (err) {
-        //     if (DocumentPicker.isCancel(err)) {
-        //         console.log('User cancelled the picker');
-        //     } else {
-        //         console.error('Picker Error:', err);
-        //     }
-        // }
+        try {
+            const [file] = await pick({
+                allowMultiSelection: false,
+                type: [types.pdf, types.images],
+            });
+            console.log('Picked Document:', file);
+            setAttachment(file);
+        } catch (err) {
+
+        }
     };
 
     const fetchCategories = async () => {

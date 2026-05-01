@@ -2,7 +2,7 @@ const ApiUrl = {
   SendOtp: 'users/send-otp',
   VerifyOtp: 'users/verify-otp',
   TeacherLogin: 'teachers/login',
-  StudentsList: 'students/list',
+  StudentsList: 'students/list-by-class',
   MarkAttendance: 'attendance/mark',
   ClassesAll: 'classes/all',
   SubjectsList: 'subjects/list',

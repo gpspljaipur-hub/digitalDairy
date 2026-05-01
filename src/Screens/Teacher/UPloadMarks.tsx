@@ -36,7 +36,6 @@ const UPloadMarks = () => {
 
     useEffect(() => {
         fetchClasses()
-        fetchStudents(teacher?._id)
     }, []);
 
     const fetchClasses = async () => {
@@ -70,7 +69,7 @@ const UPloadMarks = () => {
     const fetchStudents = async (classId: string) => {
         setLoadingData(true);
         try {
-            const res = await Auth_ApiRequest(ApiUrl.StudentsList, { teacherId: classId });
+            const res = await Auth_ApiRequest(ApiUrl.StudentsListByClass, { classId });
             console.log(res, 'stuRes')
             if (res && !res.error) {
                 const list = res.data || res || [];
@@ -242,6 +241,76 @@ const UPloadMarks = () => {
                                 </ScrollView>
                             </View>
                         )}
+                    </TouchableOpacity>
+
+                    {showClassList && (
+                        <View style={styles.dropdownList}>
+                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                {classes.map((item) => (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedClass(item);
+                                            fetchStudents(item._id);
+                                            fetchSubjects(item._id);
+                                            setShowClassList(false);
+                                            setSelectedSubject(null);
+                                            setError('');
+
+
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedClass?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                        {selectedClass?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
+
+                    <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
+                    <TouchableOpacity
+                        style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
+                        activeOpacity={0.7}
+                        disabled={!selectedClass}
+                        onPress={() => {
+                            setShowSubjectList(!showSubjectList);
+                            setShowClassList(false);
+                        }}
+                    >
+                        <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
+                            {selectedSubject ? selectedSubject.name : Strings.selectSubject}
+                        </Text>
+                        <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
+                    </TouchableOpacity>
+
+                    {showSubjectList && (
+                        <View style={styles.dropdownList}>
+                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                {subjects.map((item) => (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedSubject(item);
+                                            setShowSubjectList(false);
+                                            setError('');
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                        {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
+                </View>
+
+                {/* Students List */}
+                <View style={styles.listHeader}>
+                    <Text style={styles.listTitle}>{Strings.studentsList} ({students.length})</Text>
+                </View>
 
                         <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
                         <TouchableOpacity
