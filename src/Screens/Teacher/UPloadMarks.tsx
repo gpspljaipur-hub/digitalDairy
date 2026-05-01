@@ -225,12 +225,13 @@ const UPloadMarks = () => {
                                             key={item._id}
                                             style={styles.dropdownItem}
                                             onPress={() => {
+                                                fetchStudents(item._id);
+                                                fetchSubjects(item._id);
                                                 setSelectedClass(item);
                                                 setShowClassList(false);
                                                 setSelectedSubject(null);
                                                 setError('');
-
-                                                fetchSubjects(item._id);
+                                             
 
                                             }}
                                         >
@@ -241,33 +242,10 @@ const UPloadMarks = () => {
                                 </ScrollView>
                             </View>
                         )}
-                    </TouchableOpacity>
-
-                    {showClassList && (
-                        <View style={styles.dropdownList}>
-                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
-                                {classes.map((item) => (
-                                    <TouchableOpacity
-                                        key={item._id}
-                                        style={styles.dropdownItem}
-                                        onPress={() => {
-                                            setSelectedClass(item);
-                                            fetchStudents(item._id);
-                                            fetchSubjects(item._id);
-                                            setShowClassList(false);
-                                            setSelectedSubject(null);
-                                            setError('');
+                    </View>
 
 
-                                        }}
-                                    >
-                                        <Text style={[styles.dropdownItemText, selectedClass?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
-                                        {selectedClass?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView>
-                        </View>
-                    )}
+                    <View style={styles.selectorContainer}>
 
                     <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
                     <TouchableOpacity
@@ -305,49 +283,6 @@ const UPloadMarks = () => {
                             </ScrollView>
                         </View>
                     )}
-                </View>
-
-                {/* Students List */}
-                <View style={styles.listHeader}>
-                    <Text style={styles.listTitle}>{Strings.studentsList} ({students.length})</Text>
-                </View>
-
-                        <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
-                        <TouchableOpacity
-                            style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
-                            activeOpacity={0.7}
-                            disabled={!selectedClass}
-                            onPress={() => {
-                                setShowSubjectList(!showSubjectList);
-                                setShowClassList(false);
-                            }}
-                        >
-                            <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
-                                {selectedSubject ? selectedSubject.name : Strings.selectSubject}
-                            </Text>
-                            <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
-                        </TouchableOpacity>
-
-                        {showSubjectList && (
-                            <View style={styles.dropdownList}>
-                                <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
-                                    {subjects.map((item) => (
-                                        <TouchableOpacity
-                                            key={item._id}
-                                            style={styles.dropdownItem}
-                                            onPress={() => {
-                                                setSelectedSubject(item);
-                                                setShowSubjectList(false);
-                                                setError('');
-                                            }}
-                                        >
-                                            <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
-                                            {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
-                                        </TouchableOpacity>
-                                    ))}
-                                </ScrollView>
-                            </View>
-                        )}
                     </View>
 
                     {/* Students List */}
@@ -443,7 +378,7 @@ const styles = StyleSheet.create({
     },
     selectorContainer: {
         paddingHorizontal: HWSize.W_Width20,
-        marginBottom: 24,
+        marginBottom: 2,
     },
     selectorLabel: {
         fontSize: 15,
@@ -482,6 +417,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: HWSize.W_Width20,
         marginBottom: 16,
+        marginTop: 24,
     },
     listTitle: {
         fontSize: 18,
@@ -500,14 +436,15 @@ const styles = StyleSheet.create({
         color: '#2D6A4F',
     },
     listContainer: {
-        paddingHorizontal: HWSize.W_Width20,
+       
     },
     studentCard: {
         flexDirection: 'row',
         backgroundColor: Colors.white,
         borderRadius: 16,
-        padding: 16,
+        padding: 10,
         alignItems: 'center',
+        marginHorizontal: HWSize.W_Width20,
         justifyContent: 'space-between',
         marginBottom: 12,
         borderWidth: 1,
