@@ -10,7 +10,9 @@ import Helper from '../../Lib/HelperFiles/Helper';
 import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
 import Config from '../../Lib/ApiService/Config';
 import { logout } from '../../Redux/Reducers/Userslice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store/Store';
+import LanguageModal from '../../Component/LanguageModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useStrings from '../../comman/useStrings';
 
@@ -19,6 +21,14 @@ const Profile = () => {
     const navigation = useNavigation<any>();
     const dispatch = useDispatch<any>();
     const [profileDetails, setProfileDetails] = useState<any>()
+    const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
+    const selectedLanguage = useSelector((state: RootState) => state.user.language);
+
+    const languages = [
+        { id: 'en', label: 'English' },
+        { id: 'hi', label: 'Hindi (हिन्दी)' },
+        { id: 'pa', label: 'Punjabi (ਪੰਜਾਬੀ)' },
+    ];
     useEffect(() => {
         const getRole = async () => {
             const role = await AsyncStorageHelper.getData(Config.USER_DATA);
@@ -38,18 +48,18 @@ const Profile = () => {
             }),
             showChevron: true,
         },
-        {
-            title: strings.switchRoleToTeacher,
-            subtitle: '',
-            icon: '🔄',
-            onPress: () => navigation.navigate('Welcomeback'),
-            showChevron: false,
-        },
+        // {
+        //     title: strings.switchRoleToTeacher,
+        //     subtitle: '',
+        //     icon: '🔄',
+        //     onPress: () => navigation.navigate('Welcomeback'),
+        //     showChevron: false,
+        // },
         {
             title: strings.language,
-            subtitle: strings.language || 'English',
+            subtitle: languages.find(l => l.id === selectedLanguage)?.label || 'English',
             icon: '🌐',
-            onPress: () => navigation.navigate('LanguageSelection'),
+            onPress: () => setIsLanguageModalVisible(true),
             showChevron: false,
         },
         {
@@ -124,6 +134,11 @@ const Profile = () => {
             </ScrollView>
 
             <ParentBottom activeTab="PROFILE" />
+
+            <LanguageModal 
+                visible={isLanguageModalVisible} 
+                onClose={() => setIsLanguageModalVisible(false)} 
+            />
         </ScreenWrapper>
     );
 };
