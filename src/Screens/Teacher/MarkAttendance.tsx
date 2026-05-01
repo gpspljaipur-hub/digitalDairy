@@ -103,11 +103,16 @@ const MarkAttendance = () => {
             studentId: s._id || s.id || index.toString(),
             status: s.status
         }));
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
 
+        console.log("selectedDate", formattedDate)
         const payload = {
             students: attendanceData,
             teacherId: teacher?._id,
-            date: selectedDate.toISOString().split('T')[0]
+            date: formattedDate
         };
         console.log("payload", payload)
 
@@ -287,8 +292,10 @@ const MarkAttendance = () => {
             <DatePicker
                 visible={showDatePicker}
                 selectedDate={selectedDate}
+                maxDate={new Date()}
                 onClose={() => setShowDatePicker(false)}
                 onSelect={(date) => {
+                    console.log("selectedDate", date)
                     setSelectedDate(date)
                     setShowDatePicker(false)
                 }}

@@ -31,9 +31,8 @@ const PostHomework = () => {
         try {
             const res = await Auth_ApiRequest(ApiUrl.HomeworkList, { classId });
             console.log('Homework List Response:', res);
-
             if (res && !res.error) {
-                const HomeWork = await res.find((item: any) => item?.classId?._id === homework?.classId);
+                const HomeWork = await res.find((item: any) => item?._id === homework?._id);
                 console.log('HomeWork', HomeWork);
                 setHomeworkList(HomeWork);
             }
@@ -45,6 +44,7 @@ const PostHomework = () => {
     }
 
     const formatDate = (dateStr: string) => {
+
         if (!dateStr) return 'N/A';
         const date = new Date(dateStr);
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
