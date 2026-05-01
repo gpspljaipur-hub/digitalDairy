@@ -16,15 +16,61 @@ import Fonts from '../../comman/fonts';
 import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
 import useStrings from '../../comman/useStrings';
+import { useSelector } from 'react-redux';
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest';
+import ApiUrl from '../../Lib/ApiService/ApiUrl';
+import Helper from '../../Lib/HelperFiles/Helper';
+import AsyncStorageHelper from '../../Lib/HelperFiles/AsyncStorageHelper';
+import Config from '../../Lib/ApiService/Config';
+import { loginParentSuccess, setUserType } from '../../Redux/Reducers/Userslice';
+import { useDispatch } from 'react-redux';
 
 const EditProfile = () => {
+    const dispatch = useDispatch();
     const strings = useStrings();
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+    const parentData = parent?.data || parent || {};
+    const [fullName, setFullName] = useState(parentData.parentName);
+    const [mobileNumber, setMobileNumber] = useState(parentData.mobile);
+    const [email, setEmail] = useState(parentData.email);
+    const [address, setAddress] = useState(parentData.address || '');
+    const [loading, setLoading] = useState(false);
 
-    const [fullName, setFullName] = useState('');
-    const [mobileNumber, setMobileNumber] = useState('');
-    const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
+    const onUpdateProfile = async () => {
+        const payload = {
+            mobile: mobileNumber,
+            parentName: fullName,
+            studentFullName: parentData.studentFullName || '',
+            classId: parentData.classId?._id || parentData.classId || '',
+            schoolId: parentData.schoolId?._id || parentData.schoolId || '',
+            relationId: parentData.relationId?._id || parentData.relationId || '',
+            studentId: parentData.studentId?._id || parentData.studentId || parentData._id || '',
+            email: email,
+            address: address
+        };
+        setLoading(true);
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.RegisterUpdate, payload);
+            if (res) {
+                await AsyncStorageHelper.setData(Config.USER_DATA, res);
+                await AsyncStorageHelper.setData(Config.TOKEN, res);
+                await AsyncStorageHelper.setData(Config.ROLE, 'parent');
+                dispatch(loginParentSuccess(res));
+                dispatch(setUserType('parent'));
+                Helper.showToast('Profile updated successfully');
+                navigation.goBack();
+            } else {
+                Helper.showToast(res?.message || 'Failed to update profile');
+                navigation.goBack(); // Still go back on success masquerading as failure if status check differs
+            }
+        } catch (error) {
+            console.error("Update profile error:", error);
+            Helper.showToast('Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
@@ -63,7 +109,7 @@ const EditProfile = () => {
                 {/* Form Fields */}
                 <View style={styles.form}>
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>{strings.fullName}</Text>
+                        <Text style={styles.label}>{strings.parentFullName || 'Full Name'}</Text>
                         <TextInput
                             style={styles.input}
                             value={fullName}
@@ -106,12 +152,12 @@ const EditProfile = () => {
 
                 {/* Action Buttons */}
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.saveBtn} onPress={() => navigation.navigate('Profile')}>
+                    <TouchableOpacity style={styles.saveBtn} onPress={onUpdateProfile} disabled={loading}>
                         <View style={styles.saveBtnContent}>
                             <View style={styles.checkCircle}>
                                 <Text style={styles.checkIcon}>✓</Text>
                             </View>
-                            <Text style={styles.saveBtnText}>{strings.saveChanges}</Text>
+                            <Text style={styles.saveBtnText}>{loading ? "Updating..." : strings.saveChanges}</Text>
                         </View>
                     </TouchableOpacity>
 

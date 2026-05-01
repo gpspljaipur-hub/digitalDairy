@@ -23,11 +23,11 @@ const ParentDashboard = ({ route }: any) => {
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     const mobile = route?.params?.phone;
-    console.log("🚀 ~ ParentDashboard ~ parent:", parent)
-    console.log("🚀 ~ ParentDashboard ~ mobile:", mobile)
 
     const [parentData, setParentData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
+    const [marksList, setMarksList] = useState<any[]>([]);
+    console.log("🚀 ~ ParentDashboard ~ parentData:", parentData)
 
 
     useEffect(() => {
@@ -45,7 +45,11 @@ const ParentDashboard = ({ route }: any) => {
                 await AsyncStorageHelper.setData(Config.ROLE, 'parent');
                 dispatch(loginParentSuccess(res));
                 dispatch(setUserType('parent'));
-                setParentData(res.data || res)
+                const pData = res.data || res;
+                setParentData(pData);
+                if (pData?.classId?._id || pData?.classId) {
+                    fetchMarks(pData?.classId?._id || pData?.classId);
+                }
             }
         } catch (error) {
             console.error('Fetch Parent Data Error:', error)
@@ -53,6 +57,22 @@ const ParentDashboard = ({ route }: any) => {
             setLoading(false)
         }
     }
+
+    const fetchMarks = async (classId: string) => {
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId })
+            if (res && !res.error) {
+                const list = res.data || res || [];
+                setMarksList(list);
+            }
+        } catch (error) {
+            console.error('Fetch Marks Error:', error);
+        }
+    };
+
+    const averageScore = marksList.length > 0
+        ? Math.round(marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) / marksList.length)
+        : 0;
 
     const gridItems = [
         { title: strings.attendanceLabel, icon: '📅', color: '#E3F2FD', iconColor: '#2196F3', type: 'Attendance' },
@@ -75,7 +95,7 @@ const ParentDashboard = ({ route }: any) => {
                 <View style={styles.welcomeSection}>
                     <Text style={styles.welcomeTitle}>{strings.hello}, {parentData?.parentName || 'Parent'}</Text>
                     <Text style={styles.welcomeSubtitle}>
-                        {strings.yourChild}, <Text style={styles.boldText}>{parentData?.studentFullName || 'Student'} ({parentData?.className || 'N/A'})</Text> {strings.isCurrentlyInSchool}.
+                        {strings.yourChild}, <Text style={styles.boldText}>{parentData?.studentFullName || 'Student'} ({parentData?.classId.name || 'N/A'})</Text> {strings.isCurrentlyInSchool}.
                     </Text>
                 </View>
 
@@ -89,12 +109,12 @@ const ParentDashboard = ({ route }: any) => {
                     </View>
 
                     <View style={styles.progressMain}>
-                        <Text style={styles.percentageText}>88%</Text>
+                        <Text style={styles.percentageText}>{averageScore}%</Text>
                         <Text style={styles.averageLabel}>{strings.overallAverage}</Text>
                     </View>
 
                     <View style={styles.progressBarBg}>
-                        <View style={[styles.progressBarFill, { width: '88%' }]} />
+                        <View style={[styles.progressBarFill, { width: `${averageScore}%` }]} />
                     </View>
 
                     <Text style={styles.statText}>📈 {strings.upSinceLastMonth.replace('{percent}', '4')}</Text>

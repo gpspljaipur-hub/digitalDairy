@@ -49,11 +49,11 @@ const Teacher_Profile = () => {
                             <Text style={styles.editEmoji}>✏️</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.teacherName}>{teacher?.name}</Text>
-                    <Text style={styles.designation}>{"Senior Secondary Teacher"}</Text>
+                    <Text style={styles.teacherName}>{teacher?.name || 'Teacher'}</Text>
+                    <Text style={styles.designation}>{teacher?.subject ? `${teacher.subject} Teacher` : "Teacher"}</Text>
                     <View style={styles.badgeContainer}>
                         <View style={styles.badge}>
-                            <Text style={styles.badgeText}>ID: {"T-2024089"}</Text>
+                            <Text style={styles.badgeText}>ID: {teacher?._id ? teacher._id.substring(teacher._id.length - 6).toUpperCase() : "T-1000"}</Text>
                         </View>
                     </View>
                 </View>
@@ -61,16 +61,16 @@ const Teacher_Profile = () => {
                 {/* Stats Section */}
                 <View style={styles.statsRow}>
                     <View style={styles.statCard}>
-                        <Text style={styles.statValue}>12+</Text>
+                        <Text style={styles.statValue}>{teacher?.experience || '5+'}</Text>
                         <Text style={styles.statLabel}>Years Exp.</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <Text style={styles.statValue}>4</Text>
-                        <Text style={styles.statLabel}>Classes</Text>
+                        <Text style={styles.statValue}>1</Text>
+                        <Text style={styles.statLabel}>Class</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <Text style={styles.statValue}>120</Text>
-                        <Text style={styles.statLabel}>Students</Text>
+                        <Text style={styles.statValue}>{teacher?.subject || 'All'}</Text>
+                        <Text style={styles.statLabel}>Subject</Text>
                     </View>
                 </View>
 
@@ -78,16 +78,16 @@ const Teacher_Profile = () => {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Personal Details</Text>
                     <View style={styles.infoCard}>
-                        <InfoRow emoji="📧" label="Email" value={teacher?.email} />
-                        <InfoRow emoji="📱" label="Phone" value={"+91 1234567890"} isLast />
+                        <InfoRow emoji="📧" label="Email" value={teacher?.email || 'N/A'} />
+                        <InfoRow emoji="📱" label="Phone" value={teacher?.phone || teacher?.mobile || 'N/A'} isLast />
                     </View>
                 </View>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Academic Info</Text>
                     <View style={styles.infoCard}>
-                        <InfoRow emoji="📚" label="Subjects" value="Mathematics, Physics" />
-                        <InfoRow emoji="🎓" label="Qualification" value="M.Sc, B.Ed" isLast />
+                        <InfoRow emoji="📚" label="Subjects" value={teacher?.subject || 'N/A'} />
+                        <InfoRow emoji="🎓" label="Qualification" value={teacher?.qualification || "B.Ed"} isLast />
                     </View>
                 </View>
 
