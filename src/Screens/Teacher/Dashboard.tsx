@@ -25,7 +25,7 @@ const Dashboard = () => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {/* Greeting Section */}
                 <View style={styles.greetingSection}>
-                    <Text style={styles.greetingText}>{Strings.greeting} {teacher?.name || 'Teacher'} 👋</Text>
+                    <Text style={styles.greetingText}>{Strings.greeting} {teacher?.name || 'Teacher'} </Text>
                     <Text style={styles.subtitleText}>{Strings.subtitle} {teacher?.subject}</Text>
                 </View>
 

@@ -169,12 +169,17 @@ const LeaveApplication = () => {
                 </View>
 
                 <View style={styles.previousSection}>
-                    <Text style={styles.sectionTitle}>Previous Requests</Text>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.sectionTitle}>Previous Requests</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('LeaveHistory')}>
+                            <Text style={styles.viewAllText}>View All</Text>
+                        </TouchableOpacity>
+                    </View>
                     {leaveList.length > 0 ? leaveList.map((request) => (
                         <TouchableOpacity
                             key={request._id}
                             style={styles.requestCard}
-                            onPress={() => navigation.navigate('LeaveHistory', { leaveData: request })}
+                        // onPress={() => navigation.navigate('LeaveHistory', { leaveData: request })}
                         >
                             <View style={styles.requestInfo}>
                                 <View style={[
@@ -188,14 +193,14 @@ const LeaveApplication = () => {
                                         {request.status?.toLowerCase() === 'approved' ? '✓' : request.status?.toLowerCase() === 'rejected' ? '✕' : '⏳'}
                                     </Text>
                                 </View>
-                                <View>
+                                <View style={{ flex: 1, marginRight: 10 }}>
                                     <Text style={styles.requestTitle}>{request.message || 'Leave Request'}</Text>
                                     <Text style={styles.requestDate}>
                                         {moment(request.startDate).format('MMM DD')} - {moment(request.endDate).format('MMM DD, YYYY')}
                                     </Text>
                                 </View>
                             </View>
-                            <View style={{ alignItems: 'flex-end' }}>
+                            <View style={{ alignItems: 'flex-end', marginLeft: 8 }}>
                                 <Text style={[
                                     styles.statusText,
                                     { color: request.status?.toLowerCase() === 'approved' ? '#4CAF50' : request.status?.toLowerCase() === 'rejected' ? '#F44336' : '#FF9800' }
@@ -268,7 +273,6 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.Lexend_Regular,
         color: Colors.textSecondary,
         lineHeight: 20,
-        marginBottom: 24,
     },
     formGroup: {
         marginBottom: 20,
@@ -372,6 +376,18 @@ const styles = StyleSheet.create({
     previousSection: {
         marginTop: 10,
     },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    viewAllText: {
+        fontSize: 14,
+        fontFamily: Fonts.Lexend_SemiBold,
+        color: Colors.primary,
+        textDecorationLine: 'underline',
+    },
     requestCard: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -386,6 +402,7 @@ const styles = StyleSheet.create({
     requestInfo: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
     },
     statusIconContainer: {
         width: 40,

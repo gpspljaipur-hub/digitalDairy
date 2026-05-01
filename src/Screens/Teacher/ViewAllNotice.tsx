@@ -23,7 +23,7 @@ const NOTICES = [
         isImportant: true,
         status: 'Sent',
         tags: ['Grade 10-A', 'Grade 10-B', 'Grade 9-C'],
-        date: 'Oct 27, 2023',
+        date: 'Mar 20, 2026',
         time: '09:45 AM'
     },
     {
@@ -33,7 +33,7 @@ const NOTICES = [
         isImportant: false,
         status: 'Sent',
         tags: ['Grade 10-A'],
-        date: 'Oct 25, 2023',
+        date: 'Feb 05, 2026',
         time: '02:30 PM'
     },
     {
@@ -43,7 +43,7 @@ const NOTICES = [
         isImportant: false,
         status: 'Sent',
         tags: ['Grade 11-B', 'Grade 12-A'],
-        date: 'Oct 24, 2023',
+        date: 'Jan 12, 2026',
         time: '11:15 AM'
     }
 ]

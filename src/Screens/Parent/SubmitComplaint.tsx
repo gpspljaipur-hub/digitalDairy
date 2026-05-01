@@ -13,7 +13,7 @@ const SubmitComplaint = () => {
     const route = useRoute<any>();
     const { category, date } = route.params;
 
-    const referenceId = "#CMP-2023-4512";
+    const referenceId = "#CMP-2026-4512";
 
     return (
         <ScreenWrapper scroll={true} style={styles.mainContainer}>
