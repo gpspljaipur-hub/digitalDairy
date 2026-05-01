@@ -118,6 +118,7 @@ const Welcomeback = ({ navigation }: any) => {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+
                     <View style={styles.header}>
                         <View style={styles.headerLeft}>
                             <Text style={styles.headerIcon}>🏛️</Text>
