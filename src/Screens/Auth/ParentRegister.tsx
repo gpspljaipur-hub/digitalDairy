@@ -87,7 +87,7 @@ const ParentRegister = ({ navigation, route }: any) => {
 
                     dispatch(setUserType('parent'));
                 }
-                navigation.navigate('ParentDashboard', { phone: mobile });
+                  navigation.reset({ index: 0, routes: [{ name: 'ParentDashboard' ,params: { phone: mobile },}],});
             } else {
                 Helper.showToast(res?.message || 'Registration failed')
             }
