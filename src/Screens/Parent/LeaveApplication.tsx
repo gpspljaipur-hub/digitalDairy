@@ -64,7 +64,7 @@ const LeaveApplication = () => {
             const res = await Auth_ApiRequest(ApiUrl.LeaveApply, payload);
             console.log('Leave Apply Response:', res);
             if (res && !res.error) {
-                Helper.showToast(res.message || 'Leave applied successfully');
+                Helper.showToast('Leave applied successfully');
                 setReason('');
                 fetchLeaveHistory(); // Refresh the list
             } else {

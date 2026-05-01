@@ -36,7 +36,6 @@ const UPloadMarks = () => {
 
     useEffect(() => {
         fetchClasses()
-        fetchStudents(teacher?._id)
     }, []);
 
     const fetchClasses = async () => {
@@ -70,7 +69,7 @@ const UPloadMarks = () => {
     const fetchStudents = async (classId: string) => {
         setLoadingData(true);
         try {
-            const res = await Auth_ApiRequest(ApiUrl.StudentsList, { teacherId: classId });
+            const res = await Auth_ApiRequest(ApiUrl.StudentsListByClass, { classId });
             console.log(res, 'stuRes')
             if (res && !res.error) {
                 const list = res.data || res || [];
@@ -226,11 +225,12 @@ const UPloadMarks = () => {
                                         style={styles.dropdownItem}
                                         onPress={() => {
                                             setSelectedClass(item);
+                                            fetchStudents(item._id);
+                                            fetchSubjects(item._id);
                                             setShowClassList(false);
                                             setSelectedSubject(null);
                                             setError('');
 
-                                            fetchSubjects(item._id);
 
                                         }}
                                     >
