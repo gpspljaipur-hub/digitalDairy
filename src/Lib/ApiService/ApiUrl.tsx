@@ -22,7 +22,8 @@ const ApiUrl = {
   ComplaintCategoryList: 'complaint-category/list',
   ComplaintAdd: 'complaint/add',
   ComplaintList: 'complaint/list',
-  MarksList: 'marks/list'
+  MarksList: 'marks/list',
+  RegisterUpdate: 'register/update',
 };
 
 export default ApiUrl;

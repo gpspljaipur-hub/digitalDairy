@@ -23,8 +23,6 @@ const ParentDashboard = ({ route }: any) => {
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     const mobile = route?.params?.phone;
-    console.log("🚀 ~ ParentDashboard ~ parent:", parent)
-    console.log("🚀 ~ ParentDashboard ~ mobile:", mobile)
 
     const [parentData, setParentData] = useState<any>(null)
     const [loading, setLoading] = useState(false)

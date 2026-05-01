@@ -12,7 +12,7 @@ import Config from '../../Lib/ApiService/Config';
 import { logout } from '../../Redux/Reducers/Userslice';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import useStrings from '../../comman/useStrings';
 
 const Profile = () => {
     const strings = useStrings();
@@ -93,11 +93,11 @@ const Profile = () => {
                             <Text style={styles.editIcon}>✏️</Text>
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.userName}>{profileDetails?.studentFullName}</Text>
-                    <View style={styles.roleRow}>
+                    <Text style={styles.userName}>{profileDetails?.parentName || 'Parent'}</Text>
+                    {/* <View style={styles.roleRow}>
                         <Text style={styles.roleIcon}>👥</Text>
-                        <Text style={styles.roleText}>{profileDetails?.classId?.name}</Text>
-                    </View>
+                        <Text style={styles.roleText}>{profileDetails?.className?.name}</Text>
+                    </View> */}
                 </View>
 
                 {/* Menu List */}

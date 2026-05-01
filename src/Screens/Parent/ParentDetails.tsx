@@ -4,14 +4,16 @@ import ScreenWrapper from '../../comman/ScreenWrapper';
 import Header from '../../comman/Header';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ParentBottom from '../../Component/ParentBottom';
 import useStrings from '../../comman/useStrings';
+import { useSelector } from 'react-redux';
 
-const ParentDetails = ({ route }: any) => {
+const ParentDetails = () => {
+    const strings = useStrings();
     const navigation = useNavigation<any>();
-    const { profileDetails } = route?.params
-    console.log(profileDetails, "profileDetailsprofileDetails");
+    const { parent } = useSelector((state: any) => state.user);
+    const parentData = parent?.data || parent || {};
 
     return (
         <ScreenWrapper scroll={false} style={styles.container}>
@@ -34,10 +36,10 @@ const ParentDetails = ({ route }: any) => {
                             <Text style={styles.verifiedIcon}>✓</Text>
                         </View>
                     </View>
-                    <Text style={styles.userName}>{profileDetails?.parentName}</Text>
+                    <Text style={styles.userName}>{parentData?.parentName || 'Parent Name'}</Text>
                     <View style={styles.roleBadge}>
                         <Text style={styles.roleIcon}>⚖️</Text>
-                        <Text style={styles.roleText}>Role: {profileDetails?.relationId?.name}</Text>
+                        <Text style={styles.roleText}>{strings.role}: {strings.parent}</Text>
                     </View>
                 </View>
 
@@ -49,8 +51,8 @@ const ParentDetails = ({ route }: any) => {
                             <Text style={styles.icon}>📱</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Mobile Number</Text>
-                            <Text style={styles.infoValue}>+91-{profileDetails?.mobile}</Text>
+                            <Text style={styles.infoLabel}>{strings.mobileNumber}</Text>
+                            <Text style={styles.infoValue}>{parentData?.mobile || ''}</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
@@ -59,8 +61,8 @@ const ParentDetails = ({ route }: any) => {
                             <Text style={styles.icon}>✉️</Text>
                         </View>
                         <View style={styles.infoTextContainer}>
-                            <Text style={styles.infoLabel}>Email</Text>
-                            <Text style={styles.infoValue}>{profileDetails?.parentName}@example.edu</Text>
+                            <Text style={styles.infoLabel}>{strings.email}</Text>
+                            <Text style={styles.infoValue}>{parentData?.email || ''}</Text>
                         </View>
                     </View>
                     <View style={styles.divider} />
@@ -70,7 +72,7 @@ const ParentDetails = ({ route }: any) => {
                         </View>
                         <View style={styles.infoTextContainer}>
                             <Text style={styles.infoLabel}>{strings.address}</Text>
-                            <Text style={styles.infoValue}>#42, Garden View Residency, Bangalore North, 560024</Text>
+                            <Text style={styles.infoValue}>{parentData?.address || ''}</Text>
                         </View>
                     </View>
                 </View>
@@ -83,8 +85,8 @@ const ParentDetails = ({ route }: any) => {
                             <Text style={styles.studentEmoji}>🧒</Text>
                         </View>
                         <View>
-                            <Text style={styles.studentName}>{profileDetails?.studentFullName}</Text>
-                            <Text style={styles.studentGrade}>{profileDetails?.classId?.name}</Text>
+                            <Text style={styles.studentName}>{parentData?.studentFullName || 'Student Name'}</Text>
+                            <Text style={styles.studentGrade}>{parentData?.classId?.name || 'N/A'}</Text>
                         </View>
                     </View>
                     <Text style={styles.chevron}>›</Text>
