@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, Image, Platform, KeyboardAvoidingView } from 'react-native'
 import React, { useState } from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
@@ -17,7 +17,7 @@ interface Student {
 const ReminderHomework = () => {
     const Strings = useStrings();
     const navigation = useNavigation();
-    const [message, setMessage] = useState(Strings.defaultReminderMsg)
+    const [message, setMessage] = useState('')
     const [students, setStudents] = useState<Student[]>([
         { id: '1', name: 'Arjun Verma', initials: 'AV', selected: true },
         { id: '2', name: 'Riya Kapoor', initials: 'RK', selected: true },
@@ -47,79 +47,82 @@ const ReminderHomework = () => {
                     </View>
                 </TouchableOpacity>
             </View>
-
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                {/* Active Session Card */}
-                <View style={styles.activeSessionCard}>
-                    <View style={styles.activeSessionHeader}>
-                        <Text style={styles.megaphoneIcon}>📢</Text>
-                        <Text style={styles.activeSessionTitle}>{Strings.activeSession.toUpperCase()}</Text>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={60}>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                    {/* Active Session Card */}
+                    <View style={styles.activeSessionCard}>
+                        <View style={styles.activeSessionHeader}>
+                            <Text style={styles.megaphoneIcon}>📢</Text>
+                            <Text style={styles.activeSessionTitle}>{Strings.activeSession.toUpperCase()}</Text>
+                        </View>
+                        <Text style={styles.activeSessionMain}>
+                            {Strings.sendingReminderFor}
+                            <Text style={styles.boldBlueText}>Mathematics (Grade 10-B)</Text>
+                        </Text>
+                        <Text style={styles.activeSessionSub}>
+                            {Strings.targetingStudents}<Text style={styles.boldText}>Quadratic Equations</Text>
+                        </Text>
                     </View>
-                    <Text style={styles.activeSessionMain}>
-                        {Strings.sendingReminderFor}
-                        <Text style={styles.boldBlueText}>Mathematics (Grade 10-B)</Text>
-                    </Text>
-                    <Text style={styles.activeSessionSub}>
-                        {Strings.targetingStudents}<Text style={styles.boldText}>Quadratic Equations</Text>
-                    </Text>
-                </View>
 
-                {/* Pending Submissions Section */}
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{Strings.pendingSubmissions} (12)</Text>
-                    <TouchableOpacity onPress={selectAll}>
-                        <Text style={styles.selectAllText}>{Strings.selectAll}</Text>
-                    </TouchableOpacity>
-                </View>
+                    {/* Pending Submissions Section */}
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>{Strings.pendingSubmissions} (12)</Text>
+                        <TouchableOpacity onPress={selectAll}>
+                            <Text style={styles.selectAllText}>{Strings.selectAll}</Text>
+                        </TouchableOpacity>
+                    </View>
 
-                {students.map((item) => (
-                    <TouchableOpacity
-                        key={item.id}
-                        style={styles.studentCard}
-                        onPress={() => toggleStudentSelection(item.id)}
-                        activeOpacity={0.7}
-                    >
-                        <View style={styles.studentInfo}>
-                            <View style={styles.initialsCircle}>
-                                <Text style={styles.initialsText}>{item.initials}</Text>
+                    {students.map((item) => (
+                        <TouchableOpacity
+                            key={item.id}
+                            style={styles.studentCard}
+                            onPress={() => toggleStudentSelection(item.id)}
+                            activeOpacity={0.7}
+                        >
+                            <View style={styles.studentInfo}>
+                                <View style={styles.initialsCircle}>
+                                    <Text style={styles.initialsText}>{item.initials}</Text>
+                                </View>
+                                <Text style={styles.studentName}>{item.name}</Text>
                             </View>
-                            <Text style={styles.studentName}>{item.name}</Text>
-                        </View>
-                        <View style={[styles.checkbox, item.selected && styles.checkboxSelected]}>
-                            {item.selected && <Text style={styles.checkMark}>✓</Text>}
-                        </View>
+                            <View style={[styles.checkbox, item.selected && styles.checkboxSelected]}>
+                                {item.selected && <Text style={styles.checkMark}>✓</Text>}
+                            </View>
+                        </TouchableOpacity>
+                    ))}
+
+                    <TouchableOpacity style={styles.showMoreBtn} activeOpacity={0.6}>
+                        <Text style={styles.showMoreText}>
+                            <Text style={styles.chevronIcon}>⌄</Text> {Strings.showMoreStudents.replace('{count}', '8')}
+                        </Text>
                     </TouchableOpacity>
-                ))}
 
-                <TouchableOpacity style={styles.showMoreBtn} activeOpacity={0.6}>
-                    <Text style={styles.showMoreText}>
-                        <Text style={styles.chevronIcon}>⌄</Text> {Strings.showMoreStudents.replace('{count}', '8')}
-                    </Text>
-                </TouchableOpacity>
-
-                {/* Reminder Message Section */}
-                <View style={styles.messageSection}>
-                    <Text style={styles.sectionTitle}>{Strings.reminderMessageLabel}</Text>
-                    <View style={styles.textAreaContainer}>
-                        <TextInput
-                            style={styles.textArea}
-                            multiline
-                            numberOfLines={4}
-                            value={message}
-                            onChangeText={setMessage}
-                            maxLength={500}
-                            placeholder="Type your message here..."
-                            placeholderTextColor={Colors.lightGreyText}
-                        />
-                        <Text style={styles.charCount}>{message.length}/500</Text>
+                    {/* Reminder Message Section */}
+                    <View style={styles.messageSection}>
+                        <Text style={styles.sectionTitle}>{Strings.reminderMessageLabel}</Text>
+                        <View style={styles.textAreaContainer}>
+                            <TextInput
+                                style={styles.textArea}
+                                multiline
+                                numberOfLines={4}
+                                value={message}
+                                onChangeText={setMessage}
+                                maxLength={500}
+                                placeholder="Type your message here..."
+                                placeholderTextColor={Colors.lightGreyText}
+                            />
+                            <Text style={styles.charCount}>{message.length}/500</Text>
+                        </View>
+                        <View style={styles.helperContainer}>
+                            <Text style={styles.infoIcon}>ⓘ</Text>
+                            <Text style={styles.helperText}>{Strings.reminderMessageHelper}</Text>
+                        </View>
                     </View>
-                    <View style={styles.helperContainer}>
-                        <Text style={styles.infoIcon}>ⓘ</Text>
-                        <Text style={styles.helperText}>{Strings.reminderMessageHelper}</Text>
-                    </View>
-                </View>
-            </ScrollView>
-
+                </ScrollView>
+            </KeyboardAvoidingView>
             {/* Footer Action Button */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.sendBtn} activeOpacity={0.8}

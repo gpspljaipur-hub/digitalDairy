@@ -200,13 +200,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     teacherName: {
-        fontSize: FontsSize.size22,
+        fontSize: FontsSize.size24,
         fontFamily: Fonts.LexendBold,
         color: Colors.textMain,
         marginBottom: 4,
     },
     designation: {
-        fontSize: FontsSize.size14,
+        fontSize: FontsSize.size16,
         fontFamily: Fonts.Lexend_Medium,
         color: Colors.textSecondary,
         marginBottom: 12,
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     badgeText: {
-        fontSize: FontsSize.size12,
+        fontSize: FontsSize.size14,
         fontFamily: Fonts.Lexend_SemiBold,
         color: Colors.primary,
     },
@@ -245,13 +245,13 @@ const styles = StyleSheet.create({
         borderColor: Colors.border,
     },
     statValue: {
-        fontSize: FontsSize.size18,
+        fontSize: FontsSize.size20,
         fontFamily: Fonts.LexendBold,
         color: Colors.primary,
         marginBottom: 2,
     },
     statLabel: {
-        fontSize: FontsSize.size11,
+        fontSize: FontsSize.size12,
         fontFamily: Fonts.Lexend_Regular,
         color: Colors.textSecondary,
     },
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
         marginBottom: 28,
     },
     sectionTitle: {
-        fontSize: FontsSize.size16,
+        fontSize: FontsSize.size18,
         fontFamily: Fonts.Lexend_SemiBold,
         color: Colors.textMain,
         marginBottom: 14,
@@ -300,13 +300,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     infoLabel: {
-        fontSize: FontsSize.size11,
+        fontSize: FontsSize.size12,
         fontFamily: Fonts.Lexend_Regular,
         color: Colors.textSecondary,
         marginBottom: 2,
     },
     infoValue: {
-        fontSize: FontsSize.size14,
+        fontSize: FontsSize.size16,
         fontFamily: Fonts.Lexend_Medium,
         color: Colors.textMain,
     },
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     actionLabel: {
-        fontSize: FontsSize.size10,
+        fontSize: FontsSize.size14,
         fontFamily: Fonts.Lexend_Medium,
         color: Colors.textMain,
     },
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     },
     footerText: {
         textAlign: 'center',
-        fontSize: FontsSize.size11,
+        fontSize: FontsSize.size12,
         fontFamily: Fonts.Lexend_Regular,
         color: Colors.textSecondary,
         marginTop: 10,
