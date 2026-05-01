@@ -55,7 +55,7 @@ const SendNotice = () => {
                             </View>
                             <View style={styles.footerColRight}>
                                 <Text style={styles.label}>{Strings.dateLabel}</Text>
-                                <Text style={styles.dateText}>Oct 27, 2023</Text>
+                                <Text style={styles.dateText}>1 may 2026</Text>
                             </View>
                         </View>
                     </View>

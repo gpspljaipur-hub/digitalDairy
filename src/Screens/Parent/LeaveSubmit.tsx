@@ -48,7 +48,7 @@ const LeaveSubmit = () => {
                 <View style={styles.card}>
                     <View style={styles.cardHeader}>
                         <Text style={styles.appIdLabel}>APPLICATION ID</Text>
-                        <Text style={styles.appIdText}>#LR-2023-8942</Text>
+                        <Text style={styles.appIdText}>#LR-2026-8942</Text>
                     </View>
 
                     <View style={styles.divider} />
@@ -85,7 +85,7 @@ const LeaveSubmit = () => {
 
                 <TouchableOpacity style={styles.historyButton}
                     onPress={() => navigation.navigate('LeaveHistory')}
-            >
+                >
                     <Text style={styles.historyText}>View My History</Text>
                 </TouchableOpacity>
 

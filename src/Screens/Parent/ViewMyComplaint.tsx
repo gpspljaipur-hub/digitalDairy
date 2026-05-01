@@ -1,7 +1,10 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import moment from 'moment'
 import { useNavigation } from '@react-navigation/native'
-
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import { Colors } from '../../comman/Colors'
@@ -10,39 +13,48 @@ import HWSize from '../../comman/HWSize'
 
 const ViewMyComplaint = () => {
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+    const [complaintList, setComplaintList] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    const complaints = [
-        {
-            id: '1',
-            category: 'Infrastructure',
-            title: 'Broken window in Room 302',
-            date: 'Oct 24, 2023',
-            description: 'The glass on the east side window is shattered and posing a safety risk to...',
-            status: 'Resolved',
-            statusColor: '#10B981',
-            type: 'Infrastructure'
-        },
-        {
-            id: '2',
-            category: 'Academic',
-            title: 'Delay in Grade Publication',
-            date: 'Nov 02, 2023',
-            description: 'The mid-term results for Chemistry 101 have not been uploaded even after thre...',
-            status: 'In Progress',
-            statusColor: '#3B82F6',
-            type: 'Academic'
-        },
-        {
-            id: '3',
-            category: 'Staff',
-            title: 'Library Staff Unavailability',
-            date: 'Nov 15, 2023',
-            description: 'There was no one at the front desk during official morning hours today from 9 AM...',
-            status: 'Received',
-            statusColor: '#6B7280',
-            type: 'Staff'
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
+
+    const fetchComplaints = async () => {
+        setLoading(true);
+        try {
+            const res = await Get_Send_Api(ApiUrl.ComplaintList, {});
+            if (res && !res.error) {
+                setComplaintList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Complaints Error:', error);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
+
+    const getStatusStyles = (status: string) => {
+        switch (status?.toLowerCase()) {
+            case 'pending':
+                return { color: '#FBC02D', bg: '#FFFDE7' };
+            case 'resolved':
+                return { color: '#4CAF50', bg: '#E8F5E9' };
+            case 'in progress':
+                return { color: '#2196F3', bg: '#E3F2FD' };
+            default:
+                return { color: '#666666', bg: '#EEEEEE' };
+        }
+    };
+
+    const stats = {
+        total: complaintList.length,
+        resolved: complaintList.filter(c => c.status?.toLowerCase() === 'resolved' || c.status?.toLowerCase() === 'approved').length,
+        inProgress: complaintList.filter(c => ['pending', 'received', 'in progress', 'processing'].includes(c.status?.toLowerCase())).length
+    };
+
+
 
     return (
         <ScreenWrapper scroll={true} style={styles.mainContainer}>
@@ -61,7 +73,7 @@ const ViewMyComplaint = () => {
                             <Text style={styles.totalLabel}>TOTAL COMPLAINTS</Text>
                             <Text style={styles.folderIcon}>📂</Text>
                         </View>
-                        <Text style={styles.totalValue}>24</Text>
+                        <Text style={styles.totalValue}>{stats.total}</Text>
                     </View>
 
                     <View style={styles.statusRow}>
@@ -69,7 +81,7 @@ const ViewMyComplaint = () => {
                             <View style={[styles.iconCircle, { backgroundColor: '#ECFDF5' }]}>
                                 <Text style={[styles.innerIcon, { color: '#10B981' }]}>✓</Text>
                             </View>
-                            <Text style={styles.statusValue}>18</Text>
+                            <Text style={styles.statusValue}>{stats.resolved}</Text>
                             <Text style={styles.statusLabel}>Resolved</Text>
                         </View>
 
@@ -77,7 +89,7 @@ const ViewMyComplaint = () => {
                             <View style={[styles.iconCircle, { backgroundColor: '#EFF6FF' }]}>
                                 <Text style={[styles.innerIcon, { color: '#3B82F6' }]}>⋯</Text>
                             </View>
-                            <Text style={styles.statusValue}>06</Text>
+                            <Text style={styles.statusValue}>{stats.inProgress}</Text>
                             <Text style={styles.statusLabel}>In Progress</Text>
                         </View>
                     </View>
@@ -92,34 +104,37 @@ const ViewMyComplaint = () => {
                     </TouchableOpacity>
                 </View>
 
-                {complaints.map((item) => (
-                    <View key={item.id} style={styles.complaintCard}>
-                        <View style={styles.cardTopRow}>
-                            <View style={styles.categoryBadge}>
-                                <Text style={styles.categoryText}>{item.category}</Text>
+                {complaintList.map((item) => {
+                    const statusStyles = getStatusStyles(item.status);
+                    return (
+                        <TouchableOpacity key={item._id} style={styles.complaintCard}>
+                            <View style={styles.complaintIconBox}>
+                                <Text style={styles.complaintIcon}>📋</Text>
                             </View>
-                            <Text style={styles.dateText}>{item.date}</Text>
-                        </View>
+                            <View style={styles.complaintInfo}>
+                                <View style={styles.complaintHeaderRow}>
+                                    <Text style={styles.complaintTitle} numberOfLines={1}>{item.message}</Text>
+                                    <View style={[styles.statusBadge, { backgroundColor: statusStyles.bg }]}>
+                                        <Text style={[styles.statusText, { color: statusStyles.color }]}>
+                                            {item.status || 'Pending'}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Text style={styles.complaintMeta}>
+                                    {item.categoryName || 'Other'} • {moment(item.createdAt).format('MMM DD, YYYY')}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })}
 
-                        <Text style={styles.complaintTitle}>{item.title}</Text>
-                        <Text style={styles.complaintDesc} numberOfLines={2}>
-                            {item.description}
+                {complaintList.length === 0 && (
+                    <View style={{ alignItems: 'center', marginVertical: 20 }}>
+                        <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.lightGreyText }}>
+                            No complaints found.
                         </Text>
-
-                        <View style={styles.divider} />
-
-                        <View style={styles.cardBottomRow}>
-                            <View style={styles.statusIndicator}>
-                                <View style={[styles.statusDot, { backgroundColor: item.statusColor }]} />
-                                <Text style={styles.statusText}>{item.status}</Text>
-                            </View>
-                            <TouchableOpacity style={styles.viewDetailsBtn}>
-                                <Text style={styles.viewDetailsText}>View Details</Text>
-                                <Text style={styles.chevron}>›</Text>
-                            </TouchableOpacity>
-                        </View>
                     </View>
-                ))}
+                )}
             </View>
 
             {/* Floating Action Button */}
@@ -243,91 +258,61 @@ const styles = StyleSheet.create({
         color: '#1E3A8A',
     },
     complaintCard: {
+        flexDirection: 'row',
         backgroundColor: Colors.white,
         borderRadius: 16,
-        padding: 20,
-        marginBottom: 15,
+        padding: 16,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#F1F5F9',
         elevation: 2,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
-        borderWidth: 1,
-        borderColor: '#F1F5F9',
     },
-    cardTopRow: {
+    complaintIconBox: {
+        width: 48,
+        height: 48,
+        borderRadius: 12,
+        backgroundColor: '#F8FAFC',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    complaintIcon: {
+        fontSize: 24,
+    },
+    complaintInfo: {
+        flex: 1,
+    },
+    complaintHeaderRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 12,
-    },
-    categoryBadge: {
-        backgroundColor: '#F1F5F9',
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 20,
-    },
-    categoryText: {
-        fontSize: 12,
-        fontFamily: Fonts.Lexend_Medium,
-        color: Colors.textSecondary,
-    },
-    dateText: {
-        fontSize: 12,
-        fontFamily: Fonts.Lexend_Medium,
-        color: Colors.lightGreyText,
+        marginBottom: 4,
     },
     complaintTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontFamily: Fonts.LexendBold,
         color: '#1E3A8A',
-        marginBottom: 8,
-    },
-    complaintDesc: {
-        fontSize: 14,
-        fontFamily: Fonts.Lexend_Medium,
-        color: Colors.textSecondary,
-        lineHeight: 20,
-        marginBottom: 15,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: '#F1F5F9',
-        marginBottom: 15,
-    },
-    cardBottomRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    statusIndicator: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    statusDot: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        flex: 1,
         marginRight: 8,
     },
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
+    },
     statusText: {
+        fontSize: 11,
+        fontFamily: Fonts.LexendBold,
+        textTransform: 'capitalize',
+    },
+    complaintMeta: {
         fontSize: 13,
         fontFamily: Fonts.Lexend_Medium,
         color: Colors.textSecondary,
-    },
-    viewDetailsBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    viewDetailsText: {
-        fontSize: 14,
-        fontFamily: Fonts.Lexend_SemiBold,
-        color: '#1E3A8A',
-        marginRight: 4,
-    },
-    chevron: {
-        fontSize: 18,
-        color: '#1E3A8A',
     },
     fab: {
         position: 'absolute',

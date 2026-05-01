@@ -38,7 +38,7 @@ const WinterVacation = () => {
 
                     <View style={styles.dateRow}>
                         <Text style={styles.calendarIcon}>📅</Text>
-                        <Text style={styles.dateRange}>December 24, 2023 - January 05, 2024</Text>
+                        <Text style={styles.dateRange}>24 Dec , 2025 - 15 Jan , 2026</Text>
                     </View>
 
                     {/* Announcement Card */}

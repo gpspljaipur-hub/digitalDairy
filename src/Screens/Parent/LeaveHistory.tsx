@@ -1,5 +1,9 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
+import ApiUrl from '../../Lib/ApiService/ApiUrl'
+import moment from 'moment'
 import { useNavigation } from '@react-navigation/native'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
@@ -9,49 +13,28 @@ import HWSize from '../../comman/HWSize'
 
 const LeaveHistory = () => {
     const navigation = useNavigation<any>();
+    const { parent } = useSelector((state: any) => state.user);
+    const [leaveList, setLeaveList] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    const leaveData = [
-        {
-            id: '1',
-            type: 'Sick Leave',
-            dateRange: 'Oct 12 - Oct 14, 2023',
-            status: 'Approved',
-            description: 'Suffering from seasonal fever. Doctor advised bed rest for 3 days to ensure ful...',
-            days: '3 Days',
-            statusColor: '#4CAF50',
-            statusBg: '#E8F5E9',
-            actionText: 'View Details',
-            icon: '✅'
-        },
-        {
-            id: '2',
-            type: 'Family Event',
-            dateRange: 'Nov 05 - Nov 06, 2023',
-            status: 'Pending',
-            description: 'Attending elder sister\'s wedding ceremony in our home town. Need leave ...',
-            days: '2 Days',
-            statusColor: '#FF9800',
-            statusBg: '#FFF3E0',
-            actionText: 'Edit Draft',
-            actionIcon: '📝',
-            icon: '💬'
-        },
-        {
-            id: '3',
-            type: 'Personal Trip',
-            dateRange: 'Oct 20, 2023',
-            status: 'Rejected',
-            description: 'Visiting local museum with family friends during school hours.',
-            note: 'Note: Leave cannot be granted for leisure trips during examination week.',
-            days: '1 Day',
-            statusColor: '#F44336',
-            statusBg: '#FFEBEE',
-            actionText: 'Appeal',
-            actionIcon: '📢',
-            icon: '❌'
-        },
-    ];
+    useEffect(() => {
+        fetchLeaveHistory();
+    }, []);
 
+    const fetchLeaveHistory = async () => {
+        setLoading(true);
+        const studentId = parent?.data?.studentId || parent?.studentId;
+        try {
+            const res = await Auth_ApiRequest(ApiUrl.LeaveList, { studentId });
+            if (res && !res.error) {
+                setLeaveList(res.data || res || []);
+            }
+        } catch (error) {
+            console.error('Fetch Leave History Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <ScreenWrapper scroll={false}>
             <Header
@@ -96,47 +79,45 @@ const LeaveHistory = () => {
                 {/* Section Header */}
                 <View style={styles.sectionHeader}>
                     <Text style={styles.sectionTitle}>Recent Applications</Text>
-                    <Text style={styles.sectionSubtitle}>Oct-Dec 2023</Text>
+                    <Text style={styles.sectionSubtitle}>jan-may 2026</Text>
                 </View>
 
-                {/* Leave Cards */}
-                {leaveData.map((item) => (
-                    <View key={item.id} style={styles.leaveCard}>
-                        <View style={[styles.statusIndicator, { backgroundColor: item.statusColor }]} />
-                        <View style={styles.cardContent}>
-                            <View style={styles.cardHeader}>
-                                <Text style={styles.leaveType}>{item.type}</Text>
-                                <View style={[styles.statusBadge, { backgroundColor: item.statusBg }]}>
-                                    <Text style={[styles.statusText, { color: item.statusColor }]}>
-                                        {item.icon} {item.status}
-                                    </Text>
-                                </View>
+                {leaveList.map((item) => (
+                    <TouchableOpacity key={item._id} style={styles.requestCard}>
+                        <View style={styles.requestInfo}>
+                            <View style={[
+                                styles.statusIconContainer,
+                                { backgroundColor: item.status?.toLowerCase() === 'approved' ? '#E8F5E9' : item.status?.toLowerCase() === 'rejected' ? '#FFEBEE' : '#FFF3E0' }
+                            ]}>
+                                <Text style={[
+                                    styles.statusIcon,
+                                    { color: item.status?.toLowerCase() === 'approved' ? '#4CAF50' : item.status?.toLowerCase() === 'rejected' ? '#F44336' : '#FF9800' }
+                                ]}>
+                                    {item.status?.toLowerCase() === 'approved' ? '✓' : item.status?.toLowerCase() === 'rejected' ? '✕' : '⏳'}
+                                </Text>
                             </View>
-
-                            <View style={styles.dateRow}>
-                                <Text style={styles.dateIcon}>📅</Text>
-                                <Text style={styles.dateText}>{item.dateRange}</Text>
-                            </View>
-
-                            <Text style={styles.description} numberOfLines={2}>
-                                {item.description}
-                            </Text>
-
-                            {item.note && (
-                                <View style={styles.noteBox}>
-                                    <Text style={styles.noteText}>{item.note}</Text>
-                                </View>
-                            )}
-
-                            <View style={styles.cardFooter}>
-                                <Text style={[styles.daysCount, { color: item.statusColor }]}>{item.days}</Text>
-                                <TouchableOpacity style={styles.actionBtn}>
-                                    <Text style={styles.actionText}>{item.actionText}</Text>
-                                    <Text style={styles.actionArrow}> {item.actionIcon || '›'}</Text>
-                                </TouchableOpacity>
+                            <View style={{ flex: 1, marginRight: 10 }}>
+                                <Text style={styles.requestTitle}>{item.message || 'Leave Request'}</Text>
+                                <Text style={styles.requestDate}>
+                                    {moment(item.startDate).format('MMM DD')} - {moment(item.endDate).format('MMM DD, YYYY')}
+                                </Text>
+                                {item.remark && (
+                                    <View style={styles.noteBox}>
+                                        <Text style={styles.noteText}>Remark: {item.remark}</Text>
+                                    </View>
+                                )}
                             </View>
                         </View>
-                    </View>
+                        <View style={{ alignItems: 'flex-end', marginLeft: 8 }}>
+                            <Text style={[
+                                styles.statusTextLabel,
+                                { color: item.status?.toLowerCase() === 'approved' ? '#4CAF50' : item.status?.toLowerCase() === 'rejected' ? '#F44336' : '#FF9800' }
+                            ]}>
+                                {item.status}
+                            </Text>
+                            <Text style={styles.chevron}>›</Text>
+                        </View>
+                    </TouchableOpacity>
                 ))}
 
                 {/* Extra space for floating button */}
@@ -152,9 +133,9 @@ const LeaveHistory = () => {
                     <Text style={styles.applyBtnIcon}>+</Text>
                     <Text style={styles.applyBtnText}>Apply for New Leave</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.refreshBtn}>
+                <TouchableOpacity style={styles.refreshBtn} onPress={fetchLeaveHistory}>
                     <Text style={styles.refreshIcon}>🔄</Text>
-                    <Text style={styles.refreshText}>Load Previous Records</Text>
+                    <Text style={styles.refreshText}>{loading ? 'Refreshing...' : 'Load Previous Records'}</Text>
                 </TouchableOpacity>
             </View>
         </ScreenWrapper>
@@ -248,104 +229,68 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.Lexend_Medium,
         color: '#8E98B0',
     },
-    leaveCard: {
+    requestCard: {
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         backgroundColor: Colors.white,
-        borderRadius: 12,
-        marginBottom: 15,
-        overflow: 'hidden',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
         borderWidth: 1,
         borderColor: '#F0F0F0',
     },
-    statusIndicator: {
-        width: 5,
-        height: '100%',
-    },
-    cardContent: {
-        flex: 1,
-        padding: 15,
-    },
-    cardHeader: {
+    requestInfo: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        flex: 1,
     },
-    leaveType: {
+    statusIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#F0FDF4',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+        borderWidth: 1,
+        borderColor: '#DCFCE7',
+    },
+    statusIcon: {
+        fontSize: 18,
+        color: '#16A34A',
+        fontWeight: 'bold',
+    },
+    requestTitle: {
         fontSize: 16,
         fontFamily: Fonts.LexendBold,
         color: '#1A1A1A',
     },
-    statusBadge: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 20,
-    },
-    statusText: {
-        fontSize: 12,
-        fontFamily: Fonts.Lexend_SemiBold,
-    },
-    dateRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    dateIcon: {
-        fontSize: 14,
-        marginRight: 8,
-    },
-    dateText: {
-        fontSize: 14,
+    requestDate: {
+        fontSize: 13,
         fontFamily: Fonts.Lexend_Medium,
         color: '#666',
+        marginTop: 2,
     },
-    description: {
+    statusTextLabel: {
         fontSize: 14,
-        fontFamily: Fonts.Lexend_Medium,
-        color: '#444',
-        lineHeight: 20,
-        marginBottom: 10,
+        fontFamily: Fonts.Lexend_SemiBold,
+    },
+    chevron: {
+        fontSize: 24,
+        color: '#CBD5E1',
     },
     noteBox: {
         backgroundColor: '#FFF0F0',
-        padding: 10,
-        borderRadius: 4,
-        marginBottom: 12,
+        padding: 8,
+        borderRadius: 8,
+        marginTop: 8,
     },
     noteText: {
         fontSize: 12,
         fontFamily: Fonts.Lexend_Medium,
         color: '#D32F2F',
         fontStyle: 'italic',
-    },
-    cardFooter: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 5,
-    },
-    daysCount: {
-        fontSize: 14,
-        fontFamily: Fonts.LexendBold,
-    },
-    actionBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    actionText: {
-        fontSize: 14,
-        fontFamily: Fonts.Lexend_SemiBold,
-        color: '#0056B3',
-    },
-    actionArrow: {
-        fontSize: 16,
-        color: '#0056B3',
-        marginLeft: 4,
     },
     bottomActions: {
         position: 'absolute',

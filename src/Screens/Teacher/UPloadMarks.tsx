@@ -93,6 +93,10 @@ const UPloadMarks = () => {
 
     const handleMarksChange = (id: string, value: string) => {
         setError('');
+        if (Number(value) > 100) {
+            Helper.showToast('Marks cannot be greater than 100');
+            return;
+        }
         setStudents(prev => prev.map(student =>
             student.id === id
                 ? { ...student, marks: value, completed: value !== '' }
@@ -116,6 +120,12 @@ const UPloadMarks = () => {
 
         if (marksData.length !== students.length) {
             setError('Please enter marks for all students');
+            return;
+        }
+
+        const invalidMarks = marksData.some(m => Number(m.marks) > 100);
+        if (invalidMarks) {
+            setError('Some students have marks greater than 100');
             return;
         }
 
@@ -231,7 +241,7 @@ const UPloadMarks = () => {
                                                 setShowClassList(false);
                                                 setSelectedSubject(null);
                                                 setError('');
-                                             
+
 
                                             }}
                                         >
@@ -247,42 +257,42 @@ const UPloadMarks = () => {
 
                     <View style={styles.selectorContainer}>
 
-                    <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
-                    <TouchableOpacity
-                        style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
-                        activeOpacity={0.7}
-                        disabled={!selectedClass}
-                        onPress={() => {
-                            setShowSubjectList(!showSubjectList);
-                            setShowClassList(false);
-                        }}
-                    >
-                        <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
-                            {selectedSubject ? selectedSubject.name : Strings.selectSubject}
-                        </Text>
-                        <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
-                    </TouchableOpacity>
+                        <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
+                        <TouchableOpacity
+                            style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
+                            activeOpacity={0.7}
+                            disabled={!selectedClass}
+                            onPress={() => {
+                                setShowSubjectList(!showSubjectList);
+                                setShowClassList(false);
+                            }}
+                        >
+                            <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
+                                {selectedSubject ? selectedSubject.name : Strings.selectSubject}
+                            </Text>
+                            <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
+                        </TouchableOpacity>
 
-                    {showSubjectList && (
-                        <View style={styles.dropdownList}>
-                            <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
-                                {subjects.map((item) => (
-                                    <TouchableOpacity
-                                        key={item._id}
-                                        style={styles.dropdownItem}
-                                        onPress={() => {
-                                            setSelectedSubject(item);
-                                            setShowSubjectList(false);
-                                            setError('');
-                                        }}
-                                    >
-                                        <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
-                                        {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView>
-                        </View>
-                    )}
+                        {showSubjectList && (
+                            <View style={styles.dropdownList}>
+                                <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                    {subjects.map((item) => (
+                                        <TouchableOpacity
+                                            key={item._id}
+                                            style={styles.dropdownItem}
+                                            onPress={() => {
+                                                setSelectedSubject(item);
+                                                setShowSubjectList(false);
+                                                setError('');
+                                            }}
+                                        >
+                                            <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                            {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        )}
                     </View>
 
                     {/* Students List */}
@@ -436,7 +446,7 @@ const styles = StyleSheet.create({
         color: '#2D6A4F',
     },
     listContainer: {
-       
+
     },
     studentCard: {
         flexDirection: 'row',
