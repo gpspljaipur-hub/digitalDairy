@@ -6,7 +6,8 @@ import {
     TouchableOpacity,
     TextInput,
     StatusBar,
-    FlatList
+    FlatList,
+    KeyboardAvoidingView
 } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -112,51 +113,53 @@ const ViewAllNotice = () => {
                 </View>
             </View>
 
-            <View style={styles.content}>
-                {/* Search Bar */}
-                <View style={styles.searchContainer}>
-                    <Text style={styles.searchIcon}>🔍</Text>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder={Strings.searchNotices}
-                        placeholderTextColor={Colors.textSecondary}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+                <View style={styles.content}>
+                    {/* Search Bar */}
+                    <View style={styles.searchContainer}>
+                        <Text style={styles.searchIcon}>🔍</Text>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder={Strings.searchNotices}
+                            placeholderTextColor={Colors.textSecondary}
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                        />
+                    </View>
+
+                    {/* Filter Chips */}
+                    <View style={styles.filterContainer}>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+                            {CLASSES.map((cls) => (
+                                <TouchableOpacity
+                                    key={cls}
+                                    style={[
+                                        styles.filterChip,
+                                        selectedClass === cls && styles.activeFilterChip
+                                    ]}
+                                    onPress={() => setSelectedClass(cls)}
+                                >
+                                    <Text style={[
+                                        styles.filterText,
+                                        selectedClass === cls && styles.activeFilterText
+                                    ]}>
+                                        {cls}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+
+                    {/* Notice List */}
+                    <FlatList
+                        data={NOTICES}
+                        renderItem={renderNoticeItem}
+                        keyExtractor={item => item.id}
+                        contentContainerStyle={styles.listContent}
+                        showsVerticalScrollIndicator={false}
                     />
                 </View>
-
-                {/* Filter Chips */}
-                <View style={styles.filterContainer}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
-                        {CLASSES.map((cls) => (
-                            <TouchableOpacity
-                                key={cls}
-                                style={[
-                                    styles.filterChip,
-                                    selectedClass === cls && styles.activeFilterChip
-                                ]}
-                                onPress={() => setSelectedClass(cls)}
-                            >
-                                <Text style={[
-                                    styles.filterText,
-                                    selectedClass === cls && styles.activeFilterText
-                                ]}>
-                                    {cls}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-
-                {/* Notice List */}
-                <FlatList
-                    data={NOTICES}
-                    renderItem={renderNoticeItem}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={styles.listContent}
-                    showsVerticalScrollIndicator={false}
-                />
-            </View>
+            </KeyboardAvoidingView>
 
             {/* Floating Action Button */}
             <TouchableOpacity

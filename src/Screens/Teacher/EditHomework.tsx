@@ -42,125 +42,127 @@ const EditHomework = () => {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-            >
-                <View style={styles.titleSection}>
-                    <Text style={styles.pageTitle}>{Strings.editHomeworkTitle}</Text>
-                    <Text style={styles.pageSubtitle}>{Strings.editHomeworkSubtitle}</Text>
-                </View>
-
-                {/* Form Fields */}
-                <View style={styles.formContainer}>
-                    <Text style={styles.label}>{Strings.selectClass}</Text>
-                    <TouchableOpacity
-                        style={styles.dropdown}
-                        onPress={() => setShowClassDropdown(!showClassDropdown)}
-                    >
-                        <Text style={styles.dropdownValue}>{selectedClass}</Text>
-                        <Text style={styles.chevronIcon}>{showClassDropdown ? '︽' : '︾'}</Text>
-                    </TouchableOpacity>
-
-                    {showClassDropdown && (
-                        <View style={styles.dropdownList}>
-                            {classOptions.map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setSelectedClass(item)
-                                        setShowClassDropdown(false)
-                                    }}
-                                >
-                                    <Text style={[styles.dropdownItemText, selectedClass === item && styles.selectedText]}>{item}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-                    <Text style={styles.label}>{Strings.selectSubject}</Text>
-                    <TouchableOpacity
-                        style={styles.dropdown}
-                        onPress={() => setShowSubjectDropdown(!showSubjectDropdown)}
-                    >
-                        <Text style={styles.dropdownValue}>{selectedSubject}</Text>
-                        <Text style={styles.chevronIcon}>{showSubjectDropdown ? '︽' : '︾'}</Text>
-                    </TouchableOpacity>
-
-                    {showSubjectDropdown && (
-                        <View style={styles.dropdownList}>
-                            {subjectOptions.map((item) => (
-                                <TouchableOpacity
-                                    key={item}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setSelectedSubject(item)
-                                        setShowSubjectDropdown(false)
-                                    }}
-                                >
-                                    <Text style={[styles.dropdownItemText, selectedSubject === item && styles.selectedText]}>{item}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-
-                    <Text style={styles.label}>{Strings.homeworkDetails}</Text>
-                    <View style={styles.textAreaContainer}>
-                        <TextInput
-                            style={styles.textArea}
-                            multiline
-                            value={homeworkDetails}
-                            onChangeText={setHomeworkDetails}
-                            textAlignVertical="top"
-                        />
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View style={styles.titleSection}>
+                        <Text style={styles.pageTitle}>{Strings.editHomeworkTitle}</Text>
+                        <Text style={styles.pageSubtitle}>{Strings.editHomeworkSubtitle}</Text>
                     </View>
 
-                    <Text style={styles.label}>{Strings.dueDateLabel}</Text>
-                    <TouchableOpacity
-                        style={styles.dateInputContainer}
-                        onPress={() => setShowDatePicker(true)}
-                    >
-                        <Text style={styles.dateInput}>{formatDate(dueDate)}</Text>
-                        <Text style={styles.calendarIcon}>📅</Text>
-                    </TouchableOpacity>
+                    {/* Form Fields */}
+                    <View style={styles.formContainer}>
+                        <Text style={styles.label}>{Strings.selectClass}</Text>
+                        <TouchableOpacity
+                            style={styles.dropdown}
+                            onPress={() => setShowClassDropdown(!showClassDropdown)}
+                        >
+                            <Text style={styles.dropdownValue}>{selectedClass}</Text>
+                            <Text style={styles.chevronIcon}>{showClassDropdown ? '︽' : '︾'}</Text>
+                        </TouchableOpacity>
 
-                    <Text style={styles.label}>{Strings.attachments}</Text>
-                    <View style={styles.attachmentCard}>
-                        <View style={styles.attachmentIconContainer}>
-                            <Text style={styles.fileIcon}>📄</Text>
+                        {showClassDropdown && (
+                            <View style={styles.dropdownList}>
+                                {classOptions.map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedClass(item)
+                                            setShowClassDropdown(false)
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedClass === item && styles.selectedText]}>{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+
+                        <Text style={styles.label}>{Strings.selectSubject}</Text>
+                        <TouchableOpacity
+                            style={styles.dropdown}
+                            onPress={() => setShowSubjectDropdown(!showSubjectDropdown)}
+                        >
+                            <Text style={styles.dropdownValue}>{selectedSubject}</Text>
+                            <Text style={styles.chevronIcon}>{showSubjectDropdown ? '︽' : '︾'}</Text>
+                        </TouchableOpacity>
+
+                        {showSubjectDropdown && (
+                            <View style={styles.dropdownList}>
+                                {subjectOptions.map((item) => (
+                                    <TouchableOpacity
+                                        key={item}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setSelectedSubject(item)
+                                            setShowSubjectDropdown(false)
+                                        }}
+                                    >
+                                        <Text style={[styles.dropdownItemText, selectedSubject === item && styles.selectedText]}>{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+
+                        <Text style={styles.label}>{Strings.homeworkDetails}</Text>
+                        <View style={styles.textAreaContainer}>
+                            <TextInput
+                                style={styles.textArea}
+                                multiline
+                                value={homeworkDetails}
+                                onChangeText={setHomeworkDetails}
+                                textAlignVertical="top"
+                            />
                         </View>
-                        <View style={styles.attachmentInfo}>
-                            <Text style={styles.attachmentName}>formula_sheet_v2.pdf</Text>
-                            <Text style={styles.attachmentMeta}>DOCUMENT • 1.2 MB</Text>
+
+                        <Text style={styles.label}>{Strings.dueDateLabel}</Text>
+                        <TouchableOpacity
+                            style={styles.dateInputContainer}
+                            onPress={() => setShowDatePicker(true)}
+                        >
+                            <Text style={styles.dateInput}>{formatDate(dueDate)}</Text>
+                            <Text style={styles.calendarIcon}>📅</Text>
+                        </TouchableOpacity>
+
+                        <Text style={styles.label}>{Strings.attachments}</Text>
+                        <View style={styles.attachmentCard}>
+                            <View style={styles.attachmentIconContainer}>
+                                <Text style={styles.fileIcon}>📄</Text>
+                            </View>
+                            <View style={styles.attachmentInfo}>
+                                <Text style={styles.attachmentName}>formula_sheet_v2.pdf</Text>
+                                <Text style={styles.attachmentMeta}>DOCUMENT • 1.2 MB</Text>
+                            </View>
+                            <TouchableOpacity style={styles.deleteBtn}>
+                                <Text style={styles.deleteIcon}>🗑️</Text>
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={styles.deleteBtn}>
-                            <Text style={styles.deleteIcon}>🗑️</Text>
+
+                        <TouchableOpacity style={styles.addMoreBtn}>
+                            <Text style={styles.addMoreText}>⊕ {Strings.addMoreAttachments}</Text>
+                        </TouchableOpacity>
+
+                        {/* Action Buttons */}
+                        <TouchableOpacity
+                            style={styles.saveBtn}
+                            onPress={() => navigation.goBack()}
+                        >
+                            <Text style={styles.saveIcon}>💾</Text>
+                            <Text style={styles.saveBtnText}>{Strings.saveChanges}</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.cancelBtn}
+                            onPress={() => navigation.goBack()}
+                        >
+                            <Text style={styles.cancelBtnText}>{Strings.cancel}</Text>
                         </TouchableOpacity>
                     </View>
-
-                    <TouchableOpacity style={styles.addMoreBtn}>
-                        <Text style={styles.addMoreText}>⊕ {Strings.addMoreAttachments}</Text>
-                    </TouchableOpacity>
-
-                    {/* Action Buttons */}
-                    <TouchableOpacity
-                        style={styles.saveBtn}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Text style={styles.saveIcon}>💾</Text>
-                        <Text style={styles.saveBtnText}>{Strings.saveChanges}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.cancelBtn}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Text style={styles.cancelBtnText}>{Strings.cancel}</Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
 
             <DatePicker
                 visible={showDatePicker}

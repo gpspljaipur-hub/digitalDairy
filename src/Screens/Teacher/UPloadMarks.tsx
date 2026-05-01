@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, FlatList, StatusBar, KeyboardAvoidingView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../../comman/Colors'
@@ -188,31 +188,58 @@ const UPloadMarks = () => {
                 onBack={() => navigation.goBack()}
             />
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                <View style={styles.headerSection}>
-                    <Text style={styles.title}>{Strings.uploadMarksTitle}</Text>
-                    <Text style={styles.subtitle}>{Strings.uploadMarksDesc}</Text>
-                </View>
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+                    <View style={styles.headerSection}>
+                        <Text style={styles.title}>{Strings.uploadMarksTitle}</Text>
+                        <Text style={styles.subtitle}>{Strings.uploadMarksDesc}</Text>
+                    </View>
 
-                {/* Dropdowns */}
-                {/* Dropdowns */}
-                <View style={styles.selectorContainer}>
-                    <Text style={styles.selectorLabel}>{Strings.selectClass}</Text>
-                    <TouchableOpacity
-                        style={styles.dropdown}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                            setShowClassList(!showClassList);
-                            setShowSubjectList(false);
-                        }}
-                    >
-                        <Text style={[styles.dropdownText, !selectedClass && { color: '#94A3B8' }]}>
-                            {selectedClass ? selectedClass.name : Strings.selectClass}
-                        </Text>
-                        {loadingClasses ? (
-                            <ActivityIndicator size="small" color={Colors.primary} />
-                        ) : (
-                            <Text style={[styles.arrowIcon, showClassList && styles.arrowRotated]}>▼</Text>
+                    {/* Dropdowns */}
+                    {/* Dropdowns */}
+                    <View style={styles.selectorContainer}>
+                        <Text style={styles.selectorLabel}>{Strings.selectClass}</Text>
+                        <TouchableOpacity
+                            style={styles.dropdown}
+                            activeOpacity={0.7}
+                            onPress={() => {
+                                setShowClassList(!showClassList);
+                                setShowSubjectList(false);
+                            }}
+                        >
+                            <Text style={[styles.dropdownText, !selectedClass && { color: '#94A3B8' }]}>
+                                {selectedClass ? selectedClass.name : Strings.selectClass}
+                            </Text>
+                            {loadingClasses ? (
+                                <ActivityIndicator size="small" color={Colors.primary} />
+                            ) : (
+                                <Text style={[styles.arrowIcon, showClassList && styles.arrowRotated]}>▼</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        {showClassList && (
+                            <View style={styles.dropdownList}>
+                                <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                    {classes.map((item) => (
+                                        <TouchableOpacity
+                                            key={item._id}
+                                            style={styles.dropdownItem}
+                                            onPress={() => {
+                                                setSelectedClass(item);
+                                                setShowClassList(false);
+                                                setSelectedSubject(null);
+                                                setError('');
+
+                                                fetchSubjects(item._id);
+
+                                            }}
+                                        >
+                                            <Text style={[styles.dropdownItemText, selectedClass?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                            {selectedClass?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
                         )}
                     </TouchableOpacity>
 
@@ -285,59 +312,103 @@ const UPloadMarks = () => {
                     <Text style={styles.listTitle}>{Strings.studentsList} ({students.length})</Text>
                 </View>
 
-                {loadingData ? (
-                    <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={Colors.primary} />
-                        <Text style={styles.loadingText}>Loading students...</Text>
-                    </View>
-                ) : (
-                    <View style={styles.listContainer}>
-                        {students.length > 0 ? (
-                            students.map(student => (
-                                <View key={student.id}>
-                                    {renderStudentItem({ item: student })}
-                                </View>
-                            ))
-                        ) : (
-                            <View style={styles.emptyState}>
-                                <Text style={styles.emptyText}>{selectedClass ? 'No students found' : 'Select a class to view students'}</Text>
+                        <Text style={[styles.selectorLabel, { marginTop: 16 }]}>{Strings.selectSubject}</Text>
+                        <TouchableOpacity
+                            style={[styles.dropdown, !selectedClass && { backgroundColor: '#F1F5F9' }]}
+                            activeOpacity={0.7}
+                            disabled={!selectedClass}
+                            onPress={() => {
+                                setShowSubjectList(!showSubjectList);
+                                setShowClassList(false);
+                            }}
+                        >
+                            <Text style={[styles.dropdownText, !selectedSubject && { color: '#94A3B8' }]}>
+                                {selectedSubject ? selectedSubject.name : Strings.selectSubject}
+                            </Text>
+                            <Text style={[styles.arrowIcon, showSubjectList && styles.arrowRotated]}>▼</Text>
+                        </TouchableOpacity>
+
+                        {showSubjectList && (
+                            <View style={styles.dropdownList}>
+                                <ScrollView nestedScrollEnabled style={{ maxHeight: 200 }}>
+                                    {subjects.map((item) => (
+                                        <TouchableOpacity
+                                            key={item._id}
+                                            style={styles.dropdownItem}
+                                            onPress={() => {
+                                                setSelectedSubject(item);
+                                                setShowSubjectList(false);
+                                                setError('');
+                                            }}
+                                        >
+                                            <Text style={[styles.dropdownItemText, selectedSubject?._id === item._id && styles.selectedItemText]}>{item.name}</Text>
+                                            {selectedSubject?._id === item._id && <Text style={styles.selectedCheck}>✓</Text>}
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
                             </View>
                         )}
                     </View>
-                )}
 
-                {/* Warning Box */}
-                <View style={styles.infoBox}>
-                    <View style={styles.infoIconContainer}>
-                        <Text style={styles.infoIcon}>ⓘ</Text>
+                    {/* Students List */}
+                    <View style={styles.listHeader}>
+                        <Text style={styles.listTitle}>{Strings.studentsList} ({students.length})</Text>
                     </View>
-                    <Text style={styles.infoText}>{Strings.verifyMarksNote}</Text>
-                </View>
 
-                {/* Error Message */}
-                {error ? (
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{error}</Text>
-                    </View>
-                ) : null}
-
-                {/* Save Button */}
-                <TouchableOpacity
-                    style={[styles.saveButton, (students.length === 0 || loading) && { opacity: 0.6 }]}
-                    activeOpacity={0.8}
-                    disabled={loading || students.length === 0}
-                    onPress={handlePostMarks}
-                >
-                    {loading ? (
-                        <ActivityIndicator color={Colors.white} />
+                    {loadingData ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={Colors.primary} />
+                            <Text style={styles.loadingText}>Loading students...</Text>
+                        </View>
                     ) : (
-                        <>
-                            <Text style={styles.cloudIcon}>☁</Text>
-                            <Text style={styles.saveButtonText}>{Strings.saveAndUpload}</Text>
-                        </>
+                        <View style={styles.listContainer}>
+                            {students.length > 0 ? (
+                                students.map(student => (
+                                    <View key={student.id}>
+                                        {renderStudentItem({ item: student })}
+                                    </View>
+                                ))
+                            ) : (
+                                <View style={styles.emptyState}>
+                                    <Text style={styles.emptyText}>{selectedClass ? 'No students found' : 'Select a class to view students'}</Text>
+                                </View>
+                            )}
+                        </View>
                     )}
-                </TouchableOpacity>
-            </ScrollView>
+
+                    {/* Warning Box */}
+                    <View style={styles.infoBox}>
+                        <View style={styles.infoIconContainer}>
+                            <Text style={styles.infoIcon}>ⓘ</Text>
+                        </View>
+                        <Text style={styles.infoText}>{Strings.verifyMarksNote}</Text>
+                    </View>
+
+                    {/* Error Message */}
+                    {error ? (
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    ) : null}
+
+                    {/* Save Button */}
+                    <TouchableOpacity
+                        style={[styles.saveButton, (students.length === 0 || loading) && { opacity: 0.6 }]}
+                        activeOpacity={0.8}
+                        disabled={loading || students.length === 0}
+                        onPress={handlePostMarks}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={Colors.white} />
+                        ) : (
+                            <>
+                                <Text style={styles.cloudIcon}>☁</Text>
+                                <Text style={styles.saveButtonText}>{Strings.saveAndUpload}</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     )
 }

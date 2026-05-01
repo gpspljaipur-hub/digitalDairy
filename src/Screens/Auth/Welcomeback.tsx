@@ -155,7 +155,7 @@ const Welcomeback = ({ navigation }: any) => {
                 </View>
 
                 {/* Conditional Input Section */}
-                {role === 'teacher' ? (
+                {role === 'teacher' && (
                     <View style={styles.inputSection}>
                         <Text style={styles.label}>{s.email}</Text>
                         <View style={[styles.inputContainer]}>
@@ -190,7 +190,9 @@ const Welcomeback = ({ navigation }: any) => {
                         </View>
                         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
                     </View>
-                ) : (
+                )}
+
+                {role === 'parent' && (
                     <View style={styles.inputSection}>
                         <Text style={styles.label}>{s.mobileNumber}</Text>
                         <View style={[styles.mobileInputContainer]}>
@@ -216,20 +218,22 @@ const Welcomeback = ({ navigation }: any) => {
                 )}
 
                 {/* Login/Send OTP Button */}
-                <TouchableOpacity
-                    style={[styles.sendOtpBtn, loading && { opacity: 0.7 }]}
-                    onPress={handleSendOtp}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color={Colors.white} />
-                    ) : (
-                        <>
-                            <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
-                            <Text style={styles.btnArrow}>→</Text>
-                        </>
-                    )}
-                </TouchableOpacity>
+                {((role === 'teacher' && email && password) || (role === 'parent' && mobile.length === 10)) && (
+                    <TouchableOpacity
+                        style={[styles.sendOtpBtn, loading && { opacity: 0.7 }]}
+                        onPress={handleSendOtp}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={Colors.white} />
+                        ) : (
+                            <>
+                                <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
+                                <Text style={styles.btnArrow}>→</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
 
                 {/* Security Card */}
                 <View style={styles.securityCard}>
@@ -255,17 +259,17 @@ export default Welcomeback
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFC',
+        backgroundColor: Colors.white,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingHorizontal: HWSize.W_Width20,
+        paddingBottom: 15,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
+        borderBottomColor: '#F1F5F9',
     },
     headerLeft: {
         flexDirection: 'row',
@@ -484,7 +488,7 @@ const styles = StyleSheet.create({
     },
     helpLink: {
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: 10,
     },
     helpLinkText: {
         fontSize: 15,

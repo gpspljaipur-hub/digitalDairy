@@ -144,9 +144,9 @@ const Notification = ({ navigation }: any) => {
                         </View>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+                {/* <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
                     <Text style={styles.logoutText}>{Strings.logoutLabel}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
             </ScrollView>
         </SafeAreaView>
@@ -158,7 +158,7 @@ export default Notification
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FE',
+        backgroundColor: Colors.white,
     },
     header: {
         flexDirection: 'row',

@@ -32,9 +32,9 @@ const WelcomeScreen = () => {
                     <Text style={styles.headerIcon}>🎓</Text>
                     <Text style={styles.headerTitle}>{s.schoolConnect}</Text>
                 </View>
-                <TouchableOpacity style={styles.profileBtn}>
+                {/* <TouchableOpacity style={styles.profileBtn}>
                     <Text style={styles.profileEmoji}>👤</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             {/* Hero Section */}
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: HWSize.W_Width20,
-        paddingVertical: 15,
+        paddingBottom: 15,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#F1F5F9',

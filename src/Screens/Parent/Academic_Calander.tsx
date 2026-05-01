@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import ScreenWrapper from '../../comman/ScreenWrapper';
 import { Colors } from '../../comman/Colors';
 import Fonts from '../../comman/fonts';
@@ -65,16 +65,12 @@ const Academic_Calander = () => {
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.menuBtn}>
-                    <Text style={styles.menuIcon}>☰</Text>
+                    <Text style={styles.menuIcon}>←</Text>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>{strings.academicCalendar}</Text>
-                <View style={styles.profileContainer}>
-                    <View style={styles.profileBox}>
-                        <Text style={styles.profileEmoji}>👨‍💼</Text>
-                    </View>
-                </View>
             </View>
 
             <View style={styles.content}>
@@ -181,9 +177,10 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
+        gap: 30,
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: 10,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#F0F0F0',
