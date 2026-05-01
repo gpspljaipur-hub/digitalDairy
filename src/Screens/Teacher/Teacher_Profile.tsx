@@ -27,7 +27,7 @@ const Teacher_Profile = () => {
         await AsyncStorageHelper.removeItemValue(Config.ROLE);
         dispatch(logout());
         Helper.showToast('Logout Success');
-        navigation.navigate('Welcomeback');
+        navigation.reset({ index: 0, routes: [{ name: 'Welcomeback' }], });
     }
 
     return (

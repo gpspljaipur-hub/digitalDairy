@@ -67,7 +67,8 @@ const Welcomeback = ({ navigation }: any) => {
                     await AsyncStorageHelper.setData(Config.USER_DATA, res.user);
                     dispatch(loginTeacherSuccess(res.teacher));
                     dispatch(setUserType(role));
-                    navigation.navigate('Dashboard');
+                    // navigation.navigate('Dashboard');
+                    navigation.reset({ index: 0, routes: [{ name: 'Dashboard' }],});
                 } else {
                     Helper.showToast(res?.message || 'Invalid credentials');
                 }
@@ -83,7 +84,7 @@ const Welcomeback = ({ navigation }: any) => {
                     const isVerified = res?.data?.isVerified || false;
 
                     if (isVerified && isRegistered) {
-                        navigation.navigate('ParentDashboard', { phone: mobile });
+                        navigation.reset({ index: 0, routes: [{ name: 'ParentDashboard' ,params: { phone: mobile },}],});
                     } else if (isVerified && !isRegistered) {
                         navigation.navigate('StudentRegister', { phone: mobile });
                     } else {

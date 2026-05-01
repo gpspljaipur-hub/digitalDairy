@@ -77,7 +77,7 @@ const Profile = () => {
         await AsyncStorageHelper.removeItemValue(Config.ROLE);
         dispatch(logout());
         Helper.showToast(strings.logout);
-        navigation.navigate('Welcomeback');
+        navigation.reset({ index: 0, routes: [{ name: 'Welcomeback' }], });
     }
 
     return (
