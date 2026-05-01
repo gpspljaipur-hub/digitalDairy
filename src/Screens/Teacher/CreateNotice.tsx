@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Switch, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Switch, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import { Colors } from '../../comman/Colors'
@@ -93,6 +93,7 @@ const CreateNotice = () => {
 
     return (
         <ScreenWrapper style={styles.container}>
+
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Text style={styles.backIcon}>←</Text>
@@ -104,138 +105,150 @@ const CreateNotice = () => {
                     </View>
                 </TouchableOpacity>
             </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={60}
+            >
 
-            <View style={styles.content}>
-                {/* Broadcasting Banner */}
-                <View style={styles.banner}>
-                    <View style={styles.bannerIconBg}>
-                        <Text style={styles.megaphoneIcon}>📢</Text>
-                    </View>
-                    <View style={styles.bannerTextContent}>
-                        <Text style={styles.bannerTitle}>{strings.broadcastingTitle}</Text>
-                        <Text style={styles.bannerSubtitle}>
-                            {strings.broadcastingSubtitle}
-                        </Text>
-                    </View>
-                </View>
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                >
 
-                {/* Notice Title Section */}
-                <Text style={styles.sectionLabel}>{strings.noticeTitleLabel}</Text>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder={strings.noticeTitlePlaceholder}
-                        placeholderTextColor={Colors.lightGreyText}
-                        value={title}
-                        onChangeText={(text) => {
-                            setTitle(text);
-                            setError('');
-                        }}
-                    />
-                </View>
-
-                {/* Select Class Section */}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>Select Class</Text>
-                    {loadingClasses && <ActivityIndicator size="small" color={Colors.primary} />}
-                </View>
-                <View style={styles.classesGrid}>
-                    {classes.map((item) => {
-                        const isSelected = selectedClass === item._id;
-                        return (
-                            <TouchableOpacity
-                                key={item._id}
-                                style={[styles.classItem, isSelected && styles.classItemActive]}
-                                onPress={() => toggleClass(item._id)}
-                                activeOpacity={0.7}
-                            >
-                                <View style={[styles.checkbox, isSelected && styles.checkboxActive, { borderRadius: 10 }]}>
-                                    {isSelected && <Text style={styles.checkMark}>✓</Text>}
-                                </View>
-                                <Text style={[styles.classText, isSelected && styles.classTextActive]} numberOfLines={1}>
-                                    {item.name}
+                    <View style={styles.content}>
+                        {/* Broadcasting Banner */}
+                        <View style={styles.banner}>
+                            <View style={styles.bannerIconBg}>
+                                <Text style={styles.megaphoneIcon}>📢</Text>
+                            </View>
+                            <View style={styles.bannerTextContent}>
+                                <Text style={styles.bannerTitle}>{strings.broadcastingTitle}</Text>
+                                <Text style={styles.bannerSubtitle}>
+                                    {strings.broadcastingSubtitle}
                                 </Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </View>
+                            </View>
+                        </View>
 
-    {/* Notice Content Section */ }
-                <Text style={styles.sectionLabel}>{strings.noticeContentLabel}</Text>
-                <View style={styles.editorContainer}>
-                    <View style={styles.toolbar}>
-                        <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>B</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.toolbarBtn}><Text style={[styles.toolbarIcon, { fontStyle: 'italic' }]}>I</Text></TouchableOpacity>
-                        <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>≡</Text></TouchableOpacity>
-                        <View style={styles.toolbarDivider} />
-                        <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>📎</Text></TouchableOpacity>
-                    </View>
-                    <TextInput
-                        style={styles.textArea}
-                        placeholder={strings.noticeContentPlaceholder}
-                        placeholderTextColor={Colors.lightGreyText}
-                        multiline
-                        textAlignVertical="top"
-                        value={content}
-                        onChangeText={(text) => {
-                            setContent(text);
-                            setError('');
-                        }}
-                    />
-                    <View style={styles.textAreaFooter}>
-                        <Text style={styles.resizeHandle}>◢</Text>
-                    </View>
-                </View>
+                        {/* Notice Title Section */}
+                        <Text style={styles.sectionLabel}>{strings.noticeTitleLabel}</Text>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder={strings.noticeTitlePlaceholder}
+                                placeholderTextColor={Colors.lightGreyText}
+                                value={title}
+                                onChangeText={(text) => {
+                                    setTitle(text);
+                                    setError('');
+                                }}
+                            />
+                        </View>
 
-    {/* Mark as Important Section */ }
-    <View style={styles.importantCard}>
-        <View style={styles.importantIconBg}>
-            <Text style={styles.warningIcon}>!</Text>
-        </View>
-        <View style={styles.importantTextContent}>
-            <Text style={styles.importantTitle}>{strings.markAsImportantLabel}</Text>
-            <Text style={styles.importantSubtitle}>{strings.markAsImportantSubtitle}</Text>
-        </View>
-        <Switch
-            value={isImportant}
-            onValueChange={setIsImportant}
-            trackColor={{ false: '#D1D5DB', true: '#BFC5FF' }}
-            thumbColor={isImportant ? Colors.primary : '#F4F3F4'}
-        />
-    </View>
+                        {/* Select Class Section */}
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                            <Text style={[styles.sectionLabel, { marginBottom: 0 }]}>Select Class</Text>
+                            {loadingClasses && <ActivityIndicator size="small" color={Colors.primary} />}
+                        </View>
+                        <View style={styles.classesGrid}>
+                            {classes.map((item) => {
+                                const isSelected = selectedClass === item._id;
+                                return (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        style={[styles.classItem, isSelected && styles.classItemActive]}
+                                        onPress={() => toggleClass(item._id)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <View style={[styles.checkbox, isSelected && styles.checkboxActive, { borderRadius: 10 }]}>
+                                            {isSelected && <Text style={styles.checkMark}>✓</Text>}
+                                        </View>
+                                        <Text style={[styles.classText, isSelected && styles.classTextActive]} numberOfLines={1}>
+                                            {item.name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
 
-    {/* Error Message */ }
-    {
-        error ? (
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{error}</Text>
-            </View>
-        ) : null
-    }
+                        {/* Notice Content Section */}
+                        <Text style={styles.sectionLabel}>{strings.noticeContentLabel}</Text>
+                        <View style={styles.editorContainer}>
+                            <View style={styles.toolbar}>
+                                <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>B</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.toolbarBtn}><Text style={[styles.toolbarIcon, { fontStyle: 'italic' }]}>I</Text></TouchableOpacity>
+                                <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>≡</Text></TouchableOpacity>
+                                <View style={styles.toolbarDivider} />
+                                <TouchableOpacity style={styles.toolbarBtn}><Text style={styles.toolbarIcon}>📎</Text></TouchableOpacity>
+                            </View>
+                            <TextInput
+                                style={styles.textArea}
+                                placeholder={strings.noticeContentPlaceholder}
+                                placeholderTextColor={Colors.lightGreyText}
+                                multiline
+                                textAlignVertical="top"
+                                value={content}
+                                onChangeText={(text) => {
+                                    setContent(text);
+                                    setError('');
+                                }}
+                            />
+                            <View style={styles.textAreaFooter}>
+                                <Text style={styles.resizeHandle}>◢</Text>
+                            </View>
+                        </View>
 
-    {/* Send Button */ }
-    <TouchableOpacity
-        style={[styles.sendButton, (loading || classes.length === 0) && { opacity: 0.7 }]}
-        activeOpacity={0.8}
-        disabled={loading || classes.length === 0}
-        onPress={handleSendNotice}
-    >
-{
-    loading ? (
-        <ActivityIndicator color={Colors.white} />
-    ) : (
-        <>
-            <Text style={styles.sendButtonIcon}>➤</Text>
-            <Text style={styles.sendButtonText}>{strings.sendNoticeButton}</Text>
-        </>
-    )
-}
-                </TouchableOpacity >
+                        {/* Mark as Important Section */}
+                        <View style={styles.importantCard}>
+                            <View style={styles.importantIconBg}>
+                                <Text style={styles.warningIcon}>!</Text>
+                            </View>
+                            <View style={styles.importantTextContent}>
+                                <Text style={styles.importantTitle}>{strings.markAsImportantLabel}</Text>
+                                <Text style={styles.importantSubtitle}>{strings.markAsImportantSubtitle}</Text>
+                            </View>
+                            <Switch
+                                value={isImportant}
+                                onValueChange={setIsImportant}
+                                trackColor={{ false: '#D1D5DB', true: '#BFC5FF' }}
+                                thumbColor={isImportant ? Colors.primary : '#F4F3F4'}
+                            />
+                        </View>
 
-    <Text style={styles.footerNote}>
-        {strings.footerArchivedNote}
-    </Text>
-            </View >
+                        {/* Error Message */}
+                        {
+                            error ? (
+                                <View style={styles.errorContainer}>
+                                    <Text style={styles.errorText}>{error}</Text>
+                                </View>
+                            ) : null
+                        }
+
+                        {/* Send Button */}
+                        <TouchableOpacity
+                            style={[styles.sendButton, (loading || classes.length === 0) && { opacity: 0.7 }]}
+                            activeOpacity={0.8}
+                            disabled={loading || classes.length === 0}
+                            onPress={handleSendNotice}
+                        >
+                            {
+                                loading ? (
+                                    <ActivityIndicator color={Colors.white} />
+                                ) : (
+                                    <>
+                                        <Text style={styles.sendButtonIcon}>➤</Text>
+                                        <Text style={styles.sendButtonText}>{strings.sendNoticeButton}</Text>
+                                    </>
+                                )
+                            }
+                        </TouchableOpacity >
+
+                        <Text style={styles.footerNote}>
+                            {strings.footerArchivedNote}
+                        </Text>
+                    </View >
+                </ScrollView>
+            </KeyboardAvoidingView>
         </ScreenWrapper >
     )
 }

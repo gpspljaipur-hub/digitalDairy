@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import ScreenWrapper from '../../comman/ScreenWrapper'
 
@@ -107,150 +107,164 @@ const Welcomeback = ({ navigation }: any) => {
 
     return (
         <ScreenWrapper scroll={true} style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.headerLeft}>
-                    <Text style={styles.headerIcon}>🏛️</Text>
-                    <Text style={styles.headerTitle}>{s.eduPortal}</Text>
-                </View>
-            </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+                keyboardVerticalOffset={60}
+            >
 
-            <View style={styles.content}>
-                {/* Hero Icon */}
-                <View style={styles.heroIconContainer}>
-                    <View style={styles.iconBox}>
-                        <Text style={styles.bookIcon}>📖</Text>
-                    </View>
-                </View>
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
 
-                {/* Welcome Text */}
-                <View style={styles.welcomeContainer}>
-                    <Text style={styles.welcomeTitle}>{s.welcomeBack}</Text>
-                    <Text style={styles.welcomeSubtitle}>{s.welcomeBackSubtitle}</Text>
-                </View>
-
-                {/* Role Selection */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionLabel}>{s.chooseRole}</Text>
-                    <View style={styles.roleContainer}>
-                        <TouchableOpacity
-                            style={[styles.roleCard, role === 'parent' && styles.activeRoleCard]}
-                            onPress={() => setRole('parent')}
-                        >
-                            <View style={styles.roleIconWrapper}>
-                                <Text style={[styles.roleIcon, role === 'parent' && styles.activeRoleIcon]}>🧬</Text>
-                            </View>
-                            <Text style={[styles.roleText, role === 'parent' && styles.activeRoleText]}>{s.parent}</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={[styles.roleCard, role === 'teacher' && styles.activeRoleCard]}
-                            onPress={() => setRole('teacher')}
-                        >
-                            <View style={styles.roleIconWrapper}>
-                                <Text style={[styles.roleIcon, role === 'teacher' && styles.activeRoleIcon]}>🎓</Text>
-                            </View>
-                            <Text style={[styles.roleText, role === 'teacher' && styles.activeRoleText]}>{s.teacher}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Conditional Input Section */}
-                {role === 'teacher' && (
-                    <View style={styles.inputSection}>
-                        <Text style={styles.label}>{s.email}</Text>
-                        <View style={[styles.inputContainer]}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder={s.emailPlaceholder}
-                                placeholderTextColor={Colors.lightGreyText}
-                                value={email}
-                                onChangeText={(text) => {
-                                    setEmail(text);
-                                    if (emailError) setEmailError('');
-                                }}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                            />
+                    <View style={styles.header}>
+                        <View style={styles.headerLeft}>
+                            <Text style={styles.headerIcon}>🏛️</Text>
+                            <Text style={styles.headerTitle}>{s.eduPortal}</Text>
                         </View>
-                        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-
-                        <Text style={[styles.label, { marginTop: emailError ? 10 : 20 }]}>{s.password}</Text>
-                        <View style={[styles.inputContainer]}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder={s.passwordPlaceholder}
-                                placeholderTextColor={Colors.lightGreyText}
-                                value={password}
-                                onChangeText={(text) => {
-                                    setPassword(text);
-                                    if (passwordError) setPasswordError('');
-                                }}
-                                secureTextEntry
-                            />
-                        </View>
-                        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
                     </View>
-                )}
 
-                {role === 'parent' && (
-                    <View style={styles.inputSection}>
-                        <Text style={styles.label}>{s.mobileNumber}</Text>
-                        <View style={[styles.mobileInputContainer]}>
-                            <View style={styles.countryCodeBox}>
-                                <Text style={styles.countryCode}>{s.countryCode}</Text>
+                    <View style={styles.content}>
+                        {/* Hero Icon */}
+                        <View style={styles.heroIconContainer}>
+                            <View style={styles.iconBox}>
+                                <Text style={styles.bookIcon}>📖</Text>
                             </View>
-                            <TextInput
-                                style={styles.mobileInput}
-                                placeholder={s.mobilePlaceholder}
-                                placeholderTextColor={Colors.lightGreyText}
-                                keyboardType="phone-pad"
-                                maxLength={10}
-                                value={mobile}
-                                onChangeText={(text) => {
-                                    setMobile(text);
-                                    if (mobileError) setMobileError('');
-                                }}
-                            />
                         </View>
-                        {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
-                        <Text style={styles.otpNote}>{s.otpNote}</Text>
-                    </View>
-                )}
 
-                {/* Login/Send OTP Button */}
-                {((role === 'teacher' && email && password) || (role === 'parent' && mobile.length === 10)) && (
-                    <TouchableOpacity
-                        style={[styles.sendOtpBtn, loading && { opacity: 0.7 }]}
-                        onPress={handleSendOtp}
-                        disabled={loading}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color={Colors.white} />
-                        ) : (
-                            <>
-                                <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
-                                <Text style={styles.btnArrow}>→</Text>
-                            </>
+                        {/* Welcome Text */}
+                        <View style={styles.welcomeContainer}>
+                            <Text style={styles.welcomeTitle}>{s.welcomeBack}</Text>
+                            <Text style={styles.welcomeSubtitle}>{s.welcomeBackSubtitle}</Text>
+                        </View>
+
+                        {/* Role Selection */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionLabel}>{s.chooseRole}</Text>
+                            <View style={styles.roleContainer}>
+                                <TouchableOpacity
+                                    style={[styles.roleCard, role === 'parent' && styles.activeRoleCard]}
+                                    onPress={() => setRole('parent')}
+                                >
+                                    <View style={styles.roleIconWrapper}>
+                                        <Text style={[styles.roleIcon, role === 'parent' && styles.activeRoleIcon]}>🧬</Text>
+                                    </View>
+                                    <Text style={[styles.roleText, role === 'parent' && styles.activeRoleText]}>{s.parent}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[styles.roleCard, role === 'teacher' && styles.activeRoleCard]}
+                                    onPress={() => setRole('teacher')}
+                                >
+                                    <View style={styles.roleIconWrapper}>
+                                        <Text style={[styles.roleIcon, role === 'teacher' && styles.activeRoleIcon]}>🎓</Text>
+                                    </View>
+                                    <Text style={[styles.roleText, role === 'teacher' && styles.activeRoleText]}>{s.teacher}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* Conditional Input Section */}
+                        {role === 'teacher' && (
+                            <View style={styles.inputSection}>
+                                <Text style={styles.label}>{s.email}</Text>
+                                <View style={[styles.inputContainer]}>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder={s.emailPlaceholder}
+                                        placeholderTextColor={Colors.lightGreyText}
+                                        value={email}
+                                        onChangeText={(text) => {
+                                            setEmail(text);
+                                            if (emailError) setEmailError('');
+                                        }}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                    />
+                                </View>
+                                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+                                <Text style={[styles.label, { marginTop: emailError ? 10 : 20 }]}>{s.password}</Text>
+                                <View style={[styles.inputContainer]}>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder={s.passwordPlaceholder}
+                                        placeholderTextColor={Colors.lightGreyText}
+                                        value={password}
+                                        onChangeText={(text) => {
+                                            setPassword(text);
+                                            if (passwordError) setPasswordError('');
+                                        }}
+                                        secureTextEntry
+                                    />
+                                </View>
+                                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+                            </View>
                         )}
-                    </TouchableOpacity>
-                )}
 
-                {/* Security Card */}
-                <View style={styles.securityCard}>
-                    <Text style={styles.shieldIcon}>🛡️</Text>
-                    <Text style={styles.securityText}>{s.dataSafeNote}</Text>
-                </View>
+                        {role === 'parent' && (
+                            <View style={styles.inputSection}>
+                                <Text style={styles.label}>{s.mobileNumber}</Text>
+                                <View style={[styles.mobileInputContainer]}>
+                                    <View style={styles.countryCodeBox}>
+                                        <Text style={styles.countryCode}>{s.countryCode}</Text>
+                                    </View>
+                                    <TextInput
+                                        style={styles.mobileInput}
+                                        placeholder={s.mobilePlaceholder}
+                                        placeholderTextColor={Colors.lightGreyText}
+                                        keyboardType="phone-pad"
+                                        maxLength={10}
+                                        value={mobile}
+                                        onChangeText={(text) => {
+                                            setMobile(text);
+                                            if (mobileError) setMobileError('');
+                                        }}
+                                    />
+                                </View>
+                                {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
+                                <Text style={styles.otpNote}>{s.otpNote}</Text>
+                            </View>
+                        )}
 
-                {/* Help Link */}
-                <TouchableOpacity style={styles.helpLink}>
-                    <Text style={styles.helpLinkText}>{s.helpLoggingIn}</Text>
-                </TouchableOpacity>
+                        {/* Login/Send OTP Button */}
+                        {((role === 'teacher' && email && password) || (role === 'parent' && mobile.length === 10)) && (
+                            <TouchableOpacity
+                                style={[styles.sendOtpBtn, loading && { opacity: 0.7 }]}
+                                onPress={handleSendOtp}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color={Colors.white} />
+                                ) : (
+                                    <>
+                                        <Text style={styles.sendOtpText}>{role === 'teacher' ? s.login : s.sendOTP}</Text>
+                                        <Text style={styles.btnArrow}>→</Text>
+                                    </>
+                                )}
+                            </TouchableOpacity>
+                        )}
 
-                {/* Footer Links */}
-                <View style={styles.footer}>
-                    <Text style={styles.footerLink}>{s.privacy}</Text>
-                </View>
-            </View>
+                        {/* Security Card */}
+                        <View style={styles.securityCard}>
+                            <Text style={styles.shieldIcon}>🛡️</Text>
+                            <Text style={styles.securityText}>{s.dataSafeNote}</Text>
+                        </View>
+
+                        {/* Help Link */}
+                        <TouchableOpacity style={styles.helpLink}>
+                            <Text style={styles.helpLinkText}>{s.helpLoggingIn}</Text>
+                        </TouchableOpacity>
+
+                        {/* Footer Links */}
+                        <View style={styles.footer}>
+                            <Text style={styles.footerLink}>{s.privacy}</Text>
+                        </View>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </ScreenWrapper>
     )
 }

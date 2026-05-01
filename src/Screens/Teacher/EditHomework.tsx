@@ -10,7 +10,7 @@ import DatePicker from '../../comman/DatePicker'
 const EditHomework = () => {
     const Strings = useStrings()
     const navigation = useNavigation<any>();
-    const [homeworkDetails, setHomeworkDetails] = useState('Type your message here...')
+    const [homeworkDetails, setHomeworkDetails] = useState('')
     const [dueDate, setDueDate] = useState(new Date())
     const [showDatePicker, setShowDatePicker] = useState(false)
 
