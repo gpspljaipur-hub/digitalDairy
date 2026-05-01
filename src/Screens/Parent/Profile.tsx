@@ -78,8 +78,6 @@ const Profile = () => {
                 onBack={() => navigation.goBack()}
                 showProfile={false}
                 showNotification={false}
-                rightIcon="⚙️"
-                onRightIconPress={() => { }}
             />
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -112,7 +110,6 @@ const Profile = () => {
                                 {item.subtitle ? <Text style={styles.menuSubtitle}>{item.subtitle}</Text> : null}
                             </View>
                             {item.showChevron && <Text style={styles.chevron}>›</Text>}
-                            {item.showExternal && <Text style={styles.externalIcon}>↗️</Text>}
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -122,9 +119,6 @@ const Profile = () => {
                     <Text style={styles.logoutIcon}>🚪</Text>
                     <Text style={styles.logoutText}>{strings.logout}</Text>
                 </TouchableOpacity>
-
-                <Text style={styles.versionText}>App Version 2.4.0 (Build 892)</Text>
-
                 {/* Extra space for bottom nav */}
                 <View style={{ height: 100 }} />
             </ScrollView>
@@ -138,7 +132,7 @@ export default Profile;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.white,
     },
     scrollContent: {
         paddingTop: 30,

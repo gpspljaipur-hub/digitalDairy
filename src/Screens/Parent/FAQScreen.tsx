@@ -163,7 +163,7 @@ export default FAQScreen;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.white,
         flex: 1,
     },
     scrollContent: {

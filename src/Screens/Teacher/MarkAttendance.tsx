@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBar, Alert, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList, StatusBar, Alert, ActivityIndicator, KeyboardAvoidingView } from 'react-native'
 import React, { useState, useMemo } from 'react'
 import { Colors } from '../../comman/Colors'
 import Fonts from '../../comman/fonts'
@@ -239,6 +239,7 @@ const MarkAttendance = () => {
                     )}
                 </View>
 
+            <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
                 <View style={styles.searchSection}>
                     <View style={styles.searchBar}>
                         <Text style={styles.searchEmoji}>🔍</Text>
@@ -271,6 +272,7 @@ const MarkAttendance = () => {
                         </View>
                     }
                 />
+            </KeyboardAvoidingView>
 
             </View>
 

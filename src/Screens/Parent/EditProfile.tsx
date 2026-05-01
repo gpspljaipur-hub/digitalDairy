@@ -189,7 +189,7 @@ export default EditProfile;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.white,
     },
     header: {
         flexDirection: 'row',
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
         borderBottomColor: '#F1F5F9',
+        justifyContent: 'space-between',
     },
     backBtn: {
         padding: 5,

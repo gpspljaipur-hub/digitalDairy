@@ -4,6 +4,7 @@ import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import Fonts from '../../comman/fonts'
 import { useNavigation } from '@react-navigation/native'
+import { Platform } from 'react-native'
 
 const Chat_Screen = () => {
     const navigation = useNavigation();
@@ -78,9 +79,10 @@ const Chat_Screen = () => {
             />
 
             <KeyboardAvoidingView
-                behavior="padding"
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 keyboardVerticalOffset={40}
-                style={{ flex: 1 }}>
+                style={{ flex: 1 }}
+            >
                 <FlatList
                     ref={flatListRef}
                     data={messages}
@@ -88,6 +90,8 @@ const Chat_Screen = () => {
                     renderItem={renderMessage}
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
+                    style={{ flex: 1 }}
+                    keyboardShouldPersistTaps="handled"
                 />
 
                 <View style={styles.inputContainer}>
@@ -127,7 +131,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         paddingHorizontal: 15,
-        paddingBottom: 20,
+        paddingBottom: 10,
         marginTop: 20,
     },
     messageRow: {
@@ -220,15 +224,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 14,
+        paddingVertical: 12,
         backgroundColor: '#FFFFFF',
         borderTopWidth: 1,
         borderTopColor: '#F1F5F9',
-        elevation: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
     },
     addButton: {
         marginRight: 12,

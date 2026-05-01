@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, StatusBar } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { Auth_ApiRequest } from '../../Lib/ApiService/ApiRequest'
@@ -85,6 +85,7 @@ const ParentDashboard = ({ route }: any) => {
 
     return (
         <ScreenWrapper scroll={false}>
+            <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
             <Header title={strings.parentDashboardTitle} showProfile={true} />
             <ScrollView
                 style={styles.container}
@@ -247,7 +248,7 @@ export default ParentDashboard
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F9FE',
+        backgroundColor: Colors.white,
     },
     scrollContent: {
         paddingHorizontal: HWSize.W_Width20,

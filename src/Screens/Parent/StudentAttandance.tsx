@@ -234,7 +234,7 @@ export default StudentAttandance
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8FAFC',
+        backgroundColor: Colors.white,
     },
     scrollContent: {
         padding: 20,
