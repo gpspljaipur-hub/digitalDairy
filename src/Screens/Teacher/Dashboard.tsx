@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar, Dimensions } from 'react-native'
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { Colors } from '../../comman/Colors'
 import useStrings from '../../comman/useStrings'
 import Fonts from '../../comman/fonts'
@@ -13,6 +14,8 @@ import { useNavigation } from '@react-navigation/native'
 const Dashboard = () => {
     const navigation = useNavigation<any>();
     const Strings = useStrings()
+    const { teacher } = useSelector((state: any) => state.user);
+    console.log('teacher', teacher);
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
@@ -22,8 +25,8 @@ const Dashboard = () => {
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {/* Greeting Section */}
                 <View style={styles.greetingSection}>
-                    <Text style={styles.greetingText}>{Strings.greeting}</Text>
-                    <Text style={styles.subtitleText}>{Strings.subtitle}</Text>
+                    <Text style={styles.greetingText}>{Strings.greeting} {teacher?.name || 'Teacher'} 👋</Text>
+                    <Text style={styles.subtitleText}>{Strings.subtitle} {teacher?.subject}</Text>
                 </View>
 
                 {/* Quick Actions Grid */}

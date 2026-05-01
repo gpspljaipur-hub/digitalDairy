@@ -70,12 +70,16 @@ const AddHomework = () => {
             Helper.showToast('Please fill all details');
             return;
         }
+        const year = dueDate.getFullYear();
+        const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+        const day = String(dueDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
 
         const payload = {
             classId: selectedClass?._id,
             subjectId: selectedSubject?._id,
             message: homeworkDetails,
-            date: dueDate.toISOString().split('T')[0]
+            date: formattedDate
         };
         console.log('Post Homework Payload:', payload);
         setLoading(true);

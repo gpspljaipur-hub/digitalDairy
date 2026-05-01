@@ -15,6 +15,7 @@ interface DatePickerProps {
     onClose: () => void;
     onSelect: (date: Date) => void;
     selectedDate: Date;
+    maxDate?: Date;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -22,6 +23,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
     onClose,
     onSelect,
     selectedDate,
+    maxDate,
 }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -81,15 +83,17 @@ const DatePicker: React.FC<DatePickerProps> = ({
                         {calendarData.map((date, index) => {
                             const isToday = date?.toDateString() === new Date().toDateString();
                             const isSelected = date?.toDateString() === selectedDate.toDateString();
+                            const isDisabled = date && maxDate ? date > maxDate : false;
 
                             return (
                                 <TouchableOpacity
                                     key={index}
-                                    disabled={!date}
+                                    disabled={!date || isDisabled}
                                     style={[
                                         styles.dayCell,
                                         isSelected && styles.selectedDay,
                                         isToday && styles.todayCell,
+                                        isDisabled && styles.disabledDay,
                                     ]}
                                     onPress={() => {
                                         if (date) {
@@ -101,6 +105,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                                         styles.dayText,
                                         !date && { opacity: 0 },
                                         isSelected && styles.selectedDayText,
+                                        isDisabled && styles.disabledDayText,
                                     ]}>
                                         {date ? date.getDate() : ''}
                                     </Text>
@@ -201,6 +206,12 @@ const styles = StyleSheet.create({
     todayCell: {
         borderWidth: 1,
         borderColor: '#2563EB',
+    },
+    disabledDay: {
+        backgroundColor: 'transparent',
+    },
+    disabledDayText: {
+        color: '#CBD5E1',
     },
     closeCalendarBtn: {
         marginTop: 15,
