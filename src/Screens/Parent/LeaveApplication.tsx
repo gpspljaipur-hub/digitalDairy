@@ -245,6 +245,7 @@ const LeaveApplication = () => {
 const styles = StyleSheet.create({
     scrollContent: {
         padding: HWSize.W_Width20,
+        backgroundColor: Colors.white,
     },
     section: {
         marginBottom: 30,

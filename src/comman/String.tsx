@@ -421,6 +421,7 @@ const Strings = {
 		recentApplications: "Recent Applications",
 		applyForNewLeave: "Apply for New Leave",
 		loadPreviousRecords: "Load Previous Records",
+		fullName: "full Name",
 	},
 	hi: {
 		// Dashboard Extra
@@ -839,9 +840,11 @@ const Strings = {
 		recentApplications: "हाल के आवेदन",
 		applyForNewLeave: "नई छुट्टी के लिए आवेदन करें",
 		loadPreviousRecords: "पिछले रिकॉर्ड लोड करें",
+		fullName: "पूरा नाम",
 	},
 	pa: {
 		// Dashboard Extra
+		fullName: "ਪੂਰਾ ਨਾਮ",
 		TeacherPortal: "ਅਧਿਆਪਕ ਪੋਰਟਲ",
 		TEACHER_PORTAL: "ਅਧਿਆਪਕ ਪੋਰਟਲ",
 		submitAttendance: "ਹਾਜ਼ਰੀ ਜਮ੍ਹਾਂ ਕਰੋ",

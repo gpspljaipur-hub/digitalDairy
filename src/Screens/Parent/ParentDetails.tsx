@@ -100,10 +100,10 @@ const ParentDetails = () => {
                     <Text style={styles.editBtnText}>{strings.editDetails}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.signOutBtn} onPress={() => navigation.navigate('Splash')}>
+                {/* <TouchableOpacity style={styles.signOutBtn} onPress={() => navigation.navigate('Splash')}>
                     <Text style={styles.signOutIcon}>🚪</Text>
                     <Text style={styles.signOutText}>{strings.signOut}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 {/* Space for bottom nav */}
                 <View style={{ height: 100 }} />
@@ -118,7 +118,7 @@ export default ParentDetails;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.white,
     },
     scrollContent: {
         paddingTop: 20,

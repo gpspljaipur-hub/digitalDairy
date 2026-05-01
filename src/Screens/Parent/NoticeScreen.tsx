@@ -205,7 +205,7 @@ export default NoticeScreen;
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: '#F8F9FE',
+        backgroundColor: Colors.white,
     },
     header: {
         flexDirection: 'row',

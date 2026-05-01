@@ -6,8 +6,6 @@ import { Auth_ApiRequest, Get_Send_Api } from '../../Lib/ApiService/ApiRequest'
 import ApiUrl from '../../Lib/ApiService/ApiUrl'
 import Helper from '../../Lib/HelperFiles/Helper'
 import { ActivityIndicator } from 'react-native'
-import DocumentPicker, { types } from 'react-native-document-picker'
-
 import ScreenWrapper from '../../comman/ScreenWrapper'
 import Header from '../../comman/Header'
 import { Colors } from '../../comman/Colors'

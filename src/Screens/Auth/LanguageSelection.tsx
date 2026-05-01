@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '../../Redux/Reducers/Userslice';
 import { RootState } from '../../Redux/Store/Store';
 import useStrings from '../../comman/useStrings';
+import HWSize from '../../comman/HWSize';
 
 const { width } = Dimensions.get('window');
 
@@ -46,9 +47,9 @@ const LanguageSelection = () => {
                     </View>
                     <Text style={styles.headerTitle}>{Strings.selectLanguage}</Text>
                 </View>
-                <TouchableOpacity style={styles.helpButton}>
+                {/* <TouchableOpacity style={styles.helpButton}>
                     <Text style={styles.helpIcon}>❓</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -130,22 +131,17 @@ export default LanguageSelection;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.white,
     },
     header: {
         flexDirection: 'row',
-        alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 12,
+        alignItems: 'center',
+        paddingHorizontal: HWSize.W_Width20,
+        paddingBottom: 15,
         backgroundColor: Colors.white,
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 5,
+        borderBottomColor: '#F1F5F9',
     },
     headerLeft: {
         flexDirection: 'row',

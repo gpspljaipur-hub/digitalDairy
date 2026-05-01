@@ -122,7 +122,10 @@ const ReminderHomework = () => {
 
             {/* Footer Action Button */}
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.sendBtn} activeOpacity={0.8}>
+                <TouchableOpacity style={styles.sendBtn} activeOpacity={0.8}
+                    onPress={() => {
+                        navigation.navigate("Dashboard")
+                    }}>
                     <Text style={styles.sendBtnIcon}>➤</Text>
                     <Text style={styles.sendBtnText}>{Strings.sendReminder}</Text>
                 </TouchableOpacity>
