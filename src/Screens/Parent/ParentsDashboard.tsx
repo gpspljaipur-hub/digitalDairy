@@ -23,13 +23,15 @@ const ParentDashboard = ({ route }: any) => {
     const navigation = useNavigation<any>();
     const { parent } = useSelector((state: any) => state.user);
     const mobile = route?.params?.phone;
+    useEffect(() => {
+        if (mobile !== undefined && mobile !== null) {
+            AsyncStorageHelper.setData("MOBILE", mobile);
+        }
+    }, [mobile]);
 
     const [parentData, setParentData] = useState<any>(null)
     const [loading, setLoading] = useState(false)
     const [marksList, setMarksList] = useState<any[]>([]);
-    console.log("🚀 ~ ParentDashboard ~ parentData:", parentData)
-
-
     useEffect(() => {
         fetchParentData()
     }, [])
@@ -37,7 +39,13 @@ const ParentDashboard = ({ route }: any) => {
     const fetchParentData = async () => {
         setLoading(true)
         try {
-            const res = await Auth_ApiRequest(ApiUrl.ParentRegisterGet, { mobile: mobile })
+
+            const storedMobile = await AsyncStorageHelper.getData("MOBILE");
+            if (!storedMobile) {
+                console.log("No mobile found");
+                return;
+            }
+            const res = await Auth_ApiRequest(ApiUrl.ParentRegisterGet, { mobile: storedMobile })
             console.log('Parent Data Response:', res)
             if (res && !res.error) {
                 await AsyncStorageHelper.setData(Config.USER_DATA, res);
