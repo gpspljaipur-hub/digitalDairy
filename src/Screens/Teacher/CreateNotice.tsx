@@ -17,7 +17,7 @@ const CreateNotice = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isImportant, setIsImportant] = useState(false);
-    const [selectedClass, setSelectedClass] = useState<string>('');
+    const [selectedClass, setSelectedClass] = useState<any>([]);
     const [classes, setClasses] = useState<any[]>([]);
     const [loadingClasses, setLoadingClasses] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -41,13 +41,23 @@ const CreateNotice = () => {
         }
     };
 
-    const toggleClass = (classId: string) => {
-        setError('');
-        if (selectedClass === classId) {
-            setSelectedClass('');
-        } else {
-            setSelectedClass(classId);
-        }
+    // const toggleClass = (classId: string) => {
+    //     setError('');
+    //     if (selectedClass === classId) {
+    //         setSelectedClass('');
+    //     } else {
+    //         setSelectedClass(classId);
+    //     }
+    // };
+
+    const toggleClass = (id: any) => {
+        setSelectedClass((prev: any) => {
+            if (prev.includes(id)) {
+                return prev.filter((item: any) => item !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
     };
 
     const handleSendNotice = async () => {
@@ -152,10 +162,12 @@ const CreateNotice = () => {
                         </View>
                         <View style={styles.classesGrid}>
                             {classes.map((item) => {
-                                const isSelected = selectedClass === item._id;
+                                // const isSelected = selectedClass === item._id;
+                                const isSelected = selectedClass.includes(item._id);
                                 return (
                                     <TouchableOpacity
                                         key={item._id}
+
                                         style={[styles.classItem, isSelected && styles.classItemActive]}
                                         onPress={() => toggleClass(item._id)}
                                         activeOpacity={0.7}
