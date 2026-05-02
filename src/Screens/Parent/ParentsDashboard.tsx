@@ -136,7 +136,7 @@ const ParentDashboard = ({ route }: any) => {
                         <View style={[styles.progressBarFill, { width: `${averageScore}%` }]} />
                     </View>
 
-                    <Text style={styles.statText}>📈 {strings.upSinceLastMonth.replace('{percent}', '4')}</Text>
+                    {/* <Text style={styles.statText}>📈 {strings.upSinceLastMonth.replace('{percent}', '4')}</Text> */}
                 </View>
 
                 {/* Dashboard Grid */}

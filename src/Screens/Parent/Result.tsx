@@ -26,9 +26,15 @@ const Result = () => {
 
     const fetchMarks = async () => {
         setLoading(true);
-        const classId = parent?.classId?._id || parent?._id;
+        const pData = parent?.data || parent;
+        const classId = pData?.classId?._id || pData?.classId;
+        const studentId = pData?.studentId?._id || pData?.studentId;
+        console.log('pData: ', pData);
+        console.log('classId: ', classId);
+        console.log('studentId: ', studentId);
+
         try {
-            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId })
+            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId, studentId })
             console.log('Marks List Response:', res);
             if (res && !res.error) {
                 const list = res.data || res || [];
@@ -37,7 +43,7 @@ const Result = () => {
                 // Calculate average for progress bar
                 if (list.length > 0) {
                     const total = list.reduce((acc: number, curr: any) => acc + (curr.marks || 0), 0);
-                    const avg = total / (list.length * 100);
+                    const avg = Math.min(1, total / (list.length * 100));
                     Animated.timing(progressAnim, {
                         toValue: avg,
                         duration: 1500,
@@ -61,7 +67,7 @@ const Result = () => {
     };
 
     const averageScore = marksList.length > 0
-        ? Math.round(marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) / marksList.length)
+        ? Math.min(100, Math.round(marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) / marksList.length))
         : 0;
 
     return (
@@ -76,42 +82,47 @@ const Result = () => {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                 {/* Performance Summary Card */}
-                <View style={styles.summaryCard}>
-                    <View style={styles.summaryHeader}>
-                        <View>
-                            <Text style={styles.summaryTitle}>Performance Summary</Text>
-                            <Text style={styles.summarySubtitle}>Academic Session 2026</Text>
-                        </View>
-                        <View style={[styles.passBadge, { backgroundColor: averageScore >= 40 ? '#4CAF50' : '#D32F2F' }]}>
-                            <Text style={styles.passText}>{averageScore >= 40 ? 'Pass' : 'Fail'}</Text>
-                        </View>
-                    </View>
+                {(() => {
+                    const pData = parent?.data || parent;
+                    return (
+                        <View style={styles.summaryCard}>
+                            <View style={styles.summaryHeader}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.summaryTitle}>Performance Summary</Text>
+                                    <Text style={styles.summarySubtitle}>Academic Session 2026</Text>
+                                </View>
+                                {/* <View style={[styles.passBadge, { backgroundColor: averageScore >= 40 ? '#4CAF50' : '#D32F2F' }]}>
+                                    <Text style={styles.passText}>{averageScore >= 40 ? 'Pass' : 'Fail'}</Text>
+                                </View> */}
+                            </View>
 
-                    <View style={styles.scoreContainer}>
-                        <Text style={styles.scoreText}>{averageScore}%</Text>
-                        <Text style={styles.scoreLabel}>{strings.totalScore}</Text>
-                    </View>
+                            <View style={styles.scoreContainer}>
+                                <Text style={styles.scoreText}>{averageScore}%</Text>
+                                <Text style={styles.scoreLabel}>{strings.totalScore}</Text>
+                            </View>
 
-                    <View style={styles.progressContainer}>
-                        <View style={styles.progressBarBg}>
-                            <Animated.View
-                                style={[
-                                    styles.progressBarFill,
-                                    {
-                                        width: progressAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: ['0%', '100%']
-                                        })
-                                    }
-                                ]}
-                            />
+                            <View style={styles.progressContainer}>
+                                <View style={styles.progressBarBg}>
+                                    <Animated.View
+                                        style={[
+                                            styles.progressBarFill,
+                                            {
+                                                width: progressAnim.interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: ['0%', '100%']
+                                                })
+                                            }
+                                        ]}
+                                    />
+                                </View>
+                                <View style={styles.progressLabels}>
+                                    <Text style={styles.limitText}>0%</Text>
+                                    <Text style={styles.limitText}>Target: 100%</Text>
+                                </View>
+                            </View>
                         </View>
-                        <View style={styles.progressLabels}>
-                            <Text style={styles.limitText}>0%</Text>
-                            <Text style={styles.limitText}>Target: 100%</Text>
-                        </View>
-                    </View>
-                </View>
+                    )
+                })()}
 
                 {/* Subject-wise Marks Section */}
                 <Text style={styles.sectionTitle}>{strings.subjectWiseMarks}</Text>
@@ -183,6 +194,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+    },
+    studentNameHeader: {
+        fontSize: 20,
+        fontFamily: fonts.LexendBold,
+        color: Colors.primary,
+        marginBottom: 2,
+    },
+    classNameHeader: {
+        fontSize: 14,
+        fontFamily: fonts.Lexend_Medium,
+        color: Colors.textSecondary,
+        marginBottom: 8,
     },
     summaryTitle: {
         fontSize: 16,

@@ -100,7 +100,7 @@ const Homework_Screen = () => {
                 <TouchableOpacity style={[
                     styles.actionButton,
                     { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
-                ]}>
+                ]} onPress={() => navigation.navigate('View_Homework', { homeworkData: item })}>
                     <Text style={[
                         styles.actionButtonText,
                         { color: item.type === 'submission' ? Colors.primary : Colors.white }
