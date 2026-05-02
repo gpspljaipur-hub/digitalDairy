@@ -87,97 +87,97 @@ const Homework_Screen = () => {
                 <View>
                     <Text style={styles.dateLabel}>{strings.dueDateLabel}</Text>
                     <Text style={[styles.dateValue, { color: '#DC2626', fontFamily: Fonts.LexendBold }]}>{moment(item.date).format('DD-MM-YYYY')}</Text>
-    </View>
+                </View>
             </View >
 
-    <View style={styles.cardFooter}>
-        {/* <View style={styles.teacherInfo}>
+            <View style={styles.cardFooter}>
+                {/* <View style={styles.teacherInfo}>
                     <View style={styles.teacherAvatarBox}>
                         <Text style={styles.teacherAvatar}>{item.teacherAvatar}</Text>
                     </View>
                     <Text style={styles.teacherName}>{item.teacher}</Text>
                 </View> */}
-        <TouchableOpacity style={[
-            styles.actionButton,
-            { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
-        ]}>
-            <Text style={[
-                styles.actionButtonText,
-                { color: item.type === 'submission' ? Colors.primary : Colors.white }
-            ]}>
-                {item.type === 'submission' ? strings.viewSubmission : strings.viewDetails}
-            </Text>
-        </TouchableOpacity>
-    </View>
+                <TouchableOpacity style={[
+                    styles.actionButton,
+                    { backgroundColor: item.type === 'submission' ? '#EEF2FF' : Colors.primary }
+                ]}>
+                    <Text style={[
+                        styles.actionButtonText,
+                        { color: item.type === 'submission' ? Colors.primary : Colors.white }
+                    ]}>
+                        {item.type === 'submission' ? strings.viewSubmission : strings.viewDetails}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View >
     );
 
-return (
-    <ScreenWrapper scroll={false}>
-        <Header
-            title={strings.homeworkTitle}
-            showBack={true}
-            onBack={() => navigation.goBack()}
-            showProfile={false}
-            showNotification={false}
-        />
+    return (
+        <ScreenWrapper scroll={false}>
+            <Header
+                title={strings.homeworkTitle}
+                showBack={true}
+                onBack={() => navigation.goBack()}
+                showProfile={false}
+                showNotification={false}
+            />
 
-        <View style={styles.container}>
-            {/* Categories Filter */}
-            <View style={styles.categoryWrapper}>
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={styles.categoryList}
-                >
-                    {categories.map((cat) => (
-                        <TouchableOpacity
-                            key={cat}
-                            style={[
-                                styles.categoryItem,
-                                selectedCategory === cat && styles.categoryItemActive
-                            ]}
-                            onPress={() => setSelectedCategory(cat)}
-                        >
-                            <Text style={[
-                                styles.categoryText,
-                                selectedCategory === cat && styles.categoryTextActive
-                            ]}>
-                                {cat}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-            </View>
-
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollContent}
-            >
-                {/* Info Banner */}
-                <View style={styles.infoBanner}>
-                    <View style={styles.infoIconBox}>
-                        <Text style={styles.infoIcon}>ℹ️</Text>
-                    </View>
-                    <Text style={styles.infoText}>{filteredHomework.length}{strings.assignmentsDue}.</Text>
+            <View style={styles.container}>
+                {/* Categories Filter */}
+                <View style={styles.categoryWrapper}>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.categoryList}
+                    >
+                        {categories.map((cat) => (
+                            <TouchableOpacity
+                                key={cat}
+                                style={[
+                                    styles.categoryItem,
+                                    selectedCategory === cat && styles.categoryItemActive
+                                ]}
+                                onPress={() => setSelectedCategory(cat)}
+                            >
+                                <Text style={[
+                                    styles.categoryText,
+                                    selectedCategory === cat && styles.categoryTextActive
+                                ]}>
+                                    {cat}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
                 </View>
 
-                {loading ? (
-                    <View style={{ marginTop: 50 }}>
-                        <ActivityIndicator size="large" color={Colors.primary} />
-                    </View>
-                ) : (
-                    filteredHomework.length > 0 ? (
-                        filteredHomework.map(renderHomeworkCard)
-                    ) : (
-                        <View style={{ alignItems: 'center', marginTop: 50 }}>
-                            <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.textSecondary }}>No homework found for this category.</Text>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollContent}
+                >
+                    {/* Info Banner */}
+                    <View style={styles.infoBanner}>
+                        <View style={styles.infoIconBox}>
+                            <Text style={styles.infoIcon}>ℹ️</Text>
                         </View>
-                    )
-                )}
+                        <Text style={styles.infoText}>{filteredHomework.length}{strings.assignmentsDue}.</Text>
+                    </View>
 
-                {/* Guidelines Card */}
-                {/* <TouchableOpacity style={styles.guidelinesCard}>
+                    {loading ? (
+                        <View style={{ marginTop: 50 }}>
+                            <ActivityIndicator size="large" color={Colors.primary} />
+                        </View>
+                    ) : (
+                        filteredHomework.length > 0 ? (
+                            filteredHomework.map(renderHomeworkCard)
+                        ) : (
+                            <View style={{ alignItems: 'center', marginTop: 50 }}>
+                                <Text style={{ fontFamily: Fonts.Lexend_Medium, color: Colors.textSecondary }}>No homework found for this category.</Text>
+                            </View>
+                        )
+                    )}
+
+                    {/* Guidelines Card */}
+                    {/* <TouchableOpacity style={styles.guidelinesCard}>
                         <View style={styles.guidelinesIconBox}>
                             <Text style={styles.guidelinesIcon}>📄</Text>
                         </View>
@@ -188,12 +188,12 @@ return (
                         <Text style={styles.downloadIcon}>⬇️</Text>
                     </TouchableOpacity> */}
 
-                {/* Bottom Spacing */}
-                <View style={{ height: 100 }} />
-            </ScrollView>
-        </View>
-    </ScreenWrapper>
-)
+                    {/* Bottom Spacing */}
+                    <View style={{ height: 100 }} />
+                </ScrollView>
+            </View>
+        </ScreenWrapper>
+    )
 }
 
 export default Homework_Screen
