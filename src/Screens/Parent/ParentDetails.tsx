@@ -39,7 +39,7 @@ const ParentDetails = () => {
                     <Text style={styles.userName}>{parentData?.parentName || 'Parent Name'}</Text>
                     <View style={styles.roleBadge}>
                         <Text style={styles.roleIcon}>⚖️</Text>
-                        <Text style={styles.roleText}>{strings.role}: {strings.parent}</Text>
+                        <Text style={styles.roleText}>{strings.role}: {parentData.relationId?.name}</Text>
                     </View>
                 </View>
 
