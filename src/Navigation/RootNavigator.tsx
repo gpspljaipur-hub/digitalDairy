@@ -45,7 +45,7 @@ import ParentDetails from '../Screens/Parent/ParentDetails';
 import EditProfile from '../Screens/Parent/EditProfile';
 import FAQScreen from '../Screens/Parent/FAQScreen';
 import Schedule from '../Screens/Parent/Schedule';
-
+import View_Homework from '../Screens/Parent/View_Homework';
 
 
 
@@ -97,6 +97,7 @@ export type RootStackParamList = {
   FAQScreen: undefined;
   Teacher_Profile: undefined;
   Schedule: undefined;
+  View_Homework: undefined;
 };
 
 
@@ -170,6 +171,7 @@ const RootNavigator = () => {
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="Teacher_Profile" component={Teacher_Profile} />
       <Stack.Screen name="Schedule" component={Schedule} />
+      <Stack.Screen name="View_Homework" component={View_Homework} />
     </Stack.Navigator>
 
 
