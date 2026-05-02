@@ -48,7 +48,7 @@ const ParentDashboard = ({ route }: any) => {
                 const pData = res.data || res;
                 setParentData(pData);
                 if (pData?.classId?._id || pData?.classId) {
-                    fetchMarks(pData?.classId?._id || pData?.classId);
+                    fetchMarks(pData?.classId?._id || pData?.classId, pData?.studentId);
                 }
             }
         } catch (error) {
@@ -58,9 +58,9 @@ const ParentDashboard = ({ route }: any) => {
         }
     }
 
-    const fetchMarks = async (classId: string) => {
+    const fetchMarks = async (classId: string, studentId: any) => {
         try {
-            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId })
+            const res = await Auth_ApiRequest(ApiUrl.MarksList, { classId, studentId })
             if (res && !res.error) {
                 const list = res.data || res || [];
                 setMarksList(list);
@@ -69,10 +69,20 @@ const ParentDashboard = ({ route }: any) => {
             console.error('Fetch Marks Error:', error);
         }
     };
+    const averageScore =
+        marksList.length > 0
+            ? Math.min(
+                100,
+                Math.round(
+                    marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) /
+                    marksList.length
+                )
+            )
+            : 0;
 
-    const averageScore = marksList.length > 0
-        ? Math.round(marksList.reduce((acc, curr) => acc + (curr.marks || 0), 0) / marksList.length)
-        : 0;
+    console.log(averageScore, "averageScore");
+
+
 
     const gridItems = [
         { title: strings.attendanceLabel, icon: '📅', color: '#E3F2FD', iconColor: '#2196F3', type: 'Attendance' },
